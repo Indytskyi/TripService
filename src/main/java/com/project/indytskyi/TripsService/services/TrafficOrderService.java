@@ -3,7 +3,7 @@ package com.project.indytskyi.TripsService.services;
 import com.project.indytskyi.TripsService.dto.TripActivationDTO;
 import com.project.indytskyi.TripsService.models.TrafficOrderEntity;
 import com.project.indytskyi.TripsService.repositories.TrafficsRepository;
-import com.project.indytskyi.TripsService.util.TrafficNotFoundException;
+import com.project.indytskyi.TripsService.exceptions.TrafficNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +40,12 @@ public class TrafficOrderService {
      */
     public TrafficOrderEntity findOne(long id) {
         return trafficsRepository.findById(id).orElseThrow(TrafficNotFoundException::new);
+    }
+
+
+    @Transactional
+    public void stopOrder(long id) {
+        findOne(id).setStatus("STOP");
     }
 
 

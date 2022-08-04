@@ -6,9 +6,9 @@ import com.project.indytskyi.TripsService.models.TrackEntity;
 import com.project.indytskyi.TripsService.models.TrafficOrderEntity;
 import com.project.indytskyi.TripsService.services.TrackService;
 import com.project.indytskyi.TripsService.services.TrafficOrderService;
-import com.project.indytskyi.TripsService.util.ErrorResponse;
-import com.project.indytskyi.TripsService.util.StartOrderNotCreatedException;
-import com.project.indytskyi.TripsService.util.TrafficNotFoundException;
+import com.project.indytskyi.TripsService.exceptions.ErrorResponse;
+import com.project.indytskyi.TripsService.exceptions.StartOrderNotCreatedException;
+import com.project.indytskyi.TripsService.exceptions.TrafficNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/trip")
@@ -73,6 +74,20 @@ public class TrafficOrderController {
 
         return ResponseEntity.ok(createTripStartDTO(trafficOrder, track));
     }
+
+
+    /**
+     * Controller where you stop your order but don`t finish
+     * @param trafficOrderId
+     * @return
+     */
+    @PatchMapping("/stop")
+    public ResponseEntity<HttpStatus> stop(@RequestBody Map<String, Long> trafficOrderId) {
+        // TODO status change to "STOP"
+        trafficOrderService.stopOrder(trafficOrderId.get("trafficOrderId"));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
 
 
     /**

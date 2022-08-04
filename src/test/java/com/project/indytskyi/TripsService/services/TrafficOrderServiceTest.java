@@ -3,7 +3,7 @@ package com.project.indytskyi.TripsService.services;
 import com.project.indytskyi.TripsService.dto.TripActivationDTO;
 import com.project.indytskyi.TripsService.models.TrafficOrderEntity;
 import com.project.indytskyi.TripsService.repositories.TrafficsRepository;
-import com.project.indytskyi.TripsService.util.TrafficNotFoundException;
+import com.project.indytskyi.TripsService.exceptions.TrafficNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,15 +70,30 @@ class TrafficOrderServiceTest {
     @Test
     void itShouldCheckIfTrafficOrderDataBaseDoesntContainsTrafficOrderWithIdExists() {
         //GIVEN
-        //WHEN
         given(trafficsRepository.findById(1L)).willReturn(Optional.empty());
-
+        //WHEN
 
         //THEN
         assertThatThrownBy(() -> underTest.findOne(1L))
                 .isInstanceOf(TrafficNotFoundException.class);
 
     }
+
+    @Test
+    void ifObjectOfTrafficOrderEntityChangedStatus() {
+        //GIVEN
+        //WHEN
+        TrafficOrderEntity orderEntity = new TrafficOrderEntity();
+        orderEntity.setUserId(1);
+        orderEntity.setCarId(1);
+        String expected = "STOP";
+        //WHEN
+        lenient().when(trafficsRepository.findById(any())).thenReturn(Optional.of(orderEntity));
+        underTest.stopOrder(1);
+
+        assertEquals(expected, orderEntity.getStatus());
+    }
+
 
 
 }
