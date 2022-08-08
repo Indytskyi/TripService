@@ -1,16 +1,13 @@
 package com.project.indytskyi.tripsservice.controllers;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.exceptions.CurrentTrackNotCreatedException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.exceptions.TrackNotFoundException;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
-import java.util.List;
-import javax.validation.Valid;
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +21,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @RestController
 @RequestMapping("trip/track")
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class TrackController {
     private final TrackService trackService;
 
     /**
      * Controller where we want to find special track by id
      */
+    @ApiOperation("Find special track by id")
     @GetMapping("/{id}")
-    public TrackEntity getTrackOrder(@PathVariable("id") long id) {
+    public TrackEntity getTrack(@PathVariable("id") long id) {
         log.warn("Show track by id");
         return trackService.findOne(id);
     }
@@ -45,6 +48,7 @@ public class TrackController {
      *  create current track
      */
     @PostMapping("/current")
+    @ApiOperation("Get json with current coordinates and create current track")
     public ResponseEntity<TrackEntity> getCurrentCoordinates(
             @RequestBody @Valid CurrentCoordinatesDto currentCoordinates,
                                                             BindingResult bindingResult) {
@@ -64,6 +68,8 @@ public class TrackController {
         TrackEntity track = trackService.instanceTrack(currentCoordinates);
         return ResponseEntity.ok(track);
     }
+
+
 
     /**
      * Exception (if we want to find special track but, the track with this id does not exist)
