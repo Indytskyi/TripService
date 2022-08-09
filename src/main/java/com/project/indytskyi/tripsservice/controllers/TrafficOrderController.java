@@ -9,9 +9,6 @@ import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
-import java.util.List;
-import java.util.Map;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -27,6 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/trip")
@@ -76,10 +76,9 @@ public class TrafficOrderController {
     /**
      * Controller where you stop your order but don`t finish
      */
-    @PatchMapping("/stop")
-    public ResponseEntity<HttpStatus> stop(@RequestBody Map<String, Long> trafficOrderId) {
-        // TODO status change to "STOP"
-        trafficOrderService.stopOrder(trafficOrderId.get("trafficOrderId"));
+    @PatchMapping("/stop/{id}")
+    public ResponseEntity<HttpStatus> stop(@PathVariable("id") long trafficOrderId) {
+        trafficOrderService.stopOrder(trafficOrderId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
