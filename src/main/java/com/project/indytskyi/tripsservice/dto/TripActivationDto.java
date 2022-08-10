@@ -1,14 +1,16 @@
 package com.project.indytskyi.tripsservice.dto;
 
-import javax.validation.constraints.Min;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.Min;
 
 /**
  *  Class in which we will receive constant data from the car service
  */
 @Data
 public class TripActivationDto {
+
     @Min(value = 1, message = "CarId must have correct data")
     private long carId;
     @Min(value = 1, message = "UserId must have correct data")
@@ -19,4 +21,5 @@ public class TripActivationDto {
     private double latitude;
     @Range(min = -180, max = 180, message = "For latitude, use values in the range -180 to 180")
     private double longitude;
+
 }

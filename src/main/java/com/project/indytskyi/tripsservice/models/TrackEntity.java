@@ -1,7 +1,8 @@
 package com.project.indytskyi.tripsservice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.Data;
+import java.time.LocalDateTime;
 
 /**
  * Class which interacts with the table Track in which the location of the car
@@ -20,6 +21,7 @@ import lombok.Data;
 @Data
 @Table(name = "track")
 public class TrackEntity {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,4 +46,5 @@ public class TrackEntity {
 
     @Column(name = "distance")
     private double distance;
+
 }

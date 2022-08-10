@@ -1,7 +1,8 @@
 package com.project.indytskyi.tripsservice.dto;
 
-import java.time.LocalDateTime;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * class TripStartDTO which contains all information
@@ -9,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class TripStartDto {
+
     private long ownerId;
     private long carId;
     private long userId;

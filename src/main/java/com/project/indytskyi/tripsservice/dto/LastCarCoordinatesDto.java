@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LastCarCoordinatesDto {
+
     private double latitude;
     private double longitude;
     private double distance;
+
 }

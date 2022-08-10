@@ -1,5 +1,8 @@
 package com.project.indytskyi.tripsservice.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
@@ -7,8 +10,15 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
-public class GFG {
+/**
+ * Class where you calculate distance between two coordinates
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class GFG {
 
+    /**
+     * method where you calculate distance between two coordinates
+     */
     public static double distance(double previousLatitude,
                                   double previousLongitude,
                                   double currentLatitude, double currentLongitude) {
@@ -30,4 +40,5 @@ public class GFG {
 
         return (arc * radiusEarth);
     }
+
 }

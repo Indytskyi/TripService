@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Service
 @AllArgsConstructor
 public class TrafficOrderServiceImpl implements TrafficOrderService {
+
     private final TrafficsRepository trafficsRepository;
 
     @Override

@@ -1,8 +1,8 @@
 package com.project.indytskyi.tripsservice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *  Class which interacts with the table Traffic order and contain data od travel
@@ -19,6 +20,7 @@ import lombok.Data;
 @Data
 @Table(name = "traffic_order")
 public class TrafficOrderEntity {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,8 +12,10 @@ import org.hibernate.validator.constraints.Range;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CurrentCoordinatesDto {
+
     @Range(min = -90, max = 90, message = "For latitude, use values in the range -90 to 90")
     private double latitude;
     @Range(min = -180, max = 180, message = "For latitude, use values in the range -180 to 180")
     private double longitude;
+
 }

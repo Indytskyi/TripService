@@ -20,4 +20,5 @@ public class ImageServiceImpl implements ImageService {
         imagesEntity.setOwnerImage(ownerOrder);
         return imagesRepository.save(imagesEntity);
     }
+
 }

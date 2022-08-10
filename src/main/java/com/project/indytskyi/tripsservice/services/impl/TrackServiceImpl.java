@@ -24,9 +24,9 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class TrackServiceImpl implements TrackService {
+
     private final TracksRepository tracksRepository;
     private final LastCarCoordinatesMapper lastCarCoordinatesMapper;
-
     private TrafficOrderEntity trafficOrderCurrent;
     private LastCarCoordinatesDto lastCarCoordinates;
 
