@@ -6,7 +6,7 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface StartMapper {
     StartMapper MAPPER = Mappers.getMapper(StartMapper.class);
 

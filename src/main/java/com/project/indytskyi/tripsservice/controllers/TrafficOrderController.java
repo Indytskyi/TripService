@@ -9,7 +9,6 @@ import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,8 @@ import javax.validation.Valid;
 public class TrafficOrderController {
     private final TrafficOrderService trafficOrderService;
     private final TrackService trackService;
-    private final ModelMapper modelMapper;
+    private final StartMapper startMapper;
+
 
     /**
      * Controller where we want to find special traffic order by id
@@ -73,7 +73,7 @@ public class TrafficOrderController {
      */
     private TripStartDto createTripStartDto(TrafficOrderEntity trafficOrderEntity,
                                             TrackEntity trackEntity) {
-        TripStartDto tripStartDto = StartMapper.MAPPER
+        TripStartDto tripStartDto = startMapper
                 .toStartDto(trafficOrderEntity, trackEntity);
 
         tripStartDto.setOwnerId(trafficOrderEntity.getId());
