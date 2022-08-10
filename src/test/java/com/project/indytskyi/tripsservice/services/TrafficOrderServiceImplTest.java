@@ -1,7 +1,6 @@
 package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.exceptions.TrafficNotFoundException;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import org.junit.jupiter.api.Test;

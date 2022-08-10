@@ -2,7 +2,6 @@ package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.exceptions.TrackNotFoundException;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;

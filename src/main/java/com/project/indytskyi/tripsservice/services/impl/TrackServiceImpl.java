@@ -2,13 +2,14 @@ package com.project.indytskyi.tripsservice.services.impl;
 
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.exceptions.TrackNotFoundException;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +33,7 @@ public class TrackServiceImpl implements TrackService {
         return tracksRepository.save(track);
     }
 
-    // Пока не точно как будет (не знаю как решить пару моментов)
+    //NOT FINAL VERSION!!!!
     @Override
     public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates) {
         TrackEntity track = initializationNewTrack(currentCoordinates);
@@ -42,7 +43,8 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public TrackEntity findOne(long id) {
-        return tracksRepository.findById(id).orElseThrow(TrackNotFoundException::new);
+        return tracksRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     /**
