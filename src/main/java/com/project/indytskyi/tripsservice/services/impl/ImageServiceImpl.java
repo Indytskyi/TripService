@@ -7,6 +7,8 @@ import com.project.indytskyi.tripsservice.services.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
@@ -14,11 +16,13 @@ public class ImageServiceImpl implements ImageService {
     private final ImagesRepository imagesRepository;
 
     @Override
-    public ImagesEntity saveImage(TrafficOrderEntity ownerOrder, String image) {
-        ImagesEntity imagesEntity = new ImagesEntity();
-        imagesEntity.setImage(image);
-        imagesEntity.setOwnerImage(ownerOrder);
-        return imagesRepository.save(imagesEntity);
+    public void saveImages(TrafficOrderEntity ownerOrder, List<String> images) {
+        images.forEach(image -> {
+            ImagesEntity imagesEntity = new ImagesEntity();
+            imagesEntity.setImage(image);
+            imagesEntity.setOwnerImage(ownerOrder);
+            imagesRepository.save(imagesEntity);
+        });
     }
 
 }

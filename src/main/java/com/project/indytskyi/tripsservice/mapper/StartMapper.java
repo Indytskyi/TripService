@@ -6,11 +6,13 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for covert data from TrafficOrderEntity
- * and trackEntity to LastCarCoordinatesDto
+ * Mapper for converting data from
+ * TrafficOrderEntity and TrackEntity
+ * to LastCarCoordinatesDto
  */
 @Mapper(componentModel = "spring")
 public interface StartMapper {
-     TripStartDto toStartDto(TrafficOrderEntity trafficOrderEntity, TrackEntity trackEntity);
 
+    TripStartDto toStartDto(TrafficOrderEntity trafficOrderEntity,
+                            TrackEntity trackEntity);
 }

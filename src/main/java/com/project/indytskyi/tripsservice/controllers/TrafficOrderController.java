@@ -2,10 +2,12 @@ package com.project.indytskyi.tripsservice.controllers;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
+import com.project.indytskyi.tripsservice.dto.TripFinishReceiverDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import lombok.AllArgsConstructor;
@@ -31,6 +33,7 @@ import javax.validation.Valid;
 public class TrafficOrderController {
     private final TrafficOrderService trafficOrderService;
     private final TrackService trackService;
+    private final ImageService imageService;
     private final StartMapper startMapper;
 
 
@@ -72,10 +75,14 @@ public class TrafficOrderController {
     /**
      * Controller where you finish your order and send json to another service
      */
-    @PutMapping("/finish/{id}")
-    public  ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId) {
-        log.info("Finish traffic order by id = {}", trafficOrderId);
-        return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrderId));
+    @PutMapping("/finish")
+    public  ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
+                                                     TripFinishReceiverDto tripFinishReceiverDto) {
+        log.info("Finish traffic order by id = {}", tripFinishReceiverDto.getTrafficOrderId());
+
+        TrafficOrderEntity trafficOrder = trafficOrderService.findOne(tripFinishReceiverDto.getTrafficOrderId());
+        imageService.saveImages(trafficOrder, tripFinishReceiverDto.getImages());
+        return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
     }
 
     /**

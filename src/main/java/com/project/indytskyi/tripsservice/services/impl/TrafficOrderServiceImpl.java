@@ -52,9 +52,8 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     @Transactional
     @Override
-    public TripFinishDto finishOrder(long trafficOrderId) {
+    public TripFinishDto finishOrder(TrafficOrderEntity trafficOrder) {
 
-        TrafficOrderEntity trafficOrder = findOne(trafficOrderId);
         trafficOrder.setCompletionTime(LocalDateTime.now());
         trafficOrder.setStatus(String.valueOf(Status.FINISH));
         trafficOrder.setStatusPaid(String.valueOf(StatusPaid.PAID));
