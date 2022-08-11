@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 /**
  *  Class in which we will receive constant data from the car service
@@ -21,5 +22,7 @@ public class TripActivationDto {
     private double latitude;
     @Range(min = -180, max = 180, message = "For latitude, use values in the range -180 to 180")
     private double longitude;
+    @Positive(message = "Pay per hour should be more than zero")
+    private double tariff;
 
 }

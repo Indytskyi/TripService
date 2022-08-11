@@ -1,6 +1,7 @@
 package com.project.indytskyi.tripsservice.controllers;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
+import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +66,16 @@ public class TrafficOrderController {
         log.info("Stop traffic order by id = {}", trafficOrderId);
         trafficOrderService.stopOrder(trafficOrderId);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+
+    /**
+     * Controller where you finish your order and send json to another service
+     */
+    @PutMapping("/finish/{id}")
+    public  ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId) {
+        log.info("Finish traffic order by id = {}", trafficOrderId);
+        return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrderId));
     }
 
     /**

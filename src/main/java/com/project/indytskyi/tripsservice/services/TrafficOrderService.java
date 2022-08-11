@@ -1,6 +1,8 @@
 package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
+import com.project.indytskyi.tripsservice.dto.TripFinishDto;
+import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 
 public interface TrafficOrderService {
@@ -13,11 +15,23 @@ public interface TrafficOrderService {
     /**
      * find TrafficOrder by id and if we don`t have this id (throw the exception)
      */
-    TrafficOrderEntity findOne(long id);
+    TrafficOrderEntity findOne(long trafficOrderId);
 
     /**
      * stop order - status of orderTraffic will change to "STOP"
      * and will wait to "FINISH" status
      */
-    void stopOrder(long id);
+    void stopOrder(long trafficOrderId);
+
+
+    /**
+     * change status of order to finish after correct image
+     * calculate trip payment and balance after trip payment
+     * change status paid to "PAID"
+     * also set completion time in order to count trip payment
+     * @param trafficOrderId
+     * @return the last {@link TrackEntity}
+     */
+    TripFinishDto finishOrder(long trafficOrderId);
+
 }

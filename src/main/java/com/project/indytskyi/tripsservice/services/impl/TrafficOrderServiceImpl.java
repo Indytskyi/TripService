@@ -1,6 +1,10 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
+import com.project.indytskyi.tripsservice.dto.TripFinishDto;
+import com.project.indytskyi.tripsservice.mapper.TrafficOrderMapper;
+import com.project.indytskyi.tripsservice.mapper.TripFinishMapper;
+import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
@@ -13,20 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @AllArgsConstructor
 public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     private final TrafficsRepository trafficsRepository;
+    private final TrafficOrderMapper trafficOrderMapper;
+    private final TripFinishMapper tripFinishMapper;
+
 
     @Override
     public TrafficOrderEntity save(TripActivationDto tripActivation) {
-        TrafficOrderEntity trafficOrder = new TrafficOrderEntity();
-        trafficOrder.setUserId(tripActivation.getUserId());
-        trafficOrder.setCarId(tripActivation.getCarId());
+        TrafficOrderEntity trafficOrder = trafficOrderMapper
+                .toTrafficOrderEntity(tripActivation);
         trafficOrder.setActivationTime(LocalDateTime.now());
-        trafficOrder.setBalance(tripActivation.getBalance());
         trafficOrder.setStatus(String.valueOf(Status.IN_ORDER));
         trafficOrder.setStatusPaid(String.valueOf(StatusPaid.IN_PROCESS));
         return trafficsRepository.save(trafficOrder);
@@ -40,8 +46,45 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     @Transactional
     @Override
-    public void stopOrder(long id) {
-        findOne(id).setStatus(String.valueOf(Status.STOP));
+    public void stopOrder(long trafficOrderId) {
+        findOne(trafficOrderId).setStatus(String.valueOf(Status.STOP));
+    }
+
+    @Transactional
+    @Override
+    public TripFinishDto finishOrder(long trafficOrderId) {
+
+        TrafficOrderEntity trafficOrder = findOne(trafficOrderId);
+        trafficOrder.setCompletionTime(LocalDateTime.now());
+        trafficOrder.setStatus(String.valueOf(Status.FINISH));
+        trafficOrder.setStatusPaid(String.valueOf(StatusPaid.PAID));
+        TrackEntity track = trafficOrder.getTracks().get(trafficOrder.getTracks().size() - 1);
+
+        TripFinishDto tripFinishDto = tripFinishMapper
+                .toTripFinishDto(trafficOrder, track);
+
+        tripFinishDto.setTripPayment(calculateTripPayment(trafficOrder));
+        tripFinishDto.setBalance(tripFinishDto.getBalance() -
+                tripFinishDto.getTripPayment());
+
+        return tripFinishDto;
+
+    }
+
+    /**
+     * calculate trip payment
+     * @return trip payment = {@link Double}
+     */
+    private double calculateTripPayment(TrafficOrderEntity trafficOrder) {
+        final double minutesInHour = 60;
+        final double pricePerMinute = trafficOrder.getTariff() / minutesInHour;
+
+        long travelTimeInMinutes = ChronoUnit.MINUTES.between(
+                trafficOrder.getActivationTime(),
+                trafficOrder.getCompletionTime()
+        );
+
+        return travelTimeInMinutes * pricePerMinute;
     }
 
 }

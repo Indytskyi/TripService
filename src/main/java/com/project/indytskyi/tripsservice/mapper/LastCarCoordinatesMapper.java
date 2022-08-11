@@ -5,7 +5,7 @@ import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for covert data from TripActivation to LastCarCoordinatesDto
+ * Mapper for converting data from TripActivation to LastCarCoordinatesDto
  */
 @Mapper(componentModel = "spring")
 public interface LastCarCoordinatesMapper {

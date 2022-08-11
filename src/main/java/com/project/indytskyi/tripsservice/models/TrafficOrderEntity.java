@@ -45,7 +45,10 @@ public class TrafficOrderEntity {
     private String statusPaid;
 
     @Column(name = "balance")
-    private Double balance;
+    private double balance;
+
+    @Column(name = "tariff")
+    private double tariff;
 
     @JsonIgnore
     @OneToMany(mappedBy = "ownerTrack")

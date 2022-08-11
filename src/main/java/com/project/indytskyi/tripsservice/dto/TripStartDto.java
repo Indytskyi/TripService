@@ -17,11 +17,13 @@ public class TripStartDto {
     private LocalDateTime activationTime;
     private String status;
     private String statusPaid;
-    private Double balance;
+    private double balance;
     private long trackId;
     private double latitude;
     private double longitude;
     private int speed;
     private LocalDateTime timestamp;
     private double distance;
+    private double tariff;
+
 }
