@@ -29,7 +29,7 @@ public interface TrafficOrderService {
      * calculate trip payment and balance after trip payment
      * change status paid to "PAID"
      * also set completion time in order to count trip payment
-     * @param trafficOrder
+     * @param  trafficOrder trafficOrder
      * @return the last {@link TrackEntity}
      */
     TripFinishDto finishOrder(TrafficOrderEntity trafficOrder);

@@ -10,21 +10,18 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-
 
 @RestController
 @RequestMapping("/trip")
@@ -64,7 +61,7 @@ public class TrafficOrderController {
     /**
      * Controller where you stop your order but don`t finish
      */
-    @PatchMapping("/stop/{id}")
+    @PutMapping("/stop/{id}")
     public ResponseEntity<HttpStatus> stop(@PathVariable("id") long trafficOrderId) {
         log.info("Stop traffic order by id = {}", trafficOrderId);
         trafficOrderService.stopOrder(trafficOrderId);
@@ -76,11 +73,13 @@ public class TrafficOrderController {
      * Controller where you finish your order and send json to another service
      */
     @PutMapping("/finish")
-    public  ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
+    public ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
                                                      TripFinishReceiverDto tripFinishReceiverDto) {
         log.info("Finish traffic order by id = {}", tripFinishReceiverDto.getTrafficOrderId());
 
-        TrafficOrderEntity trafficOrder = trafficOrderService.findOne(tripFinishReceiverDto.getTrafficOrderId());
+        TrafficOrderEntity trafficOrder = trafficOrderService
+                .findOne(tripFinishReceiverDto.getTrafficOrderId());
+
         imageService.saveImages(trafficOrder, tripFinishReceiverDto.getImages());
         return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
     }
@@ -99,6 +98,5 @@ public class TrafficOrderController {
         tripStartDto.setTrackId(trackEntity.getId());
         return tripStartDto;
     }
-
 
 }

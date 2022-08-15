@@ -3,6 +3,7 @@ package com.project.indytskyi.tripsservice.mapper;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import lombok.Generated;
 import org.mapstruct.Mapper;
 
 /**
@@ -10,6 +11,7 @@ import org.mapstruct.Mapper;
  * TrafficOrderEntity and TrackEntity
  * to TripFinishDto
  */
+@Generated
 @Mapper(componentModel = "spring")
 public interface TripFinishMapper {
 

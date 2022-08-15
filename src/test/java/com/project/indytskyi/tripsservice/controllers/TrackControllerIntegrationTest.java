@@ -1,151 +1,148 @@
 package com.project.indytskyi.tripsservice.controllers;
 
+import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.createCurrentCoordinatesDto;
+import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.currentCoordinatesDtoForSavingWithInvalidLatitude;
+import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.currentCoordinatesDtoForSavingWithInvalidLongitude;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_DISTANCE;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_ID;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_LATITUDE;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_LONGITUDE;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_SPEED;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
+import com.project.indytskyi.tripsservice.models.TrackEntity;
+import com.project.indytskyi.tripsservice.services.TrackService;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 @AutoConfigureMockMvc
-@SpringBootTest
+@WebMvcTest(TrackController.class)
 class TrackControllerIntegrationTest {
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @Autowired
-//    private TracksRepository tracksRepository;
-//
-//    @MockBean
-//    private TrackServiceImpl trackService;
-//
-//
-//
-//
-//    @BeforeEach
-//    public void setup() {
-//        reset();
-//    }
-//
-//    @AfterEach
-//    void tearDown() {
-//        tracksRepository.deleteAll();
-//    }
-//
-//
-//    @DisplayName("Save coordinates that we get from GPS")
-//    @SneakyThrows
-//    @Test
-//    void saveCurrentCoordinates() throws Exception {
-//        final CurrentCoordinatesDto coordinatesDto = new CurrentCoordinatesDto(20, 20);
-//        TrackEntity track = new TrackEntity();
-//        track.setLatitude(20);
-//        track.setLongitude(20);
-//
-//
-//
-//
-//    }
 
+    @Autowired
+    private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
+    @MockBean
+    private TrackService trackService;
 
+    @Test
+    @SneakyThrows
+    @DisplayName("Test finding a track by id")
+    void getTrackById() {
+        //GIVEN
+        TrackEntity track = createTrack();
 
+        //WHEN
+        when(trackService.findOne(TRACK_ID)).thenReturn(track);
+
+        mockMvc.perform(get("http://localhost:8080/trip/track/" + TRACK_ID)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(TRACK_ID))
+                .andExpect(jsonPath("$.latitude").value(TRACK_LATITUDE))
+                .andExpect(jsonPath("$.longitude").value(TRACK_LONGITUDE))
+                .andExpect(jsonPath("$.speed").value(TRACK_SPEED))
+                .andExpect(jsonPath("$.distance").value(TRACK_DISTANCE));
+
+        //THEN
+        verify(trackService).findOne(TRACK_ID);
+
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Test finding a track by non existent id")
+    void getTrackByNonExistentId() {
+        //GIVEN
+        when(trackService.findOne(TRACK_ID))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        //WHEN
+        mockMvc.perform(get("http://localhost:8080/trip/track/" + TRACK_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        //THEN
+        verify(trackService).findOne(TRACK_ID);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Test adding current coordinates ")
+    void addCurrentCoordinates() {
+        //GIVEN
+        CurrentCoordinatesDto coordinatesDto = createCurrentCoordinatesDto();
+        TrackEntity track = createTrack();
+
+        when(trackService.instanceTrack(coordinatesDto)).thenReturn(track);
+
+        //WHEN
+        mockMvc.perform(post("http://localhost:8080/trip/track/current")
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(coordinatesDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(TRACK_ID))
+                .andExpect(jsonPath("$.latitude").value(TRACK_LATITUDE))
+                .andExpect(jsonPath("$.longitude").value(TRACK_LONGITUDE))
+                .andExpect(jsonPath("$.speed").value(TRACK_SPEED))
+                .andExpect(jsonPath("$.distance").value(TRACK_DISTANCE));
+
+        //THEN
+        verify(trackService).instanceTrack(coordinatesDto);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Test adding current coordinates with invalid latitude")
+    void addCurrentCoordinatesWithInvalidLatitude() {
+        //GIVEN
+          CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLatitude();
 //
-//    //    @InjectMocks
-////    private TrackController trackController;
+        //WHEN
+        mockMvc.perform(post("http://localhost:8080/trip/track/current")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(coordinatesDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$..field").value("latitude"))
+                .andExpect(jsonPath("$..message").
+                        value("For latitude, use values in the range -90 to 90"));
+
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Test adding current coordinates with invalid longitude")
+    void addCurrentCoordinatesWithInvalidLongitude() {
+        //GIVEN
+        CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLongitude();
 //
-//    @Autowired
-//    private TrackServiceImpl trackService;
-//
-//    private JacksonTester<CurrentCoordinatesDto> jsonCurrentCoordinatesDTO;
-//
-////    @BeforeEach
-////    public void setup() {
-////        JacksonTester.initFields(this, new ObjectMapper());
-////        mvc = MockMvcBuilders.standaloneSetup(trackController)
-////                .build();
-////    }
-//
-//    @Test
-//    void getTrackOrder() throws Exception {
-//        // given
-//        TrackEntity track = new TrackEntity();
-//        track.setLongitude(10);
-//        track.setLatitude(10);
-//        given(trackService.findOne(2))
-//                .willReturn(track);
-//
-//        // when
-//        MockHttpServletResponse response = mockMvc.perform(
-//                        get("/trip/track/2")
-//                                .accept(MediaType.APPLICATION_JSON))
-//                .andReturn().getResponse();
-//
-//        // then
-//        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-////        assertThat(response.getContentAsString()).isEqualTo(
-////
-////                jsonCurrentCoordinatesDTO.write(new CurrentCoordinatesDTO(10, 10)).getJson()
-////        );
-//
-//    }
-//
-//    @Test
-//    void getTrackOrder2() throws Exception {
-//        // given
-//        given(trackService.findOne(2))
-//                .willThrow(new TrackNotFoundException());
-//
-//        // when
-//        MockHttpServletResponse response = mockMvc.perform(
-//                        get("/trip/track/2")
-//                                .accept(MediaType.APPLICATION_JSON))
-//                .andReturn().getResponse();
-//        // then
-//        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-////        assertThat(response.getContentAsString()).isEqualTo(
-////
-////                jsonCurrentCoordinatesDTO.write(new CurrentCoordinatesDTO(10, 10)).getJson()
-////        );
-//
-//    }
-//
-//    @DisplayName("Save coordinates that we get from GPS")
-//    @SneakyThrows
-//    @Test
-//    void saveCurrentCoordinates() throws Exception {
-//        CurrentCoordinatesDto coordinatesDto = new CurrentCoordinatesDto(20, 20);
-//        TrackEntity track = new TrackEntity();
-//        track.setLatitude(20);
-//        track.setLongitude(20);
-//        when(trackService.instanceTrack(coordinatesDto)).thenReturn(track);
-//
-////        MockHttpServletResponse response = mvc.perform(post("/trip/track/current")
-////                .contentType(MediaType.APPLICATION_JSON)
-////                .content(String.valueOf(coordinatesDto))
-////                ).andReturn().getResponse();
-////
-////        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-//
-//                MockHttpServletResponse response = mockMvc.perform(
-//                post("/trip/track/current").contentType(MediaType.APPLICATION_JSON)
-//                        .content(jsonCurrentCoordinatesDTO.
-//                                write(new CurrentCoordinatesDto(20, 20))
-//                                .getJson()))
-//                .andReturn().getResponse();
-//
-//        // then
-//        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-//    }
-//
-//    @Test
-//    void ifCurrentCoordinatesThatWeWantToSaveAreIncorrect() throws Exception {
-//        MockHttpServletResponse response = mockMvc.perform(
-//                        post("/trip/track/current").contentType(MediaType.APPLICATION_JSON)
-//                                .content(jsonCurrentCoordinatesDTO.
-//                                        write(new CurrentCoordinatesDto(-100,10))
-//                                        .getJson()))
-//                .andReturn().getResponse();
-//
-//        // then
-//        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-//    }
+        //WHEN
+        mockMvc.perform(post("http://localhost:8080/trip/track/current")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(coordinatesDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$..field").value("longitude"))
+                .andExpect(jsonPath("$..message").
+                        value("For latitude, use values in the range -180 to 180"));
+
+    }
 }

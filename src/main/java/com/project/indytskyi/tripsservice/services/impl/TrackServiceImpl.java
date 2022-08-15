@@ -8,14 +8,13 @@ import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
-import com.project.indytskyi.tripsservice.util.GFG;
+import com.project.indytskyi.tripsservice.util.Gfg;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 
 
 /**
@@ -34,7 +33,7 @@ public class TrackServiceImpl implements TrackService {
     public TrackEntity createStartTrack(TrafficOrderEntity trafficOrder,
                                         TripActivationDto tripActivation) {
 
-        lastCarCoordinates =lastCarCoordinatesMapper.toLastCarCoordinatesDto(tripActivation);
+        lastCarCoordinates = lastCarCoordinatesMapper.toLastCarCoordinatesDto(tripActivation);
 
         TrackEntity track = initializationNewTrack(convertToCurrentCoordinates(tripActivation));
         track.setOwnerTrack(trafficOrder);
@@ -42,12 +41,12 @@ public class TrackServiceImpl implements TrackService {
         return tracksRepository.save(track);
     }
 
-    //NOT FINAL VERSION!!!!
     @Transactional
     @Override
     public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates) {
-        TrackEntity track = initializationNewTrack(currentCoordinates);
-        double distance = lastCarCoordinates.getDistance() + getDistanceBetweenTwoCoordinates(currentCoordinates);
+        final TrackEntity track = initializationNewTrack(currentCoordinates);
+        final double distance = lastCarCoordinates.getDistance()
+                + getDistanceBetweenTwoCoordinates(currentCoordinates);
         lastCarCoordinates.setDistance(distance);
         lastCarCoordinates.setLatitude(currentCoordinates.getLatitude());
         lastCarCoordinates.setLongitude(currentCoordinates.getLongitude());
@@ -79,7 +78,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
     private double getDistanceBetweenTwoCoordinates(CurrentCoordinatesDto currentCoordinates) {
-        return GFG.distance(lastCarCoordinates.getLatitude(),
+        return Gfg.distance(lastCarCoordinates.getLatitude(),
                 lastCarCoordinates.getLongitude(),
                 currentCoordinates.getLatitude(),
                 currentCoordinates.getLongitude());

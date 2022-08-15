@@ -1,15 +1,22 @@
 package com.project.indytskyi.tripsservice.dto;
 
-import lombok.Data;
-import org.hibernate.validator.constraints.Range;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Generated;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 /**
  *  Class in which we will receive constant data from the car service
  */
+@Generated
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true, builderMethodName = "of")
 public class TripActivationDto {
 
     @Min(value = 1, message = "CarId must have correct data")

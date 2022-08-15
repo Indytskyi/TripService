@@ -2,7 +2,6 @@ package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
-
 import java.util.List;
 
 public interface ImageService {

@@ -4,10 +4,9 @@ import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.ImagesRepository;
 import com.project.indytskyi.tripsservice.services.ImageService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

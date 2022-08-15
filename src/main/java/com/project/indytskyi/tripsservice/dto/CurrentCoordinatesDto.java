@@ -1,16 +1,20 @@
 package com.project.indytskyi.tripsservice.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 /**
  * Class in which we will receive constant data about the current coordinate of the car
  */
+@Generated
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true, builderMethodName = "of")
 public class CurrentCoordinatesDto {
 
     @Range(min = -90, max = 90, message = "For latitude, use values in the range -90 to 90")

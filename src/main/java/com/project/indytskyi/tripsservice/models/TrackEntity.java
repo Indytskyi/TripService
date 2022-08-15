@@ -1,8 +1,7 @@
 package com.project.indytskyi.tripsservice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,14 +10,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Generated;
+import lombok.NoArgsConstructor;
 
 /**
  * Class which interacts with the table Track in which the location of the car
  * will be saved at intervals
  */
+@Generated
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true, builderMethodName = "of")
 @Table(name = "track")
 public class TrackEntity {
 

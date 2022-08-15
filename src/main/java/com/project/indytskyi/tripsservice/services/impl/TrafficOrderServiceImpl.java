@@ -10,23 +10,21 @@ import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.Status;
 import com.project.indytskyi.tripsservice.util.StatusPaid;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     private final TrafficsRepository trafficsRepository;
     private final TrafficOrderMapper trafficOrderMapper;
     private final TripFinishMapper tripFinishMapper;
-
 
     @Override
     public TrafficOrderEntity save(TripActivationDto tripActivation) {
@@ -63,8 +61,8 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
                 .toTripFinishDto(trafficOrder, track);
 
         tripFinishDto.setTripPayment(calculateTripPayment(trafficOrder));
-        tripFinishDto.setBalance(tripFinishDto.getBalance() -
-                tripFinishDto.getTripPayment());
+        tripFinishDto.setBalance(tripFinishDto.getBalance()
+                - tripFinishDto.getTripPayment());
 
         return tripFinishDto;
 
