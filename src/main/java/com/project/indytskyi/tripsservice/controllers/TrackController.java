@@ -47,7 +47,9 @@ public class TrackController {
     public ResponseEntity<TrackDto> getCurrentCoordinates(
             @RequestBody @Valid CurrentCoordinatesDto currentCoordinates) {
 
-        log.info("Save current coordinates");
+        log.info("Save current coordinates with latitude = {}, longitude = {}",
+                currentCoordinates.getLatitude(),
+                currentCoordinates.getLongitude());
 
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService.instanceTrack(currentCoordinates)));
