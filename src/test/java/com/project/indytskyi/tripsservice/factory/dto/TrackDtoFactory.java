@@ -23,7 +23,6 @@ public class TrackDtoFactory {
                 .longitude(TRACK_DTO_LONGITUDE)
                 .speed(TRACK_DTO_SPEED)
                 .timestamp(TRACK_DTO_TIMESTAMP)
-                .ownerTrack(TRACK_DTO_TRAFFIC_ORDER)
                 .build();
     }
 }

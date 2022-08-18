@@ -1,7 +1,5 @@
 package com.project.indytskyi.tripsservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -18,10 +16,6 @@ import lombok.NoArgsConstructor;
 public class TrackDto {
     @ApiModelProperty(example = "18", value = "")
     private long id;
-
-    @ApiModelProperty(example = "3.567", value = "")
-    @JsonIgnore
-    private TrafficOrderEntity ownerTrack;
 
     @ApiModelProperty(example = "-4.6587", value = "")
     private double latitude;

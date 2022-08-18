@@ -1,11 +1,7 @@
 package com.project.indytskyi.tripsservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.indytskyi.tripsservice.models.ImagesEntity;
-import com.project.indytskyi.tripsservice.models.TrackEntity;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,11 +40,5 @@ public class TrafficOrderDto {
 
     @ApiModelProperty(example = "300.0", value = "")
     private double tariff;
-
-    @JsonIgnore
-    private List<TrackEntity> tracks;
-
-    @JsonIgnore
-    private List<ImagesEntity> images;
 
 }
