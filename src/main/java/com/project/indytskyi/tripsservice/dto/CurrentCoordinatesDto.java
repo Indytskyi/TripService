@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +17,11 @@ import org.hibernate.validator.constraints.Range;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class CurrentCoordinatesDto {
-
+    @ApiModelProperty(example = "3.567", value = "")
     @Range(min = -90, max = 90, message = "For latitude, use values in the range -90 to 90")
     private double latitude;
+
+    @ApiModelProperty(example = "-4.6587", value = "")
     @Range(min = -180, max = 180, message = "For latitude, use values in the range -180 to 180")
     private double longitude;
 

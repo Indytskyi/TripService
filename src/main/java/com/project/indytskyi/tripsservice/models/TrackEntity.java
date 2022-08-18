@@ -1,6 +1,5 @@
 package com.project.indytskyi.tripsservice.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +33,6 @@ public class TrackEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private TrafficOrderEntity ownerTrack;

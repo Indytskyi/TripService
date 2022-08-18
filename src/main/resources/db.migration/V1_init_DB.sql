@@ -7,7 +7,6 @@ create table traffic_order
     completion_time timestamp,
     status varchar(100) not null,
     status_paid varchar(100) not null,
-    tariff double precision,
     balance double precision
 );
 

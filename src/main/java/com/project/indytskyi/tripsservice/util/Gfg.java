@@ -7,15 +7,14 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 
 /**
  * Class where you calculate distance between two coordinates
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Gfg {
+@UtilityClass
+public class Gfg {
 
     /**
      * method where you calculate distance between two coordinates

@@ -3,6 +3,7 @@ package com.project.indytskyi.tripsservice.controllers;
 import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.createCurrentCoordinatesDto;
 import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.currentCoordinatesDtoForSavingWithInvalidLatitude;
 import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.currentCoordinatesDtoForSavingWithInvalidLongitude;
+import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.createTrackDto;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_DISTANCE;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_LATITUDE;
@@ -18,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
+import com.project.indytskyi.tripsservice.dto.TrackDto;
+import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import lombok.SneakyThrows;
@@ -45,15 +48,20 @@ class TrackControllerIntegrationTest {
     @MockBean
     private TrackService trackService;
 
+    @MockBean
+    private TrackDtoMapper trackDtoMapper;
+
     @Test
     @SneakyThrows
     @DisplayName("Test finding a track by id")
     void getTrackById() {
         //GIVEN
         TrackEntity track = createTrack();
+        TrackDto trackDto = createTrackDto();
 
         //WHEN
         when(trackService.findOne(TRACK_ID)).thenReturn(track);
+        when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
 
         mockMvc.perform(get("http://localhost:8080/trip/track/" + TRACK_ID)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -92,10 +100,12 @@ class TrackControllerIntegrationTest {
         //GIVEN
         CurrentCoordinatesDto coordinatesDto = createCurrentCoordinatesDto();
         TrackEntity track = createTrack();
-
-        when(trackService.instanceTrack(coordinatesDto)).thenReturn(track);
+        TrackDto trackDto = createTrackDto();
 
         //WHEN
+        when(trackService.instanceTrack(coordinatesDto)).thenReturn(track);
+        when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
+
         mockMvc.perform(post("http://localhost:8080/trip/track/current")
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(coordinatesDto)))
@@ -134,7 +144,7 @@ class TrackControllerIntegrationTest {
     void addCurrentCoordinatesWithInvalidLongitude() {
         //GIVEN
         CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLongitude();
-//
+
         //WHEN
         mockMvc.perform(post("http://localhost:8080/trip/track/current")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,0 +1,457 @@
+---
+swagger: '2.0'
+info:
+  description: |-
+    This is a microservice "Track service" based on the OpenAPI 3.0 specification.  
+    - Book a car (from point in time) + pay initial price
+    - Track car via GPS
+    - Finish order (make photos, etc) + pay for order (distance, time)
+  version: '1.0'
+  title: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+host: localhost:8080
+basePath: "/"
+tags:
+- name: track-controller
+  description: Track Controller
+- name: traffic-order-controller
+  description: Traffic Order Controller
+paths:
+  "/trip/finish":
+    put:
+      tags:
+      - traffic-order-controller
+      summary: finish
+      operationId: finishUsingPUT
+      consumes:
+      - application/json
+      produces:
+      - "*/*"
+      parameters:
+      - in: body
+        name: tripFinishReceiverDto
+        description: tripFinishReceiverDto
+        required: true
+        schema:
+          "$ref": "#/definitions/TripFinishReceiverDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TripFinishDto"
+        '400':
+          description: Invalid traffic order Id
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                field:
+                  type: "string"
+                  example: trafficOrderId
+                message:
+                  type: "string"
+                  example: trafficOrderId must have correct data
+  "/trip/start":
+    post:
+      tags:
+      - traffic-order-controller
+      summary: save
+      operationId: saveUsingPOST
+      consumes:
+      - application/json
+      produces:
+      - "*/*"
+      parameters:
+      - in: body
+        name: tripActivation
+        description: tripActivation
+        required: true
+        schema:
+          "$ref": "#/definitions/TripActivationDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TripStartDto"
+        '400' :
+          description: Invalid some data
+          schema:
+            $ref: '#/definitions/ErrorValidate'
+  "/trip/stop/{id}":
+    put:
+      tags:
+      - traffic-order-controller
+      summary: stop
+      operationId: stopUsingPUT
+      consumes:
+      - application/json
+      produces:
+      - "*/*"
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            example: OK
+        '404':
+          description: Not Found
+          schema:
+             type: object
+             properties:
+              timestamp: 
+                type: string
+                format: date-time
+              status:
+                type: integer
+                example: 404
+              error:
+                type: string
+                example: Not Found
+              path:
+                type: string
+                example: /trip/stop/-6
+              
+  "/trip/track/current":
+    post:
+      tags:
+      - track-controller
+      summary: Get json with current coordinates and create current track
+      operationId: getCurrentCoordinatesUsingPOST
+      consumes:
+      - application/json
+      produces:
+      - "*/*"
+      parameters:
+      - in: body
+        name: currentCoordinates
+        description: currentCoordinates
+        required: true
+        schema:
+          "$ref": "#/definitions/CurrentCoordinatesDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TrackEntity"
+        '400' :
+          description: Invalid some data
+          schema:
+            $ref: '#/definitions/ErrorValidate'
+
+  "/trip/track/{id}":
+    get:
+      tags:
+      - track-controller
+      summary: Find special track by id
+      operationId: getTrackUsingGET
+      produces:
+      - "*/*"
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TrackEntity"
+        '404':
+          description: Not Found
+          schema:
+             type: object
+             properties:
+              timestamp: 
+                type: string
+                format: date-time
+              status:
+                type: integer
+                example: 404
+              error:
+                type: string
+                example: Not Found
+              path:
+                type: string
+                example: /trip/track/-6
+  "/trip/{id}":
+    get:
+      tags:
+      - traffic-order-controller
+      summary: getTrafficOrder
+      operationId: getTrafficOrderUsingGET
+      produces:
+      - "*/*"
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TrafficOrderEntity"
+        '404':
+          description: Not Found
+          schema:
+             type: object
+             properties:
+              timestamp: 
+                type: string
+                format: date-time
+              status:
+                type: integer
+                example: 404
+              error:
+                type: string
+                example: Not Found
+              path:
+                type: string
+                example: /trip/-6
+definitions:
+  CurrentCoordinatesDto:
+    type: object
+    properties:
+      latitude:
+        type: number
+        format: double
+        minimum: -90
+        maximum: 90
+        example: 3.567
+      longitude:
+        type: number
+        format: double
+        minimum: -180
+        maximum: 180
+        example: -4.6587
+    title: CurrentCoordinatesDto
+  TrackEntity:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 18
+      latitude:
+        type: number
+        format: double
+        example: 3.567
+      longitude:
+        type: number
+        format: double
+        example: -4.6587
+      speed:
+        type: integer
+        format: int32
+      timestamp:
+        type: string
+        format: date-time
+      distance:
+        type: number
+        format: double
+        example: 0.2
+    title: TrackEntity
+  TrafficOrderEntity:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 27
+      carId:
+        type: integer
+        format: int64
+        example: 12
+      userId:
+        type: integer
+        format: int64
+        example: 22
+      activationTime:
+        type: string
+        format: date-time
+      completionTime:
+        type: string
+        format: date-time
+        example:
+      status:
+        type: string
+        example: IN_ORDER
+      statusPaid:
+        type: string
+        example: IN_PROCESS
+      balance:
+        type: number
+        format: double
+        example: 600
+      tariff:
+        type: number
+        format: double
+        example: 300
+    title: TrafficOrderEntity
+  TripActivationDto:
+    type: object
+    properties:
+      carId:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 12
+      userId:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 22
+      balance:
+        type: number
+        format: double
+        minimum: 10
+        example: 600
+      latitude:
+        type: number
+        format: double
+        minimum: -90
+        maximum: 90
+        example: 3.567
+      longitude:
+        type: number
+        format: double
+        minimum: -180
+        maximum: 180
+        example: -4.6587
+      tariff:
+        type: number
+        format: double
+        minimum: 0
+        exclusiveMinimum: true
+        example: 300
+    title: TripActivationDto
+  TripFinishDto:
+    type: object
+    properties:
+      latitude:
+        type: number
+        format: double
+        example: 3.567
+      longitude:
+        type: number
+        format: double
+        example: -4.6587
+      tripPayment:
+        type: number
+        format: double
+        example: 300
+      balance:
+        type: number
+        format: double
+        example: 300
+      carId:
+        type: integer
+        format: int64
+        example: 12
+      userId:
+        type: integer
+        format: int64
+        example: 22
+      distance:
+        type: number
+        format: double
+        example: 5
+    title: TripFinishDto
+  TripFinishReceiverDto:
+    type: object
+    properties:
+      trafficOrderId:
+          type: integer
+          format: int64
+          minimum: 1
+      images:
+        type: array
+        items:
+          type: string
+          example: drive.google.com/drive/folders/1.jpg
+    title: TripFinishReceiverDto
+  TripStartDto:
+    type: object
+    properties:
+      ownerId:
+        type: integer
+        format: int64
+        example: 27
+      carId:
+        type: integer
+        format: int64
+        example: 12
+      userId:
+        type: integer
+        format: int64
+        example: 22
+      activationTime:
+        type: string
+        format: date-time
+      status:
+        type: string
+        example: IN_ORDER
+      statusPaid:
+        type: string
+        example: IN_PROCESS 
+      balance:
+        type: number
+        format: double
+        example: 600
+      tariff:
+        type: number
+        format: double
+        example: 300
+      trackId:
+        type: integer
+        format: int64
+        example: 17
+      latitude:
+        type: number
+        format: double
+        example: 3.567
+      longitude:
+        type: number
+        format: double
+        example: -4.6587
+      speed:
+        type: integer
+        format: int32
+      timestamp:
+        type: string
+        format: date-time
+      distance:
+        type: number
+        format: double
+        example: 0
+    title: TripStartDto
+  ErrorValidate:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        field:
+          type: "string"
+          example: latitude
+        message:
+          type: "string"
+          example: For latitude, use values in the range -90 to 90
+    title: ErrorValidate
+ 
+      

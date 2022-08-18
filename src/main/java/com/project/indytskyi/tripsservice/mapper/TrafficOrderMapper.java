@@ -13,4 +13,5 @@ import org.mapstruct.Mapper;
 public interface TrafficOrderMapper {
 
     TrafficOrderEntity toTrafficOrderEntity(TripActivationDto tripActivationDto);
+
 }

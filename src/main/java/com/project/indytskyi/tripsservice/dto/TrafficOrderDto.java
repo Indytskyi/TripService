@@ -1,25 +1,25 @@
 package com.project.indytskyi.tripsservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.indytskyi.tripsservice.models.ImagesEntity;
+import com.project.indytskyi.tripsservice.models.TrackEntity;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
-import javax.validation.Valid;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Generated;
+import lombok.NoArgsConstructor;
 
-/**
- * class TripStartDTO which contains all information
- * about new traffic order and start track
- */
 @Generated
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
-public class TripStartDto {
-
+public class TrafficOrderDto {
     @ApiModelProperty(example = "27", value = "")
-    private long ownerId;
+    private long id;
 
     @ApiModelProperty(example = "12", value = "")
     private long carId;
@@ -28,8 +28,10 @@ public class TripStartDto {
     private long userId;
 
     @ApiModelProperty(value = "")
-    @Valid
     private LocalDateTime activationTime;
+
+    @ApiModelProperty(value = "")
+    private LocalDateTime completionTime;
 
     @ApiModelProperty(example = "IN_ORDER", value = "")
     private String status;
@@ -43,23 +45,10 @@ public class TripStartDto {
     @ApiModelProperty(example = "300.0", value = "")
     private double tariff;
 
-    @ApiModelProperty(example = "17", value = "")
-    private long trackId;
+    @JsonIgnore
+    private List<TrackEntity> tracks;
 
-    @ApiModelProperty(example = "3.567", value = "")
-    private double latitude;
-
-    @ApiModelProperty(example = "-4.6587", value = "")
-    private double longitude;
-
-    @ApiModelProperty(value = "")
-    private int speed;
-
-    @ApiModelProperty(value = "")
-    @Valid
-    private LocalDateTime timestamp;
-
-    @ApiModelProperty(example = "0.0", value = "")
-    private double distance;
+    @JsonIgnore
+    private List<ImagesEntity> images;
 
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class TrackFactory {
     public static final long TRACK_ID = 27L;
-    public static final double TRACK_DISTANCE = 0.011083144287783203;
+    public static final double TRACK_DISTANCE = 0;
     public static final double TRACK_LATITUDE = 4; //4.5
     public static final double TRACK_LONGITUDE = 3; // 3.5
     public static final int TRACK_SPEED = 0;

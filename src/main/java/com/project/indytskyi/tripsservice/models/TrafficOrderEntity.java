@@ -1,6 +1,5 @@
 package com.project.indytskyi.tripsservice.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -57,11 +56,9 @@ public class TrafficOrderEntity {
     @Column(name = "tariff")
     private double tariff;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "ownerTrack")
     private List<TrackEntity> tracks;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "ownerImage")
     private List<ImagesEntity> images;
 

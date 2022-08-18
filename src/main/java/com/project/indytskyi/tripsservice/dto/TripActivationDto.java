@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -18,17 +19,27 @@ import org.hibernate.validator.constraints.Range;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class TripActivationDto {
-
+    @ApiModelProperty(example = "12", value = "")
     @Min(value = 1, message = "CarId must have correct data")
     private long carId;
+
+    @ApiModelProperty(example = "22", value = "")
     @Min(value = 1, message = "UserId must have correct data")
     private long userId;
+
+    @ApiModelProperty(example = "600.0", value = "")
     @Min(value = 10, message = "Balance must have more than 10 hryvnias on the account")
     private double balance;
+
+    @ApiModelProperty(example = "3.567", value = "")
     @Range(min = -90, max = 90, message = "For latitude, use values in the range -90 to 90")
     private double latitude;
+
+    @ApiModelProperty(example = "-4.6587", value = "")
     @Range(min = -180, max = 180, message = "For latitude, use values in the range -180 to 180")
     private double longitude;
+
+    @ApiModelProperty(example = "300.0", value = "")
     @Positive(message = "Pay per hour should be more than zero")
     private double tariff;
 

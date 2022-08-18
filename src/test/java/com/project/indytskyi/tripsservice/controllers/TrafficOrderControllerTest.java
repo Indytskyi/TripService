@@ -5,7 +5,7 @@ import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRA
 import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRACK_DTO_LATITUDE;
 import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRACK_DTO_LONGITUDE;
 import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRACK_DTO_SPEED;
-import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.createTrackDto;
+import static com.project.indytskyi.tripsservice.factory.dto.TrafficOrderDtoFactory.createTrafficOrderDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.TRIP_ACTIVATION_BALANCE;
 import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.createTripActivationDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_CAR_ID;
@@ -20,6 +20,7 @@ import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverD
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.createTripFinishReceiverDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.createTripFinishReceiverDtoInvalid;
 import static com.project.indytskyi.tripsservice.factory.dto.TripStartDtoFactory.createTripStartDto;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_BALANCE;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_CAR_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_ID;
@@ -37,11 +38,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishReceiverDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
+import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.ImageService;
@@ -63,7 +66,6 @@ import org.springframework.web.server.ResponseStatusException;
 @WebMvcTest(TrafficOrderController.class)
 class TrafficOrderControllerTest {
 
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -82,15 +84,20 @@ class TrafficOrderControllerTest {
     @MockBean
     private StartMapper startMapper;
 
+    @MockBean
+    private TrafficOrderDtoMapper trafficOrderDtoMapper;
+
     @Test
     @SneakyThrows
     @DisplayName("Test finding a track by id")
     void getTrackById() {
         //GIVEN
         TrafficOrderEntity trafficOrder = createTrafficOrder();
+        TrafficOrderDto trafficOrderDto = createTrafficOrderDto();
 
         //WHEN
         when(trafficOrderService.findOne(TRAFFIC_ORDER_ID)).thenReturn(trafficOrder);
+        when(trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder)).thenReturn(trafficOrderDto);
 
         mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -115,6 +122,7 @@ class TrafficOrderControllerTest {
         //GIVEN
         when(trafficOrderService.findOne(TRAFFIC_ORDER_ID))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
         //WHEN
         mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -130,10 +138,9 @@ class TrafficOrderControllerTest {
     void saveTrafficOrderAndStartTrack() {
         //GIVEN
         TripActivationDto tripActivationDto = createTripActivationDto();
-        TrackEntity track = createTrackDto();
+        TrackEntity track = createTrack();
         TrafficOrderEntity trafficOrder = createTrafficOrder();
         TripStartDto tripStartDto = createTripStartDto();
-
 
         //WHEN
         when(trafficOrderService.save(tripActivationDto)).thenReturn(trafficOrder);

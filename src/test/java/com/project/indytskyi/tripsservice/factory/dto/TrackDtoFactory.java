@@ -2,7 +2,7 @@ package com.project.indytskyi.tripsservice.factory.dto;
 
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
 
-import com.project.indytskyi.tripsservice.models.TrackEntity;
+import com.project.indytskyi.tripsservice.dto.TrackDto;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import java.time.LocalDateTime;
 
@@ -15,8 +15,8 @@ public class TrackDtoFactory {
     public static final LocalDateTime TRACK_DTO_TIMESTAMP = LocalDateTime.now();
     public static final TrafficOrderEntity TRACK_DTO_TRAFFIC_ORDER = createTrafficOrder();
 
-    public static TrackEntity createTrackDto() {
-        return TrackEntity.of()
+    public static TrackDto createTrackDto() {
+        return TrackDto.of()
                 .id(TRACK_DTO_ID)
                 .distance(TRACK_DTO_DISTANCE)
                 .latitude(TRACK_DTO_LATITUDE)

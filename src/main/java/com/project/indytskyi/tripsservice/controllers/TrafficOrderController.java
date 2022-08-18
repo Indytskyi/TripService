@@ -1,15 +1,19 @@
 package com.project.indytskyi.tripsservice.controllers;
 
+import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishReceiverDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
+import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,22 +36,26 @@ public class TrafficOrderController {
     private final TrackService trackService;
     private final ImageService imageService;
     private final StartMapper startMapper;
+    private final TrafficOrderDtoMapper trafficOrderDtoMapper;
 
 
     /**
      * Controller where we want to find special traffic order by id
      */
+    @ApiOperation(value = "Find special traffic order by id")
+    @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
-
-    public TrafficOrderEntity getTrafficOrder(@PathVariable("id") long id) {
+    public ResponseEntity<TrafficOrderDto> getTrafficOrder(@PathVariable("id") long id) {
         log.warn("Show traffic order by id = {}", id);
-        return trafficOrderService.findOne(id);
+        return ResponseEntity.ok(trafficOrderDtoMapper.toTrafficOrderDto(trafficOrderService.findOne(id)));
     }
 
     /**
      * Controller where you start your work
      * initialization of traffic order and create start track
      */
+    @ApiOperation(value = "Create traffic order and start tracking last coordinates of the car")
+    @ApiResponse(code = 400, message = "Invalid some data")
     @PostMapping("/start")
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
         log.info("Create new traffic order and start track");
@@ -61,6 +69,8 @@ public class TrafficOrderController {
     /**
      * Controller where you stop your order but don`t finish
      */
+    @ApiOperation(value = "Stop traffic order")
+    @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @PutMapping("/stop/{id}")
     public ResponseEntity<HttpStatus> stop(@PathVariable("id") long trafficOrderId) {
         log.info("Stop traffic order by id = {}", trafficOrderId);
@@ -72,6 +82,7 @@ public class TrafficOrderController {
     /**
      * Controller where you finish your order and send json to another service
      */
+    @ApiOperation(value = "Put images to database, calculate trip payment and  return responses to user")
     @PutMapping("/finish")
     public ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
                                                      TripFinishReceiverDto tripFinishReceiverDto) {
