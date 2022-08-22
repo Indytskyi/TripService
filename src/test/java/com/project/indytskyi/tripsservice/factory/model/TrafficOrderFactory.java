@@ -15,6 +15,7 @@ public class TrafficOrderFactory {
     public static final String TRAFFIC_ORDER_STATUS = String.valueOf(Status.IN_ORDER);
     public static final String TRAFFIC_ORDER_STATUS_PAID = String.valueOf(StatusPaid.IN_PROCESS);
     public static final double TRAFFIC_ORDER_TARIFF = 300;
+//    public static final TrackEntity track = createTrack();
 
     public static TrafficOrderEntity createTrafficOrder() {
         return TrafficOrderEntity.of()

@@ -10,6 +10,7 @@ import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRAC
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_LONGITUDE;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_SPEED;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
+import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,7 +23,10 @@ import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TrackDto;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
+import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
+import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +51,9 @@ class TrackControllerIntegrationTest {
 
     @MockBean
     private TrackService trackService;
+
+    @MockBean
+    private TrafficOrderService trafficOrderService;
 
     @MockBean
     private TrackDtoMapper trackDtoMapper;
@@ -101,10 +108,14 @@ class TrackControllerIntegrationTest {
         CurrentCoordinatesDto coordinatesDto = createCurrentCoordinatesDto();
         TrackEntity track = createTrack();
         TrackDto trackDto = createTrackDto();
+        TrafficOrderEntity trafficOrder = createTrafficOrder();
+        trafficOrder.setTracks(List.of(track));
+
 
         //WHEN
-        when(trackService.instanceTrack(coordinatesDto)).thenReturn(track);
+        when(trackService.instanceTrack(coordinatesDto, trafficOrder)).thenReturn(track);
         when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
+        when(trafficOrderService.findOne(coordinatesDto.getTrafficOrderId())).thenReturn(trafficOrder);
 
         mockMvc.perform(post("http://localhost:8080/trip/track/current")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +128,7 @@ class TrackControllerIntegrationTest {
                 .andExpect(jsonPath("$.distance").value(TRACK_DISTANCE));
 
         //THEN
-        verify(trackService).instanceTrack(coordinatesDto);
+        verify(trackService).instanceTrack(coordinatesDto, trafficOrder);
     }
 
     @Test
@@ -152,7 +163,7 @@ class TrackControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$..field").value("longitude"))
                 .andExpect(jsonPath("$..message").
-                        value("For latitude, use values in the range -180 to 180"));
+                        value("For longitude, use values in the range -180 to 180"));
 
     }
 }

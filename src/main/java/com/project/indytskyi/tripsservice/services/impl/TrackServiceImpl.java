@@ -1,15 +1,15 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
-import com.project.indytskyi.tripsservice.dto.LastCarCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.mapper.LastCarCoordinatesMapper;
+import com.project.indytskyi.tripsservice.mapper.CurrentCoordinatesMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.util.Gfg;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,33 +25,30 @@ import org.springframework.web.server.ResponseStatusException;
 public class TrackServiceImpl implements TrackService {
 
     private final TracksRepository tracksRepository;
-    private final LastCarCoordinatesMapper lastCarCoordinatesMapper;
-    private TrafficOrderEntity trafficOrderCurrent;
-    private LastCarCoordinatesDto lastCarCoordinates;
+    private final CurrentCoordinatesMapper currentCoordinatesMapper;
+
 
     @Override
     public TrackEntity createStartTrack(TrafficOrderEntity trafficOrder,
                                         TripActivationDto tripActivation) {
 
-        lastCarCoordinates = lastCarCoordinatesMapper.toLastCarCoordinatesDto(tripActivation);
-
-        TrackEntity track = initializationNewTrack(convertToCurrentCoordinates(tripActivation));
+    TrackEntity track = initializationNewTrack(currentCoordinatesMapper
+            .toCurrentCoordinates(tripActivation));
         track.setOwnerTrack(trafficOrder);
-        this.trafficOrderCurrent = trafficOrder;
         return tracksRepository.save(track);
     }
 
     @Transactional
     @Override
-    public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates) {
+    public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates, TrafficOrderEntity trafficOrder) {
         final TrackEntity track = initializationNewTrack(currentCoordinates);
-        final double distance = lastCarCoordinates.getDistance()
-                + getDistanceBetweenTwoCoordinates(currentCoordinates);
-        lastCarCoordinates.setDistance(distance);
-        lastCarCoordinates.setLatitude(currentCoordinates.getLatitude());
-        lastCarCoordinates.setLongitude(currentCoordinates.getLongitude());
+        final TrackEntity lastTrack = getLastTrack(trafficOrder);
+        final double distanceBetweenTwoCoordinates = getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
+        final double distance =  lastTrack.getDistance()
+                + distanceBetweenTwoCoordinates;
         track.setDistance(distance);
-        track.setOwnerTrack(this.trafficOrderCurrent);
+        track.setOwnerTrack(trafficOrder);
+        track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates, lastTrack.getTimestamp(), track.getTimestamp()));
         return tracksRepository.save(track);
     }
 
@@ -72,16 +69,26 @@ public class TrackServiceImpl implements TrackService {
         return track;
     }
 
-    private CurrentCoordinatesDto convertToCurrentCoordinates(TripActivationDto tripActivation) {
-        return new CurrentCoordinatesDto(tripActivation.getLatitude(),
-                tripActivation.getLongitude());
-    }
 
-    private double getDistanceBetweenTwoCoordinates(CurrentCoordinatesDto currentCoordinates) {
-        return Gfg.distance(lastCarCoordinates.getLatitude(),
-                lastCarCoordinates.getLongitude(),
+
+    private double getDistanceBetweenTwoCoordinates(CurrentCoordinatesDto currentCoordinates,
+                                                    TrackEntity lastTrack) {
+        return Gfg.distance(lastTrack.getLatitude(),
+                lastTrack.getLongitude(),
                 currentCoordinates.getLatitude(),
                 currentCoordinates.getLongitude());
+    }
+
+    private TrackEntity getLastTrack(TrafficOrderEntity trafficOrder) {
+        return trafficOrder.getTracks().get(trafficOrder.getTracks().size() - 1);
+    }
+
+    private int getCurrentSpeed(double distance,
+                                   LocalDateTime previousTimestamp,
+                                   LocalDateTime currentTimestamp) {
+        double time  = currentTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
+                - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();;
+        return (int) ((distance / (time)) * 3600000);
     }
 
 }

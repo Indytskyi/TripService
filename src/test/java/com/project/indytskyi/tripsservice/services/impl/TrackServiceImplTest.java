@@ -12,12 +12,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
-import com.project.indytskyi.tripsservice.dto.LastCarCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.mapper.LastCarCoordinatesMapper;
+import com.project.indytskyi.tripsservice.mapper.CurrentCoordinatesMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class TrackServiceImplTest {
     private TracksRepository tracksRepository;
 
     @Mock
-    private LastCarCoordinatesMapper lastCarCoordinatesMapper;
+    private CurrentCoordinatesMapper currentCoordinatesMapper;
 
 
     @InjectMocks
@@ -41,15 +41,14 @@ class TrackServiceImplTest {
     @Test
     void canAddStartTrack() {
         //GIVEN
-        LastCarCoordinatesDto dto = new LastCarCoordinatesDto(1,1,1);
         TrafficOrderEntity trafficOrder = createTrafficOrder();
         TrackEntity track  = createTrack();
         TripActivationDto tripActivation = createTripActivationDto();
-
+        CurrentCoordinatesDto coordinatesDto = createCurrentCoordinatesDto();
         //WHEN
-        when(lastCarCoordinatesMapper.toLastCarCoordinatesDto(any())).thenReturn(dto);
         when(tracksRepository.save(any())).thenReturn(track);
-
+        when(currentCoordinatesMapper
+                .toCurrentCoordinates(tripActivation)).thenReturn(coordinatesDto);
         //THEN
         TrackEntity expected = underTest.createStartTrack(trafficOrder, tripActivation);
 
@@ -59,20 +58,16 @@ class TrackServiceImplTest {
     @Test
     void instanceTrack() {
         //GIVEN
-        LastCarCoordinatesDto dto = new LastCarCoordinatesDto(1,1,1);
         TrackEntity track = createTrack();
         TrafficOrderEntity trafficOrder = createTrafficOrder();
-        TripActivationDto tripActivation = createTripActivationDto();
         CurrentCoordinatesDto coordinatesDTO = createCurrentCoordinatesDto();
-
+        trafficOrder.setTracks(List.of(track));
         //WHEN
-        when(lastCarCoordinatesMapper.toLastCarCoordinatesDto(any())).thenReturn(dto);
         when(tracksRepository.save(any())).thenReturn(track);
 
-        underTest.createStartTrack(trafficOrder, tripActivation);
 
         //THEN
-        TrackEntity expected = underTest.instanceTrack(coordinatesDTO);
+        TrackEntity expected = underTest.instanceTrack(coordinatesDTO, trafficOrder);
 
         assertEquals(expected, track);
     }
