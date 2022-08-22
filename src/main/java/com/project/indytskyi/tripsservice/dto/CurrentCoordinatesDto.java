@@ -5,14 +5,12 @@ import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 /**
- * Class in which we will receive constant data about the current coordinate of the car
+ * Class in which we will receive constant data about the current coordinate of the car.
  */
-@Generated
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -6,13 +6,11 @@ import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 
 /**
  * class TripStartDTO which contains all information
  * about new traffic order and start track
  */
-@Generated
 @Data
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")

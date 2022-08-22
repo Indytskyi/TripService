@@ -147,7 +147,7 @@ class TrafficOrderControllerTest {
         when(trackService.createStartTrack(trafficOrder, tripActivationDto)).thenReturn(track);
         when(startMapper.toStartDto(trafficOrder, track)).thenReturn(tripStartDto);
 
-        mockMvc.perform(post("http://localhost:8080/trip/start")
+        mockMvc.perform(post("http://localhost:8080/trip")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tripActivationDto)))
                 .andExpect(status().isOk())
@@ -174,7 +174,7 @@ class TrafficOrderControllerTest {
     @DisplayName("Test stopping traffic order ")
     void stopTrafficOrder() {
         //WHEN
-        mockMvc.perform(put("http://localhost:8080/trip/stop/" + TRAFFIC_ORDER_ID)
+        mockMvc.perform(put("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -197,7 +197,7 @@ class TrafficOrderControllerTest {
                 .thenReturn(trafficOrder);
         when(trafficOrderService.finishOrder(trafficOrder)).thenReturn(tripFinishDto);
 
-        mockMvc.perform(put("http://localhost:8080/trip/finish")
+        mockMvc.perform(put("http://localhost:8080/trip")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tripFinishReceiverDto)))
                 .andExpect(status().isOk())
@@ -222,7 +222,7 @@ class TrafficOrderControllerTest {
         TripFinishReceiverDto tripFinishReceiverDto = createTripFinishReceiverDtoInvalid();
 
         //WHEN
-        mockMvc.perform(put("http://localhost:8080/trip/finish")
+        mockMvc.perform(put("http://localhost:8080/trip")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tripFinishReceiverDto)))
                 .andExpect(status().isBadRequest())

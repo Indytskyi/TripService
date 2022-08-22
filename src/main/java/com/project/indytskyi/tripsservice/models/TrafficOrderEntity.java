@@ -12,13 +12,11 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 /**
  *  Class which interacts with the table Traffic order and contain data od travel
  */
-@Generated
 @Entity
 @Data
 @NoArgsConstructor

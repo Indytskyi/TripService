@@ -6,7 +6,6 @@ import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 /**
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
  * all images after car photoshoot
  * and trafficOrderId
  */
-@Generated
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

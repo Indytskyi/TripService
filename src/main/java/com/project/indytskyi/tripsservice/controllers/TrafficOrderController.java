@@ -38,6 +38,22 @@ public class TrafficOrderController {
     private final StartMapper startMapper;
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
 
+    /**
+     * Controller where you start your work
+     * initialization of traffic order and create start track
+     */
+    //    @PostMapping("/start")
+    @ApiOperation(value = "Create traffic order and start tracking last coordinates of the car")
+    @ApiResponse(code = 400, message = "Invalid some data")
+    @PostMapping
+    public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
+        log.info("Create new traffic order and start track");
+
+        TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
+        TrackEntity track = trackService.createStartTrack(trafficOrder, tripActivation);
+
+        return ResponseEntity.ok(createTripStartDto(trafficOrder, track));
+    }
 
     /**
      * Controller where we want to find special traffic order by id
@@ -51,27 +67,11 @@ public class TrafficOrderController {
     }
 
     /**
-     * Controller where you start your work
-     * initialization of traffic order and create start track
-     */
-    @ApiOperation(value = "Create traffic order and start tracking last coordinates of the car")
-    @ApiResponse(code = 400, message = "Invalid some data")
-    @PostMapping("/start")
-    public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
-        log.info("Create new traffic order and start track");
-
-        TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
-        TrackEntity track = trackService.createStartTrack(trafficOrder, tripActivation);
-
-        return ResponseEntity.ok(createTripStartDto(trafficOrder, track));
-    }
-
-    /**
      * Controller where you stop your order but don`t finish
      */
     @ApiOperation(value = "Stop traffic order")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
-    @PutMapping("/stop/{id}")
+    @PutMapping("{id}")//"/stop/{id}"
     public ResponseEntity<HttpStatus> stop(@PathVariable("id") long trafficOrderId) {
         log.info("Stop traffic order by id = {}", trafficOrderId);
         trafficOrderService.stopOrder(trafficOrderId);
@@ -83,7 +83,7 @@ public class TrafficOrderController {
      * Controller where you finish your order and send json to another service
      */
     @ApiOperation(value = "Put images to database, calculate trip payment and  return responses to user")
-    @PutMapping("/finish")
+    @PutMapping//"/finish"
     public ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
                                                      TripFinishReceiverDto tripFinishReceiverDto) {
         log.info("Finish traffic order by id = {}", tripFinishReceiverDto.getTrafficOrderId());

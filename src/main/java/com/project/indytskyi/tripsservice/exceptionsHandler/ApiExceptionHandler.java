@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class ApiExceptionHandler {
     /**
-     * If we get not valid arguments
+     * If we get not valid arguments.
      * @param e = object of exception
      * @return All exception - {@link ResponseEntity<List>}
      */

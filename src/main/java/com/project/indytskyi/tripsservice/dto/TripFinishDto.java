@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 /**
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
  * for car and backoffice service
  * after finished order
  */
-@Generated
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

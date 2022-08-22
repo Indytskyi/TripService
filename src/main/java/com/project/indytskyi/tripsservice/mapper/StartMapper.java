@@ -3,7 +3,6 @@ package com.project.indytskyi.tripsservice.mapper;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
-import lombok.Generated;
 import org.mapstruct.Mapper;
 
 /**
@@ -11,7 +10,6 @@ import org.mapstruct.Mapper;
  * TrafficOrderEntity and TrackEntity
  * to LastCarCoordinatesDto
  */
-@Generated
 @Mapper(componentModel = "spring")
 public interface StartMapper {
 

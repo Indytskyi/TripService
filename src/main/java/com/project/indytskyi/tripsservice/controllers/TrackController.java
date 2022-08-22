@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for tracks.
+ */
 @RestController
 @RequestMapping("trip/track")
 @Slf4j
@@ -46,7 +49,7 @@ public class TrackController {
      */
     @ApiOperation("Get json with current coordinates and create current track")
     @ApiResponse(code = 400, message = "Invalid some data")
-    @PostMapping("/current")
+    @PostMapping()
     public ResponseEntity<TrackDto> getCurrentCoordinates(
             @RequestBody @Valid CurrentCoordinatesDto currentCoordinates) {
 

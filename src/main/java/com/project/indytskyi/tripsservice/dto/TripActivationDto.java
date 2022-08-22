@@ -6,14 +6,12 @@ import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 /**
  *  Class in which we will receive constant data from the car service
  */
-@Generated
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

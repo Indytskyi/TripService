@@ -117,7 +117,7 @@ class TrackControllerIntegrationTest {
         when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
         when(trafficOrderService.findOne(coordinatesDto.getTrafficOrderId())).thenReturn(trafficOrder);
 
-        mockMvc.perform(post("http://localhost:8080/trip/track/current")
+        mockMvc.perform(post("http://localhost:8080/trip/track")
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(coordinatesDto)))
                 .andExpect(status().isOk())
@@ -139,7 +139,7 @@ class TrackControllerIntegrationTest {
           CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLatitude();
 //
         //WHEN
-        mockMvc.perform(post("http://localhost:8080/trip/track/current")
+        mockMvc.perform(post("http://localhost:8080/trip/track")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(coordinatesDto)))
                 .andExpect(status().isBadRequest())
@@ -157,7 +157,7 @@ class TrackControllerIntegrationTest {
         CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLongitude();
 
         //WHEN
-        mockMvc.perform(post("http://localhost:8080/trip/track/current")
+        mockMvc.perform(post("http://localhost:8080/trip/track")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(coordinatesDto)))
                 .andExpect(status().isBadRequest())

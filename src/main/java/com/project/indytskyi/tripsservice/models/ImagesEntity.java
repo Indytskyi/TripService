@@ -11,14 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 /**
  * Class which interacts with the table Imagine and will contain imagine of car
  * at the end of the trip
  */
-@Generated
 @Entity
 @Data
 @AllArgsConstructor
