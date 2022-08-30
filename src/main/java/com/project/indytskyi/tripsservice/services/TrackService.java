@@ -17,7 +17,8 @@ public interface TrackService {
      * Create track in which we will receive constant data about the current coordinate of the car
      * and save it in
      */
-    TrackEntity instanceTrack(CurrentCoordinatesDto coordinatesDto, TrafficOrderEntity trafficOrder);
+    TrackEntity instanceTrack(CurrentCoordinatesDto coordinatesDto,
+                              TrafficOrderEntity trafficOrder);
 
     /**
      * find track by id (primary key)

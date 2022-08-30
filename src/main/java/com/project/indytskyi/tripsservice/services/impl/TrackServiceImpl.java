@@ -27,28 +27,30 @@ public class TrackServiceImpl implements TrackService {
     private final TracksRepository tracksRepository;
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
 
-
     @Override
     public TrackEntity createStartTrack(TrafficOrderEntity trafficOrder,
                                         TripActivationDto tripActivation) {
 
-    TrackEntity track = initializationNewTrack(currentCoordinatesMapper
-            .toCurrentCoordinates(tripActivation));
+        TrackEntity track = initializationNewTrack(currentCoordinatesMapper
+                .toCurrentCoordinates(tripActivation));
         track.setOwnerTrack(trafficOrder);
         return tracksRepository.save(track);
     }
 
     @Transactional
     @Override
-    public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates, TrafficOrderEntity trafficOrder) {
+    public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates,
+                                     TrafficOrderEntity trafficOrder) {
         final TrackEntity track = initializationNewTrack(currentCoordinates);
         final TrackEntity lastTrack = getLastTrack(trafficOrder);
-        final double distanceBetweenTwoCoordinates = getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
-        final double distance =  lastTrack.getDistance()
+        final double distanceBetweenTwoCoordinates =
+                getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
+        final double distance = lastTrack.getDistance()
                 + distanceBetweenTwoCoordinates;
         track.setDistance(distance);
         track.setOwnerTrack(trafficOrder);
-        track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates, lastTrack.getTimestamp(), track.getTimestamp()));
+        track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
+                lastTrack.getTimestamp(), track.getTimestamp()));
         return tracksRepository.save(track);
     }
 
@@ -69,8 +71,6 @@ public class TrackServiceImpl implements TrackService {
         return track;
     }
 
-
-
     private double getDistanceBetweenTwoCoordinates(CurrentCoordinatesDto currentCoordinates,
                                                     TrackEntity lastTrack) {
         return Gfg.distance(lastTrack.getLatitude(),
@@ -84,10 +84,11 @@ public class TrackServiceImpl implements TrackService {
     }
 
     private int getCurrentSpeed(double distance,
-                                   LocalDateTime previousTimestamp,
-                                   LocalDateTime currentTimestamp) {
-        double time  = currentTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
-                - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();;
+                                LocalDateTime previousTimestamp,
+                                LocalDateTime currentTimestamp) {
+        double time = currentTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
+                - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
+        ;
         return (int) ((distance / (time)) * 3600000);
     }
 

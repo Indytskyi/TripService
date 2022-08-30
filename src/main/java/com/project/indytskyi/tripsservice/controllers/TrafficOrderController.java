@@ -63,7 +63,9 @@ public class TrafficOrderController {
     @GetMapping("/{id}")
     public ResponseEntity<TrafficOrderDto> getTrafficOrder(@PathVariable("id") long id) {
         log.warn("Show traffic order by id = {}", id);
-        return ResponseEntity.ok(trafficOrderDtoMapper.toTrafficOrderDto(trafficOrderService.findOne(id)));
+        return ResponseEntity
+                .ok(trafficOrderDtoMapper
+                        .toTrafficOrderDto(trafficOrderService.findOne(id)));
     }
 
     /**
@@ -82,10 +84,11 @@ public class TrafficOrderController {
     /**
      * Controller where you finish your order and send json to another service
      */
-    @ApiOperation(value = "Put images to database, calculate trip payment and  return responses to user")
+    @ApiOperation(value = "Put images to database, "
+            + "calculate trip payment and  return responses to user")
     @PutMapping//"/finish"
     public ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
-                                                     TripFinishReceiverDto tripFinishReceiverDto) {
+                                                TripFinishReceiverDto tripFinishReceiverDto) {
         log.info("Finish traffic order by id = {}", tripFinishReceiverDto.getTrafficOrderId());
 
         TrafficOrderEntity trafficOrder = trafficOrderService
