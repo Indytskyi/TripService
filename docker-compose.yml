@@ -1,35 +1,16 @@
-#version: '3.8'
-#
-#services:
-#  app:
-#    image: 'docker-spring-boot-postgres:latest'
-#    build:
-#      context: .
-#    container_name: app
-#    depends_on:
-#        - db
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/TripService
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=nickfury
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-#  db:
-#    image: 'postgres:latest'
-#    container_name: db
-#    environment:
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PASSWORD=nickfury
-
 version: '3.8'
 
 services:
   postgres:
     image: 'postgres:latest'
     container_name: postgres
+    ports:
+      - '5433:5432'
     environment:
       - 'POSTGRES_USER=postgres'
       - 'POSTGRES_PASSWORD=nickfury'
-      - 'POSTGRES_DB=postgres'
+      - 'POSTGRES_DB=tripsservice'
+
   app:
     build: ./
     depends_on:
@@ -38,66 +19,6 @@ services:
     ports:
       - '8080:8080'
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tripsservice
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=nickfury
-#  flyway:
-#    container_name: flyway
-#    environment:
-#      - FLYWAY_USER=postgres
-#      - FLYWAY_PASSWORD=nickfury
-#      - FLYWAY_URL=jdbc:postgresql://db:5432/postgres
-#      - FLYWAY_GROUP=true
-#      - SCHEMAS=public
-#      migrate
-#    image: flyway/flyway:latest
-#    depends_on:
-#      - db
-
-
-#       - 'flyway.url=jdbc:postgresql://postgres:5432/postgres'
-
-
-
-#    volumes:
-#      - ./postgres-data:/var/lib/postgresql/data
-#  app:
-#    image: 'tripsservice-app:latest'
-#    build: ./
-#    depends_on:
-#      - postgres
-#    environment:
-##      - 'flyway.url=jdbc:postgresql://postgres:5432/TripsService'
-#      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/TripService'
-#      - 'SPRING_DATASOURCE_USERNAME=postgres'
-#      - 'SPRING_DATASOURCE_PASSWORD=nickfury'
-#    ports:
-#      - 8080:8080
-
-#  app:
-#    build: ./
-#    container_name: 'java-app'
-#    ports:
-#      - 8080:8080
-
-#version: '3.1'
-#services:
-#  API:
-#    image: 'tripservice.jar'
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - postgres
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/TripsService
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=nickfury
-#
-#  postgres:
-#    image: postgres
-#    ports:
-#      - "5432:5432"
-#    environment:
-#      - POSTGRES_PASSWORD=nickfury
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_DB=TripsService

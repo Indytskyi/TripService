@@ -41,7 +41,27 @@ import org.springframework.web.server.ResponseStatusException;
 
 @AutoConfigureMockMvc
 @WebMvcTest(TrackController.class)
+//@Testcontainers
 class TrackControllerIntegrationTest {
+
+//    @Container
+//    public static PostgreSQLContainer container =
+//            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14-alpine")
+//                    .withExposedPorts(8080);
+//
+//
+//    @DynamicPropertySource
+//    public static void properties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.datasource.url",container::getJdbcUrl);
+//        registry.add("spring.datasource.username", container::getUsername);
+//        registry.add("spring.datasource.password", container::getPassword);
+//
+//    }
+//
+//    @BeforeAll
+//    static void beforeAll() {
+//        container.start();
+//    }
 
     @Autowired
     private MockMvc mockMvc;
