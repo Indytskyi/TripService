@@ -28,6 +28,7 @@ import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,32 +37,37 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @AutoConfigureMockMvc
 @WebMvcTest(TrackController.class)
-//@Testcontainers
+@Testcontainers
 class TrackControllerIntegrationTest {
 
-//    @Container
-//    public static PostgreSQLContainer container =
-//            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14-alpine")
-//                    .withExposedPorts(8080);
-//
-//
-//    @DynamicPropertySource
-//    public static void properties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.datasource.url",container::getJdbcUrl);
-//        registry.add("spring.datasource.username", container::getUsername);
-//        registry.add("spring.datasource.password", container::getPassword);
-//
-//    }
-//
-//    @BeforeAll
-//    static void beforeAll() {
-//        container.start();
-//    }
+    @Container
+    public static PostgreSQLContainer container =
+            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14-alpine")
+                    .withExposedPorts(8080);
+
+
+    @DynamicPropertySource
+    public static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url",container::getJdbcUrl);
+        registry.add("spring.datasource.username", container::getUsername);
+        registry.add("spring.datasource.password", container::getPassword);
+
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+        container.start();
+    }
 
     @Autowired
     private MockMvc mockMvc;
