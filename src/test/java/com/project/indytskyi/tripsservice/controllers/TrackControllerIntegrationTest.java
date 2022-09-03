@@ -28,7 +28,6 @@ import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import java.util.List;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,7 @@ class TrackControllerIntegrationTest {
 
     @Container
     public static PostgreSQLContainer container =
-            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14-alpine")
+            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14.4")
                     .withExposedPorts(8080);
 
 
@@ -62,11 +61,6 @@ class TrackControllerIntegrationTest {
         registry.add("spring.datasource.username", container::getUsername);
         registry.add("spring.datasource.password", container::getPassword);
 
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        container.start();
     }
 
     @Autowired

@@ -51,8 +51,6 @@ import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import lombok.SneakyThrows;
-import org.junit.AfterClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,15 +87,7 @@ class TrafficOrderControllerTest {
 
     }
 
-    @BeforeAll
-    static void beforeAll() {
-        container.start();
-    }
 
-    @AfterClass
-    void tearDown() {
-        container.close();
-    }
 
     @Autowired
     private MockMvc mockMvc;
