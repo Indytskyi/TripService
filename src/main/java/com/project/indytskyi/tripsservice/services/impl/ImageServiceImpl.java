@@ -2,6 +2,7 @@ package com.project.indytskyi.tripsservice.services.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -11,11 +12,8 @@ import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.ImagesRepository;
 import com.project.indytskyi.tripsservice.services.ImageService;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,8 +44,14 @@ public class ImageServiceImpl implements ImageService {
     public String saveFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         try {
-            File file1 = convertMultiPartToFile(file);
-            PutObjectResult putObjectResult = s3.putObject(bucketName, originalFilename, file1);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+
+            PutObjectResult putObjectResult = s3.putObject(bucketName,
+                    originalFilename,
+                    file.getInputStream(),
+                    metadata);
+
             return putObjectResult.getContentMd5();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -79,14 +83,6 @@ public class ImageServiceImpl implements ImageService {
                 .stream()
                 .map(S3ObjectSummary::getKey)
                 .collect(Collectors.toList());
-    }
-
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
     }
 
 }
