@@ -11,6 +11,7 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import com.project.indytskyi.tripsservice.validations.ImageValidation;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import java.util.List;
@@ -39,6 +40,8 @@ public class TrafficOrderController {
     private final ImageService imageService;
     private final StartMapper startMapper;
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
+
+    private final ImageValidation imageValidation;
 
     /**
      * Controller where you start your work
@@ -93,6 +96,8 @@ public class TrafficOrderController {
                                                 @RequestParam("files") List<MultipartFile> files) {
 
         log.info("Finish traffic order by id = {}", trafficOrderId);
+
+        imageValidation.validateImages(files);
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findOne(trafficOrderId);
