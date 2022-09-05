@@ -3,7 +3,6 @@ package com.project.indytskyi.tripsservice.controllers;
 import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
-import com.project.indytskyi.tripsservice.dto.TripFinishReceiverDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
@@ -14,6 +13,7 @@ import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/trip")
@@ -86,15 +88,17 @@ public class TrafficOrderController {
      */
     @ApiOperation(value = "Put images to database, "
             + "calculate trip payment and  return responses to user")
-    @PutMapping//"/finish"
-    public ResponseEntity<TripFinishDto> finish(@RequestBody @Valid
-                                                TripFinishReceiverDto tripFinishReceiverDto) {
-        log.info("Finish traffic order by id = {}", tripFinishReceiverDto.getTrafficOrderId());
+    @PutMapping("/finish/{id}")
+    public ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId,
+                                                @RequestParam("files") List<MultipartFile> files) {
+
+        log.info("Finish traffic order by id = {}", trafficOrderId);
 
         TrafficOrderEntity trafficOrder = trafficOrderService
-                .findOne(tripFinishReceiverDto.getTrafficOrderId());
+                .findOne(trafficOrderId);
+        imageService.saveImages(trafficOrder, files);
+        files.forEach(imageService::saveFile);
 
-        imageService.saveImages(trafficOrder, tripFinishReceiverDto.getImages());
         return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
     }
 

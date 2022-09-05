@@ -3,6 +3,7 @@ package com.project.indytskyi.tripsservice.services;
 import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
     /**
@@ -11,6 +12,13 @@ public interface ImageService {
      * @param images = {@link String}
      * @return new Image {@link ImagesEntity}
      */
-    void saveImages(TrafficOrderEntity ownerOrder, List<String> images);
+    void saveImages(TrafficOrderEntity ownerOrder, List<MultipartFile> images);
 
+    String saveFile(MultipartFile file);
+
+    byte[] downloadFile(String filename);
+
+    String deleteFile(String filename);
+
+    List<String> listAllFiles();
 }
