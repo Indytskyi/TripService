@@ -61,8 +61,6 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
                 .toTripFinishDto(trafficOrder, track);
 
         tripFinishDto.setTripPayment(calculateTripPayment(trafficOrder));
-        tripFinishDto.setBalance(tripFinishDto.getBalance()
-                - tripFinishDto.getTripPayment());
 
         return tripFinishDto;
 

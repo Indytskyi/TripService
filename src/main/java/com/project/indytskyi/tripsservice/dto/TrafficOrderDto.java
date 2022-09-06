@@ -33,9 +33,6 @@ public class TrafficOrderDto {
     @ApiModelProperty(example = "IN_PROCESS", value = "")
     private String statusPaid;
 
-    @ApiModelProperty(example = "600.0", value = "")
-    private double balance;
-
     @ApiModelProperty(example = "300.0", value = "")
     private double tariff;
 

@@ -1,7 +1,7 @@
 package com.project.indytskyi.tripsservice.validations;
 
+import com.project.indytskyi.tripsservice.exceptions.ApiValidationImageException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
-import com.project.indytskyi.tripsservice.exceptions.handler.ApiValidationImageException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

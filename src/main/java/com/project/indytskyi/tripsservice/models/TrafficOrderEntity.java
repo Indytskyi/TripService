@@ -48,9 +48,6 @@ public class TrafficOrderEntity {
     @Column(name = "status_paid")
     private String statusPaid;
 
-    @Column(name = "balance")
-    private double balance;
-
     @Column(name = "tariff")
     private double tariff;
 

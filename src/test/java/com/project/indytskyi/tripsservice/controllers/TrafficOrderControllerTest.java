@@ -6,7 +6,6 @@ import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRA
 import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRACK_DTO_LONGITUDE;
 import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRACK_DTO_SPEED;
 import static com.project.indytskyi.tripsservice.factory.dto.TrafficOrderDtoFactory.createTrafficOrderDto;
-import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.TRIP_ACTIVATION_BALANCE;
 import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.createTripActivationDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_CAR_ID;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_DISTANCE;
@@ -21,7 +20,6 @@ import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverD
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.createTripFinishReceiverDtoInvalid;
 import static com.project.indytskyi.tripsservice.factory.dto.TripStartDtoFactory.createTripStartDto;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
-import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_BALANCE;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_CAR_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_STATUS;
@@ -41,7 +39,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
-import com.project.indytskyi.tripsservice.dto.TripFinishReceiverDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
@@ -130,7 +127,6 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.userId").value(TRAFFIC_ORDER_USER_ID))
                 .andExpect(jsonPath("$.status").value(TRAFFIC_ORDER_STATUS))
                 .andExpect(jsonPath("$.statusPaid").value(TRAFFIC_ORDER_STATUS_PAID))
-                .andExpect(jsonPath("$.balance").value(TRAFFIC_ORDER_BALANCE))
                 .andExpect(jsonPath("$.tariff").value(TRAFFIC_ORDER_TARIFF));
 
         //THEN
@@ -179,7 +175,6 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.userId").value(TRAFFIC_ORDER_USER_ID))
                 .andExpect(jsonPath("$.status").value(TRAFFIC_ORDER_STATUS))
                 .andExpect(jsonPath("$.statusPaid").value(TRAFFIC_ORDER_STATUS_PAID))
-                .andExpect(jsonPath("$.balance").value(TRAFFIC_ORDER_BALANCE))
                 .andExpect(jsonPath("$.trackId").value(TRACK_DTO_ID))
                 .andExpect(jsonPath("$.latitude").value(TRACK_DTO_LATITUDE))
                 .andExpect(jsonPath("$.longitude").value(TRACK_DTO_LONGITUDE))
@@ -227,7 +222,6 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.latitude").value(TRIP_FINISH_DTO_LATITUDE))
                 .andExpect(jsonPath("$.longitude").value(TRIP_FINISH_DTO_LONGITUDE))
                 .andExpect(jsonPath("$.tripPayment").value(TRIP_FINISH_DTO_TRIP_PAYMENT))
-                .andExpect(jsonPath("$.balance").value(TRIP_ACTIVATION_BALANCE))
                 .andExpect(jsonPath("$.carId").value(TRIP_FINISH_DTO_CAR_ID))
                 .andExpect(jsonPath("$.userId").value(TRIP_FINISH_DTO_USER_ID))
                 .andExpect(jsonPath("$.distance").value(TRIP_FINISH_DTO_DISTANCE));

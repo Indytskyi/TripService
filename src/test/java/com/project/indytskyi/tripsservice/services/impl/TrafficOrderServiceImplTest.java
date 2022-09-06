@@ -106,7 +106,6 @@ class TrafficOrderServiceImplTest {
         //GIVEN
         TripFinishDto expected = createTripFinishDto();
         expected.setTripPayment(25);
-        expected.setBalance(575);
 
         TripFinishDto tripFinishDto = createTripFinishDto();
 

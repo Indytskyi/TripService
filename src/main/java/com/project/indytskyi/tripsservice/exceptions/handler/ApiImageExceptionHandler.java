@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.exceptions.handler;
 
+import com.project.indytskyi.tripsservice.exceptions.ApiValidationImageException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

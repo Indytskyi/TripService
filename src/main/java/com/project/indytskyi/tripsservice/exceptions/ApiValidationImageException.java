@@ -1,6 +1,5 @@
-package com.project.indytskyi.tripsservice.exceptions.handler;
+package com.project.indytskyi.tripsservice.exceptions;
 
-import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

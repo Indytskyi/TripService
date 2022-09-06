@@ -26,7 +26,7 @@ public interface TrafficOrderService {
 
     /**
      * change status of order to finish after correct image
-     * calculate trip payment and balance after trip payment
+     * calculate trip payment
      * change status paid to "PAID"
      * also set completion time in order to count trip payment
      * @param  trafficOrder trafficOrder

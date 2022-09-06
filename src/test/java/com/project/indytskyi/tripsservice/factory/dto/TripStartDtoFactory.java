@@ -10,7 +10,6 @@ public class TripStartDtoFactory {
     private static final long TRIP_START_USER_ID = 22L;
     private static final String TRIP_START_STATUS = String.valueOf(Status.IN_ORDER);
     private static final String TRIP_START_STATUS_PAID = String.valueOf(StatusPaid.IN_PROCESS);
-    private static final double TRIP_START_BALANCE = 600;
     private static final long TRIP_START_TRACK_ID = 27L;
     private static final double TRIP_ACTIVATION_LATITUDE = 4;
     private static final double TRIP_START_LONGITUDE = 3;
@@ -25,7 +24,6 @@ public class TripStartDtoFactory {
                 .userId(TRIP_START_USER_ID)
                 .status(TRIP_START_STATUS)
                 .statusPaid(TRIP_START_STATUS_PAID)
-                .balance(TRIP_START_BALANCE)
                 .trackId(TRIP_START_TRACK_ID)
                 .latitude(TRIP_ACTIVATION_LATITUDE)
                 .longitude(TRIP_START_LONGITUDE)

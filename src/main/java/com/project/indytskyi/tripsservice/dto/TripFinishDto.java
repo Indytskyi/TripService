@@ -25,9 +25,6 @@ public class TripFinishDto {
     @ApiModelProperty(example = "300.0", value = "")
     private double tripPayment;
 
-    @ApiModelProperty(example = "300.0", value = "")
-    private double balance;
-
     @ApiModelProperty(example = "12", value = "")
     private long carId;
 

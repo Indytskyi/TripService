@@ -9,7 +9,6 @@ public class TrafficOrderFactory {
     public static final long TRAFFIC_ORDER_ID = 22;
     public static final LocalDateTime TRAFFIC_ORDER_ACTIVATION_TIME =
             LocalDateTime.now();
-    public static final double TRAFFIC_ORDER_BALANCE = 600;
     public static final long TRAFFIC_ORDER_CAR_ID = 12;
     public static final long TRAFFIC_ORDER_USER_ID = 22;
     public static final String TRAFFIC_ORDER_STATUS = String.valueOf(Status.IN_ORDER);
@@ -20,7 +19,6 @@ public class TrafficOrderFactory {
     public static TrafficOrderEntity createTrafficOrder() {
         return TrafficOrderEntity.of()
                 .id(TRAFFIC_ORDER_ID)
-                .balance(TRAFFIC_ORDER_BALANCE)
                 .carId(TRAFFIC_ORDER_CAR_ID)
                 .userId(TRAFFIC_ORDER_USER_ID)
                 .status(TRAFFIC_ORDER_STATUS)

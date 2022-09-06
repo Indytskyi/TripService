@@ -1,6 +1,5 @@
 package com.project.indytskyi.tripsservice.factory.dto;
 
-import com.project.indytskyi.tripsservice.dto.TripFinishReceiverDto;
 import java.util.List;
 
 public class TripFinishReceiverDtoFactory {

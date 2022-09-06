@@ -25,10 +25,6 @@ public class TripActivationDto {
     @Min(value = 1, message = "UserId must have correct data")
     private long userId;
 
-    @ApiModelProperty(example = "600.0", value = "")
-    @Min(value = 10, message = "Balance must have more than 10 hryvnias on the account")
-    private double balance;
-
     @ApiModelProperty(example = "3.567", value = "")
     @Range(min = -90, max = 90, message = "For latitude, use values in the range -90 to 90")
     private double latitude;
