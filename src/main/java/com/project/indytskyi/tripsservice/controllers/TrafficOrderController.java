@@ -4,6 +4,8 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.exceptions.ApiValidationImageException;
+import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
@@ -91,13 +93,16 @@ public class TrafficOrderController {
      */
     @ApiOperation(value = "Put images to database, "
             + "calculate trip payment and  return responses to user")
-    @PutMapping("/finish/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId,
                                                 @RequestParam("files") List<MultipartFile> files) {
 
         log.info("Finish traffic order by id = {}", trafficOrderId);
 
-        imageValidation.validateImages(files);
+        List<ErrorResponse> errorResponses = imageValidation.validateImages(files);
+        if (!errorResponses.isEmpty()) {
+            throw new ApiValidationImageException(errorResponses);
+        }
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findOne(trafficOrderId);

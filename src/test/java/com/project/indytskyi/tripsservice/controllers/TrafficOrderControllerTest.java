@@ -7,17 +7,7 @@ import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRA
 import static com.project.indytskyi.tripsservice.factory.dto.TrackDtoFactory.TRACK_DTO_SPEED;
 import static com.project.indytskyi.tripsservice.factory.dto.TrafficOrderDtoFactory.createTrafficOrderDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.createTripActivationDto;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_CAR_ID;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_DISTANCE;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_LATITUDE;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_LONGITUDE;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_TRIP_PAYMENT;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.TRIP_FINISH_DTO_USER_ID;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.createTripFinishDto;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.TRIP_FINISH_RECEIVER_IMAGES;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.TRIP_FINISH_RECEIVER_TRAFFIC_ORDER_ID;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.createTripFinishReceiverDto;
-import static com.project.indytskyi.tripsservice.factory.dto.TripFinishReceiverDtoFactory.createTripFinishReceiverDtoInvalid;
 import static com.project.indytskyi.tripsservice.factory.dto.TripStartDtoFactory.createTripStartDto;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_CAR_ID;
@@ -27,9 +17,12 @@ import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFacto
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_TARIFF;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_USER_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,6 +33,7 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
@@ -47,6 +41,9 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import com.project.indytskyi.tripsservice.validations.ImageValidation;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,9 +53,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -72,7 +71,7 @@ class TrafficOrderControllerTest {
 
     @Container
     public static PostgreSQLContainer container =
-            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14-alpine")
+            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14.4")
                     .withExposedPorts(8080);
 
 
@@ -83,8 +82,6 @@ class TrafficOrderControllerTest {
         registry.add("spring.datasource.password", container::getPassword);
 
     }
-
-
 
     @Autowired
     private MockMvc mockMvc;
@@ -106,6 +103,9 @@ class TrafficOrderControllerTest {
 
     @MockBean
     private TrafficOrderDtoMapper trafficOrderDtoMapper;
+
+    @MockBean
+    private ImageValidation imageValidation;
 
     @Test
     @SneakyThrows
@@ -133,6 +133,7 @@ class TrafficOrderControllerTest {
         verify(trafficOrderService).findOne(TRAFFIC_ORDER_ID);
 
     }
+
 
     @Test
     @SneakyThrows
@@ -203,49 +204,67 @@ class TrafficOrderControllerTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Test finishing traffic order and save images")
-    void finishTrafficOrder() {
+    @DisplayName("Test finishing traffic order with incorrect type of multipartsfiles")
+    void finishTrafficOrderWithIncorrectTypeOfMultipartFiles() {
         //GIVEN
-        TripFinishDto tripFinishDto = createTripFinishDto();
-        TripFinishReceiverDto tripFinishReceiverDto = createTripFinishReceiverDto();
-        TrafficOrderEntity trafficOrder = createTrafficOrder();
-
+        MockMultipartFile file
+                = new MockMultipartFile(
+                "files",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+        List<MultipartFile> files = List.of(file);
+        List<ErrorResponse> errorResponses = List.of(new ErrorResponse("hello.txt",
+                "Incorrect format of file. Only images with format (jpg or png)"));
         //WHEN
-        when(trafficOrderService.findOne(TRIP_FINISH_RECEIVER_TRAFFIC_ORDER_ID))
-                .thenReturn(trafficOrder);
-        when(trafficOrderService.finishOrder(trafficOrder)).thenReturn(tripFinishDto);
-
-        mockMvc.perform(put("http://localhost:8080/trip")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tripFinishReceiverDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.latitude").value(TRIP_FINISH_DTO_LATITUDE))
-                .andExpect(jsonPath("$.longitude").value(TRIP_FINISH_DTO_LONGITUDE))
-                .andExpect(jsonPath("$.tripPayment").value(TRIP_FINISH_DTO_TRIP_PAYMENT))
-                .andExpect(jsonPath("$.carId").value(TRIP_FINISH_DTO_CAR_ID))
-                .andExpect(jsonPath("$.userId").value(TRIP_FINISH_DTO_USER_ID))
-                .andExpect(jsonPath("$.distance").value(TRIP_FINISH_DTO_DISTANCE));
+        when(imageValidation.validateImages(files)).thenReturn(errorResponses);
+        mockMvc.perform(multipart("http://localhost:8080/trip/" + 1L)
+                .file(file))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$..field").value("hello.txt"));
 
         //THEN
-        verify(imageService).saveImages(trafficOrder, TRIP_FINISH_RECEIVER_IMAGES);
-        verify(trafficOrderService).finishOrder(trafficOrder);
     }
 
     @Test
     @SneakyThrows
-    @DisplayName("Test finishing traffic order with invalid traffic order id")
-    void finishTrafficOrderWithInvalidTrafficOrderId() {
+    @DisplayName("Test finishing traffic order and save images")
+    void finishTrafficOrder() {
         //GIVEN
-        TripFinishReceiverDto tripFinishReceiverDto = createTripFinishReceiverDtoInvalid();
+        TripFinishDto tripFinishDto = createTripFinishDto();
+        TrafficOrderEntity trafficOrder = createTrafficOrder();
+
+        MockMultipartFile multipartFile
+                = new MockMultipartFile(
+                "files",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+        List<MultipartFile> files = List.of(multipartFile);
+        List<ErrorResponse> errorResponses = new ArrayList<>();
 
         //WHEN
-        mockMvc.perform(put("http://localhost:8080/trip")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(tripFinishReceiverDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$..field").value("trafficOrderId"))
-                .andExpect(jsonPath("$..message").
-                        value("trafficOrderId must have correct data"));
+        when(trafficOrderService.findOne(1L))
+                .thenReturn(trafficOrder);
+        when(trafficOrderService.finishOrder(trafficOrder)).thenReturn(tripFinishDto);
+        when(imageValidation.validateImages(files)).thenReturn(errorResponses);
+        doNothing().when(imageService).saveImages(trafficOrder, files);
+        doReturn("").when(imageService).saveFile(multipartFile);
+        mockMvc.perform(multipart("http://localhost:8080/trip/" + 1)
+                        .file(multipartFile))
+                .andExpect(status().isOk());
+//                .andExpect(jsonPath("$.latitude").value(TRIP_FINISH_DTO_LATITUDE))
+//                .andExpect(jsonPath("$.longitude").value(TRIP_FINISH_DTO_LONGITUDE))
+//                .andExpect(jsonPath("$.tripPayment").value(TRIP_FINISH_DTO_TRIP_PAYMENT))
+//                .andExpect(jsonPath("$.carId").value(TRIP_FINISH_DTO_CAR_ID))
+//                .andExpect(jsonPath("$.userId").value(TRIP_FINISH_DTO_USER_ID))
+//                .andExpect(jsonPath("$.distance").value(TRIP_FINISH_DTO_DISTANCE));
+
+        //THEN
     }
+
+
 
 }

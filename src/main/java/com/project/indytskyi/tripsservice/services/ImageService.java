@@ -16,9 +16,4 @@ public interface ImageService {
 
     String saveFile(MultipartFile file);
 
-    byte[] downloadFile(String filename);
-
-    String deleteFile(String filename);
-
-    List<String> listAllFiles();
 }

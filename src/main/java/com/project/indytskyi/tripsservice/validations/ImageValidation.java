@@ -1,6 +1,5 @@
 package com.project.indytskyi.tripsservice.validations;
 
-import com.project.indytskyi.tripsservice.exceptions.ApiValidationImageException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ImageValidation {
 
-    public void validateImages(List<MultipartFile> files) {
+    public List<ErrorResponse> validateImages(List<MultipartFile> files) {
         List<ErrorResponse> errorResponses = new ArrayList<>();
         files.forEach(file -> {
             String imageName = file.getOriginalFilename();
@@ -28,10 +27,6 @@ public class ImageValidation {
             }
         });
 
-        if (!errorResponses.isEmpty()) {
-            throw new ApiValidationImageException(errorResponses);
-        }
-
+        return errorResponses;
     }
 }
-
