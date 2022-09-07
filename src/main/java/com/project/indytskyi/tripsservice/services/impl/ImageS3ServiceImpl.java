@@ -24,8 +24,9 @@ public class ImageS3ServiceImpl implements ImageS3Service {
 
     @Override
     public String saveFile(long trafficOrderId, MultipartFile file) {
-        String originalFilename = s3Folder + "/" + trafficOrderId + "/"
-                + file.getOriginalFilename();
+        String originalFilename = String.format("%s/%s/%s", s3Folder,
+                trafficOrderId,
+                file.getOriginalFilename());
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
@@ -35,7 +36,7 @@ public class ImageS3ServiceImpl implements ImageS3Service {
                     file.getInputStream(),
                     metadata);
 
-            return putObjectResult.getContentMd5();
+            return originalFilename;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

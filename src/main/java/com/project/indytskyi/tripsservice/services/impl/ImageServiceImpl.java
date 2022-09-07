@@ -1,14 +1,10 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.ImagesRepository;
 import com.project.indytskyi.tripsservice.services.ImageService;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,13 +23,13 @@ public class ImageServiceImpl implements ImageService {
     private String bucketName;
 
     @Override
-    public void saveImages(TrafficOrderEntity ownerOrder, List<MultipartFile> images) {
-        images.forEach(image -> {
+    public void saveImages(TrafficOrderEntity ownerOrder,
+                           MultipartFile image,
+                           String originFileName) {
             ImagesEntity imagesEntity = new ImagesEntity();
-            imagesEntity.setImage(image.getOriginalFilename());
+            imagesEntity.setImage(originFileName);
             imagesEntity.setOwnerImage(ownerOrder);
             imagesRepository.save(imagesEntity);
-        });
     }
 
 }

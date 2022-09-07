@@ -109,8 +109,11 @@ public class TrafficOrderController {
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findOne(trafficOrderId);
-        imageService.saveImages(trafficOrder, files);
-        files.forEach(file -> imageS3Service.saveFile(trafficOrderId, file));
+
+        files.forEach(file -> {
+            String originalFilename = imageS3Service.saveFile(trafficOrderId, file);
+            imageService.saveImages(trafficOrder, file, originalFilename);
+        });
 
         return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
     }
