@@ -36,22 +36,4 @@ public class ImageServiceImpl implements ImageService {
         });
     }
 
-    @Override
-    public String saveFile(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-
-            PutObjectResult putObjectResult = s3.putObject(bucketName,
-                    originalFilename,
-                    file.getInputStream(),
-                    metadata);
-
-            return putObjectResult.getContentMd5();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

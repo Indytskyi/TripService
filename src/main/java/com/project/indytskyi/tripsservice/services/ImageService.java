@@ -14,6 +14,4 @@ public interface ImageService {
      */
     void saveImages(TrafficOrderEntity ownerOrder, List<MultipartFile> images);
 
-    String saveFile(MultipartFile file);
-
 }

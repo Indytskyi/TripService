@@ -10,6 +10,7 @@ import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
@@ -42,6 +43,8 @@ public class TrafficOrderController {
     private final ImageService imageService;
     private final StartMapper startMapper;
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
+
+    private final ImageS3Service imageS3Service;
 
     private final ImageValidation imageValidation;
 
@@ -107,7 +110,7 @@ public class TrafficOrderController {
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findOne(trafficOrderId);
         imageService.saveImages(trafficOrder, files);
-        files.forEach(imageService::saveFile);
+        files.forEach(file -> imageS3Service.saveFile(trafficOrderId, file));
 
         return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
     }
