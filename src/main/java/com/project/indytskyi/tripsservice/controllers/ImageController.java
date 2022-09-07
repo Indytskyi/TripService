@@ -1,6 +1,7 @@
 package com.project.indytskyi.tripsservice.controllers;
 
 import com.project.indytskyi.tripsservice.models.ImagesEntity;
+import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,8 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ImageController {
 
     private final TrafficOrderService trafficOrderService;
+    private final ImageS3Service imageS3Service;
 
-    @ApiOperation(value = "Find special traffic order by id")
+    @ApiOperation(value = "Find all path of images by traffic order id ")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
     public ResponseEntity<List<String>> getTrafficOrder(@PathVariable("id") long trafficOrderId) {
@@ -33,4 +36,15 @@ public class ImageController {
         return ResponseEntity
                 .ok(paths);
     }
+
+    @ApiOperation(value = "Download file by path of this file")
+    @ApiResponse(code = 400, message = "Invalid path")
+    @GetMapping
+    public ResponseEntity<byte[]> getTrafficOrder(@RequestParam("path") String path) {
+        log.warn("Path of file that we download = {}", path);
+
+        return ResponseEntity
+                .ok(imageS3Service.downloadFile(path));
+    }
+
 }
