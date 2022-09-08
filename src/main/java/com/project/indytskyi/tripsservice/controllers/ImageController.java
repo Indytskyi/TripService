@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,12 +44,15 @@ public class ImageController {
 
     @ApiOperation(value = "Download file by path of this file")
     @ApiResponse(code = 400, message = "Invalid path")
+    @SneakyThrows
     @GetMapping
-    public ResponseEntity<byte[]> downloadImage(@RequestParam("path") String path) {
+    public HttpEntity<byte[]> downloadImage(@RequestParam("path") String path) {
+        byte[] image = imageS3Service.downloadFile(path);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(image.length);
         log.warn("Path of file that we download = {}", path);
-
-        return ResponseEntity
-                .ok(imageS3Service.downloadFile(path));
+        return new HttpEntity<>(image, headers);
     }
 
 }
