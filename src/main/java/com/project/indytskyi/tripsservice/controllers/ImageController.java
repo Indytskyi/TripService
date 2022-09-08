@@ -27,7 +27,8 @@ public class ImageController {
     @ApiOperation(value = "Find all path of images by traffic order id ")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
-    public ResponseEntity<List<String>> getTrafficOrder(@PathVariable("id") long trafficOrderId) {
+    public ResponseEntity<List<String>> getTrafficOrderImages(
+            @PathVariable("id") long trafficOrderId) {
         log.warn("Show traffic order by id = {}", trafficOrderId);
         List<ImagesEntity> images = trafficOrderService
                 .findOne(trafficOrderId)
@@ -40,7 +41,7 @@ public class ImageController {
     @ApiOperation(value = "Download file by path of this file")
     @ApiResponse(code = 400, message = "Invalid path")
     @GetMapping
-    public ResponseEntity<byte[]> getTrafficOrder(@RequestParam("path") String path) {
+    public ResponseEntity<byte[]> downloadImage(@RequestParam("path") String path) {
         log.warn("Path of file that we download = {}", path);
 
         return ResponseEntity

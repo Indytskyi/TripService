@@ -2,7 +2,6 @@ package com.project.indytskyi.tripsservice.services.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
@@ -34,7 +33,7 @@ public class ImageS3ServiceImpl implements ImageS3Service {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
 
-            PutObjectResult putObjectResult = s3.putObject(bucketName,
+            s3.putObject(bucketName,
                     originalFilename,
                     file.getInputStream(),
                     metadata);
