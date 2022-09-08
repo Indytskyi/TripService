@@ -18,7 +18,6 @@ import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFacto
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_USER_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,6 +37,7 @@ import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
@@ -83,6 +83,7 @@ class TrafficOrderControllerTest {
 
     }
 
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -97,6 +98,9 @@ class TrafficOrderControllerTest {
 
     @MockBean
     private ImageService imageService;
+
+    @MockBean
+    private ImageS3Service imageS3Service;
 
     @MockBean
     private StartMapper startMapper;
@@ -250,8 +254,8 @@ class TrafficOrderControllerTest {
                 .thenReturn(trafficOrder);
         when(trafficOrderService.finishOrder(trafficOrder)).thenReturn(tripFinishDto);
         when(imageValidation.validateImages(files)).thenReturn(errorResponses);
-        doNothing().when(imageService).saveImages(trafficOrder, files);
-        doReturn("").when(imageService).saveFile(multipartFile);
+        when(imageS3Service.saveFile(trafficOrder.getId(), multipartFile)).thenReturn("hello.txt");
+        doNothing().when(imageService).saveImages(trafficOrder, multipartFile.getOriginalFilename());
         mockMvc.perform(multipart("http://localhost:8080/trip/" + 1)
                         .file(multipartFile))
                 .andExpect(status().isOk());

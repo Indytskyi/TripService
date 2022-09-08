@@ -1,14 +1,12 @@
 package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
     /**
      * Save new images after car photoshoots to DB
      */
     void saveImages(TrafficOrderEntity ownerOrder,
-                    MultipartFile image,
                     String originFileName);
 
 }

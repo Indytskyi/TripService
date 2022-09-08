@@ -112,7 +112,7 @@ public class TrafficOrderController {
 
         files.forEach(file -> {
             String originalFilename = imageS3Service.saveFile(trafficOrderId, file);
-            imageService.saveImages(trafficOrder, file, originalFilename);
+            imageService.saveImages(trafficOrder, originalFilename);
         });
 
         return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
