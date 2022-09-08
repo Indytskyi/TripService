@@ -47,9 +47,11 @@ public class ImageController {
     @SneakyThrows
     @GetMapping
     public HttpEntity<byte[]> downloadImage(@RequestParam("path") String path) {
+        MediaType contentType = path.endsWith("jpg") ? MediaType.IMAGE_JPEG
+                                    : MediaType.IMAGE_PNG;
         byte[] image = imageS3Service.downloadFile(path);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentType(contentType);
         headers.setContentLength(image.length);
         log.warn("Path of file that we download = {}", path);
         return new HttpEntity<>(image, headers);
