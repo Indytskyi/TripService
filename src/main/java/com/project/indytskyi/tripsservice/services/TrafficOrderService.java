@@ -23,7 +23,6 @@ public interface TrafficOrderService {
      */
     void stopOrder(long trafficOrderId);
 
-
     /**
      * change status of order to finish after correct image
      * calculate trip payment

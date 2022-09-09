@@ -71,6 +71,9 @@ public class TrackServiceImpl implements TrackService {
         return track;
     }
 
+    /**
+     * Calculate distance between 2 coordinates
+     */
     private double getDistanceBetweenTwoCoordinates(CurrentCoordinatesDto currentCoordinates,
                                                     TrackEntity lastTrack) {
         return Gfg.distance(lastTrack.getLatitude(),
@@ -79,10 +82,16 @@ public class TrackServiceImpl implements TrackService {
                 currentCoordinates.getLongitude());
     }
 
+    /**
+     * Get last coordinates of car
+     */
     private TrackEntity getLastTrack(TrafficOrderEntity trafficOrder) {
         return trafficOrder.getTracks().get(trafficOrder.getTracks().size() - 1);
     }
 
+    /**
+     * Calculate speed in current moment
+     */
     private int getCurrentSpeed(double distance,
                                 LocalDateTime previousTimestamp,
                                 LocalDateTime currentTimestamp) {

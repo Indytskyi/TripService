@@ -16,4 +16,5 @@ public class ApiS3Exception {
 
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+
 }

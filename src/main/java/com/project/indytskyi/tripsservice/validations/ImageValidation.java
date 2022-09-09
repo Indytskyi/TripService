@@ -11,6 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ImageValidation {
 
+    /**
+     * Validation of
+     */
     public List<ErrorResponse> validateImages(List<MultipartFile> files) {
         List<ErrorResponse> errorResponses = new ArrayList<>();
         files.forEach(file -> {
@@ -29,4 +32,5 @@ public class ImageValidation {
 
         return errorResponses;
     }
+
 }

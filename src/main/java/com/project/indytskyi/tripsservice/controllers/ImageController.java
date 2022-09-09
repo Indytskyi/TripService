@@ -28,7 +28,7 @@ public class ImageController {
     private final TrafficOrderService trafficOrderService;
     private final ImageS3Service imageS3Service;
 
-    @ApiOperation(value = "Find all path of images by traffic order id ")
+    @ApiOperation(value = "Find all path of images by traffic order id")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
     public ResponseEntity<List<String>> getTrafficOrderImages(

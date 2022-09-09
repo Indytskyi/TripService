@@ -19,4 +19,5 @@ public class ApiAmazonS3ExceptionHandler {
                 "There is no picture with this path");
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
 }

@@ -4,14 +4,18 @@ import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFacto
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +36,8 @@ class ImageS3ServiceImplTest {
     @InjectMocks
     private ImageS3ServiceImpl underTest;
 
-
+    @Mock
+    S3Object object;
 
     @Test
     void canSaveImageToAmazonS3() throws IOException {
@@ -56,6 +61,7 @@ class ImageS3ServiceImplTest {
     }
 
 
+
     @Test
     void canThrowExceptionWhenSaveFile() throws IOException {
         //GIVEN
@@ -69,19 +75,22 @@ class ImageS3ServiceImplTest {
                 .isInstanceOf(RuntimeException.class);
     }
 
-//    @SneakyThrows
-//    @Test
-//    void canDownloadFile() {
-//        //GIVEN
-//        S3Object object = new S3Object();
-//        S3ObjectInputStream objectContent = object.getObjectContent();
-//        String path = "photos/8/ycp.jpg";
-//        String bucketName = "tripsservice";
-//        byte[] expected = new byte[100];
-//        //WHEN
-//        when(s3.getObject(null, path)).thenReturn(object);
-//        doReturn(expected).when(IOUtils.toByteArray(objectContent));
-//        byte[] result  = underTest.downloadFile(path);
-//        assertEquals(expected, result);
-//    }
+    @SneakyThrows
+    @Test
+    void canDownloadFile() {
+        //GIVEN
+        S3Object object1 = new S3Object();
+        S3ObjectInputStream objectContent = object1.getObjectContent();
+
+        String path = "photos/8/ycp.jpg";
+        String bucketName = "tripsservice";
+        byte[] expected = new byte[100];
+        //WHEN
+        doReturn(object1).when(s3).getObject(null, path);
+        when(object.getObjectContent()).thenReturn(objectContent);
+        when(IOUtils.toByteArray(any())).thenReturn(expected);
+        byte[] result  = underTest.downloadFile(path);
+        assertEquals(expected, result);
+    }
+
 }
