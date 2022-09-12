@@ -62,7 +62,7 @@ public class TrackController {
 
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService
-                        .instanceTrack(currentCoordinates, trafficOrder)));
+                        .saveTrack(currentCoordinates, trafficOrder)));
     }
 
 }

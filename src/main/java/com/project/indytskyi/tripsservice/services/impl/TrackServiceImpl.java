@@ -28,7 +28,7 @@ public class TrackServiceImpl implements TrackService {
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
 
     @Override
-    public TrackEntity createStartTrack(TrafficOrderEntity trafficOrder,
+    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
                                         TripActivationDto tripActivation) {
 
         TrackEntity track = initializationNewTrack(currentCoordinatesMapper
@@ -39,7 +39,7 @@ public class TrackServiceImpl implements TrackService {
 
     @Transactional
     @Override
-    public TrackEntity instanceTrack(CurrentCoordinatesDto currentCoordinates,
+    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates,
                                      TrafficOrderEntity trafficOrder) {
         final TrackEntity track = initializationNewTrack(currentCoordinates);
         final TrackEntity lastTrack = getLastTrack(trafficOrder);

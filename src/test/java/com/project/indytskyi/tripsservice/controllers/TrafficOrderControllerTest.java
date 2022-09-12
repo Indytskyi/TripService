@@ -168,7 +168,7 @@ class TrafficOrderControllerTest {
 
         //WHEN
         when(trafficOrderService.save(tripActivationDto)).thenReturn(trafficOrder);
-        when(trackService.createStartTrack(trafficOrder, tripActivationDto)).thenReturn(track);
+        when(trackService.saveStartTrack(trafficOrder, tripActivationDto)).thenReturn(track);
         when(startMapper.toStartDto(trafficOrder, track)).thenReturn(tripStartDto);
 
         mockMvc.perform(post("http://localhost:8080/trip")
@@ -188,7 +188,7 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.tariff").value(TRAFFIC_ORDER_TARIFF));
 
         //THEN
-        verify(trackService).createStartTrack(trafficOrder, tripActivationDto);
+        verify(trackService).saveStartTrack(trafficOrder, tripActivationDto);
         verify(trafficOrderService).save(tripActivationDto);
     }
 

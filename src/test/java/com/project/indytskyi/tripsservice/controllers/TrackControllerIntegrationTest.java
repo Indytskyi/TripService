@@ -133,7 +133,7 @@ class TrackControllerIntegrationTest {
 
 
         //WHEN
-        when(trackService.instanceTrack(coordinatesDto, trafficOrder)).thenReturn(track);
+        when(trackService.saveTrack(coordinatesDto, trafficOrder)).thenReturn(track);
         when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
         when(trafficOrderService.findOne(coordinatesDto.getTrafficOrderId())).thenReturn(trafficOrder);
 
@@ -148,7 +148,7 @@ class TrackControllerIntegrationTest {
                 .andExpect(jsonPath("$.distance").value(TRACK_DISTANCE));
 
         //THEN
-        verify(trackService).instanceTrack(coordinatesDto, trafficOrder);
+        verify(trackService).saveTrack(coordinatesDto, trafficOrder);
     }
 
     @Test

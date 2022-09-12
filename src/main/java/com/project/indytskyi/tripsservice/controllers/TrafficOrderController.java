@@ -60,7 +60,7 @@ public class TrafficOrderController {
         log.info("Create new traffic order and start track");
 
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
-        TrackEntity track = trackService.createStartTrack(trafficOrder, tripActivation);
+        TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
 
         return ResponseEntity.ok(createTripStartDto(trafficOrder, track));
     }

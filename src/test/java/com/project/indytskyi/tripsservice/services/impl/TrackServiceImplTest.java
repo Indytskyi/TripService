@@ -50,7 +50,7 @@ class TrackServiceImplTest {
         when(currentCoordinatesMapper
                 .toCurrentCoordinates(tripActivation)).thenReturn(coordinatesDto);
         //THEN
-        TrackEntity expected = underTest.createStartTrack(trafficOrder, tripActivation);
+        TrackEntity expected = underTest.saveStartTrack(trafficOrder, tripActivation);
 
         assertEquals(expected, track);
     }
@@ -67,7 +67,7 @@ class TrackServiceImplTest {
 
 
         //THEN
-        TrackEntity expected = underTest.instanceTrack(coordinatesDTO, trafficOrder);
+        TrackEntity expected = underTest.saveTrack(coordinatesDTO, trafficOrder);
 
         assertEquals(expected, track);
     }

@@ -10,14 +10,14 @@ public interface TrackService {
     /**
      * Create first track in parallel with new Traffic Order and save it to Database
      */
-    TrackEntity createStartTrack(TrafficOrderEntity trafficOrder,
+    TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
                                  TripActivationDto tripActivation);
 
     /**
      * Create track in which we will receive constant data about the current coordinate of the car
      * and save it in
      */
-    TrackEntity instanceTrack(CurrentCoordinatesDto coordinatesDto,
+    TrackEntity saveTrack(CurrentCoordinatesDto coordinatesDto,
                               TrafficOrderEntity trafficOrder);
 
     /**

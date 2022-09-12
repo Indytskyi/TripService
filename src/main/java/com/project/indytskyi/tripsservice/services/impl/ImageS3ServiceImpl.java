@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
+import com.project.indytskyi.tripsservice.exceptions.DamagedFileException;
+import com.project.indytskyi.tripsservice.exceptions.FileUploadException;
 import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +42,7 @@ public class ImageS3ServiceImpl implements ImageS3Service {
 
             return originalFilename;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DamagedFileException("The file is corrupted, try another one");
         }
     }
 
@@ -52,7 +54,7 @@ public class ImageS3ServiceImpl implements ImageS3Service {
         try {
             return IOUtils.toByteArray(objectContent);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileUploadException("File upload error! Try again!");
         }
     }
 
