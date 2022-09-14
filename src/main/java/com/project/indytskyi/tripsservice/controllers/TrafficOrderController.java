@@ -10,6 +10,7 @@ import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import com.project.indytskyi.tripsservice.services.CarService;
 import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
@@ -48,6 +49,8 @@ public class TrafficOrderController {
 
     private final ImageValidation imageValidation;
 
+    private final CarService carService;
+
     /**
      * Controller where you start your work
      * initialization of traffic order and create start track
@@ -58,7 +61,8 @@ public class TrafficOrderController {
     @PostMapping
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
         log.info("Create new traffic order and start track");
-
+        String carClass = carService.getCarInfo(tripActivation);
+        tripActivation.setTariff(350);
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
 

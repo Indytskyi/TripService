@@ -2,7 +2,6 @@ package com.project.indytskyi.tripsservice.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +33,6 @@ public class TripActivationDto {
     private double longitude;
 
     @ApiModelProperty(example = "300.0", value = "")
-    @Positive(message = "Pay per hour should be more than zero")
     private double tariff;
 
 }
