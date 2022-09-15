@@ -62,6 +62,7 @@ public class TrafficOrderController {
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
         log.info("Create new traffic order and start track");
         String carClass = carService.getCarInfo(tripActivation);
+        carService.setCarStatus(tripActivation.getCarId());
         tripActivation.setTariff(350);
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
@@ -119,7 +120,11 @@ public class TrafficOrderController {
             imageService.saveImages(trafficOrder, originalFilename);
         });
 
-        return ResponseEntity.ok(trafficOrderService.finishOrder(trafficOrder));
+        TripFinishDto tripFinishDto = trafficOrderService.finishOrder(trafficOrder);
+
+        carService.setCarAfterFinishingOrder(tripFinishDto, trafficOrder.getCarId());
+
+        return ResponseEntity.ok(tripFinishDto);
     }
 
     /**
