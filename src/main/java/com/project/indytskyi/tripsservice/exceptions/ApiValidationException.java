@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Getter
-public class ApiValidationImageException extends RuntimeException {
+public class ApiValidationException extends RuntimeException {
 
     private List<ErrorResponse> errorResponses;
 

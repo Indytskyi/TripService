@@ -4,7 +4,7 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
-import com.project.indytskyi.tripsservice.exceptions.ApiValidationImageException;
+import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
@@ -109,7 +109,7 @@ public class TrafficOrderController {
 
         List<ErrorResponse> errorResponses = imageValidation.validateImages(files);
         if (!errorResponses.isEmpty()) {
-            throw new ApiValidationImageException(errorResponses);
+            throw new ApiValidationException(errorResponses);
         }
 
         TrafficOrderEntity trafficOrder = trafficOrderService
