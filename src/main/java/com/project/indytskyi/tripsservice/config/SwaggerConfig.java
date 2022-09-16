@@ -10,6 +10,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Configuration swagger in spring,
+     * and share for him path to controllers
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)

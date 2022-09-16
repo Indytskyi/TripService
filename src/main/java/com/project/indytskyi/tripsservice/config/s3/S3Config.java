@@ -19,6 +19,10 @@ public class S3Config {
     @Value("${region}")
     private String region;
 
+    /**
+     * configuration of connection to s3 service
+     * and settings S3 in spring boot
+     */
     @Bean
     public AmazonS3 s3() {
 
