@@ -55,7 +55,7 @@ public class CarServiceImpl implements CarService {
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
         carUpdateInfoAfterTripDto.setFuelLevel(5);
 
-        Object o = client.post()
+        Object response = client.post()
                 .uri(String.valueOf(carId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(carUpdateInfoAfterTripDto))
