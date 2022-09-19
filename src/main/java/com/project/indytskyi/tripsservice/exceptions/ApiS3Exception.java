@@ -13,6 +13,7 @@ public class ApiS3Exception {
 
     @ExceptionHandler
     private ResponseEntity<String> handleException(SizeLimitExceededException e) {
+        log.error("{}", e.getMessage());
 
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }

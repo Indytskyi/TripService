@@ -33,7 +33,7 @@ public class ImageController {
     @GetMapping("/{id}")
     public ResponseEntity<List<String>> getTrafficOrderImages(
             @PathVariable("id") long trafficOrderId) {
-        log.warn("Show traffic order by id = {}", trafficOrderId);
+        log.info("Show traffic order by id = {}", trafficOrderId);
         List<ImagesEntity> images = trafficOrderService
                 .findOne(trafficOrderId)
                 .getImages();
@@ -47,13 +47,14 @@ public class ImageController {
     @SneakyThrows
     @GetMapping
     public HttpEntity<byte[]> downloadImage(@RequestParam("path") String path) {
+        log.info("Uploading image by path = {}", path);
         MediaType contentType = path.endsWith("jpg") ? MediaType.IMAGE_JPEG
                                     : MediaType.IMAGE_PNG;
         byte[] image = imageS3Service.downloadFile(path);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(contentType);
         headers.setContentLength(image.length);
-        log.warn("Path of file that we download = {}", path);
+
         return new HttpEntity<>(image, headers);
     }
 

@@ -1,4 +1,4 @@
-package com.project.indytskyi.tripsservice.dto;
+package com.project.indytskyi.tripsservice.dto.backoffice;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

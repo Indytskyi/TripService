@@ -8,12 +8,14 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * Class where you calculate distance between two coordinates
  */
 @UtilityClass
+@Slf4j
 public class Gfg {
 
     /**
@@ -22,6 +24,8 @@ public class Gfg {
     public static double distance(double previousLatitude,
                                   double previousLongitude,
                                   double currentLatitude, double currentLongitude) {
+
+        log.info("calculate distance between two coordinates");
 
         previousLongitude = toRadians(previousLongitude);
         currentLongitude = toRadians(currentLongitude);

@@ -61,6 +61,7 @@ public class TrafficOrderController {
     @PostMapping
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
         log.info("Create new traffic order and start track");
+
         String carClass = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
         tripActivation.setTariff(350);
@@ -77,7 +78,7 @@ public class TrafficOrderController {
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
     public ResponseEntity<TrafficOrderDto> getTrafficOrder(@PathVariable("id") long id) {
-        log.warn("Show traffic order by id = {}", id);
+        log.info("Show traffic order by id = {}", id);
         return ResponseEntity
                 .ok(trafficOrderDtoMapper
                         .toTrafficOrderDto(trafficOrderService.findOne(id)));

@@ -20,6 +20,9 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public String getCarInfo(TripActivationDto tripActivationDto) {
+
+        log.info("get car from Cas-service, carId = {}", tripActivationDto.getCarId());
+
         CarDto carDto = client
                 .get()
                 .uri(String.valueOf(tripActivationDto.getCarId()))
@@ -48,6 +51,9 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public void setCarAfterFinishingOrder(TripFinishDto tripFinishDto, long carId) {
+
+        log.info("set information to car after the end of the trip");
+
         CarUpdateInfoAfterTripDto carUpdateInfoAfterTripDto = new CarUpdateInfoAfterTripDto();
         carUpdateInfoAfterTripDto.setCarStatus("FREE");
         carUpdateInfoAfterTripDto.setCoordinates(new StartCoordinatesOfCarDto(tripFinishDto.getLatitude(),

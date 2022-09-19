@@ -1,6 +1,6 @@
 package com.project.indytskyi.tripsservice.services;
 
-import com.project.indytskyi.tripsservice.dto.BackOfficeDto;
+import com.project.indytskyi.tripsservice.dto.backoffice.BackOfficeDto;
 
 public interface BackOfficeService {
 

@@ -38,7 +38,8 @@ public class TrackController {
     @ApiResponse(code = 400, message = "Invalid track Id")
     @GetMapping("/{id}")
     public ResponseEntity<TrackDto> getTrack(@PathVariable("id") long id) {
-        log.warn("Show track by id = {}", id);
+        log.info("Show track by id = {}", id);
+
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService.findOne(id)));
     }

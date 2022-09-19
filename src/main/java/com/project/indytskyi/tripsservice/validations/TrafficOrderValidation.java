@@ -7,15 +7,20 @@ import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class TrafficOrderValidation {
 
     private final TrafficsRepository trafficsRepository;
 
     public void validateActiveCountOfTrafficOrders(long userId) {
+
+        log.info("check if there are any unfinished trips from usesId = {}", userId);
+
         Optional<TrafficOrderEntity> trafficOrderEntityOptional = trafficsRepository
                 .findFirstByUserIdOrderByIdDesc(userId);
         if (trafficOrderEntityOptional.isPresent()) {
@@ -24,6 +29,8 @@ public class TrafficOrderValidation {
                         "You have already started the trip."
                                 + "Finish the previous one to start a new one")
                 );
+
+                log.error("the previous trip don`t finish ");
 
                 throw new ApiValidationException(exception);
             }
