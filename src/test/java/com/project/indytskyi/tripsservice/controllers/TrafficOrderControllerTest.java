@@ -41,7 +41,6 @@ import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import com.project.indytskyi.tripsservice.services.ImageService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
-import com.project.indytskyi.tripsservice.validations.ImageValidation;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;

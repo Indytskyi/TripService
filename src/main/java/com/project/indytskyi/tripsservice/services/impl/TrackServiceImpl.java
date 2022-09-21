@@ -7,6 +7,7 @@ import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
+import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.Gfg;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,9 +28,11 @@ public class TrackServiceImpl implements TrackService {
     private final TracksRepository tracksRepository;
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
 
+    private final TrafficOrderService trafficOrderService;
+
     @Override
     public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
-                                        TripActivationDto tripActivation) {
+                                      TripActivationDto tripActivation) {
 
         TrackEntity track = initializationNewTrack(currentCoordinatesMapper
                 .toCurrentCoordinates(tripActivation));
@@ -39,8 +42,11 @@ public class TrackServiceImpl implements TrackService {
 
     @Transactional
     @Override
-    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates,
-                                     TrafficOrderEntity trafficOrder) {
+    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
+
+        final   TrafficOrderEntity trafficOrder = trafficOrderService
+                .findOne(currentCoordinates.getTrafficOrderId());
+
         final TrackEntity track = initializationNewTrack(currentCoordinates);
         final TrackEntity lastTrack = getLastTrack(trafficOrder);
         final double distanceBetweenTwoCoordinates =

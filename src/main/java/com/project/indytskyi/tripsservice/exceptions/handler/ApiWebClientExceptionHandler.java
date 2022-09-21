@@ -17,7 +17,9 @@ public class ApiWebClientExceptionHandler {
     @ExceptionHandler
     @ResponseBody
     public ResponseEntity<Map<String, String>> handleStatusCodeException(WebClientResponseException e) {
-        log.error("Backend returned {} {} \n {}", e.getStatusCode(), e.getStatusCode().getReasonPhrase(), e.getResponseBodyAsString());
+        log.error("Backend returned {} {} \n {}", e.getStatusCode(),
+                e.getStatusCode().getReasonPhrase(),
+                e.getResponseBodyAsString());
 
         Map<String, String> exception = new LinkedHashMap<>();
         exception.put("timestamp", String.valueOf(LocalDateTime.now()));

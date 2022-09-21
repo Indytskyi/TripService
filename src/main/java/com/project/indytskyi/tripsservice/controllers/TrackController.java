@@ -3,9 +3,7 @@ package com.project.indytskyi.tripsservice.controllers;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TrackDto;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
-import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
-import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import javax.validation.Valid;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TrackController {
     private final TrackService trackService;
-    private final TrafficOrderService trafficOrderService;
     private final TrackDtoMapper trackDtoMapper;
 
     /**
@@ -58,12 +55,9 @@ public class TrackController {
                 currentCoordinates.getLatitude(),
                 currentCoordinates.getLongitude());
 
-        TrafficOrderEntity trafficOrder = trafficOrderService
-                .findOne(currentCoordinates.getTrafficOrderId());
-
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService
-                        .saveTrack(currentCoordinates, trafficOrder)));
+                        .saveTrack(currentCoordinates)));
     }
 
 }

@@ -6,7 +6,9 @@ import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.dto.car.CarUpdateInfoAfterTripDto;
 import com.project.indytskyi.tripsservice.dto.car.StartCoordinatesOfCarDto;
 import com.project.indytskyi.tripsservice.services.CarService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -14,9 +16,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
-    private final WebClient client = WebClient.create("http://localhost:8081/cars/");
+    private final WebClient client;
+
+    @Value("${basicUrlForCarService}")
+    private String basicUrl;
 
     @Override
     public String getCarInfo(TripActivationDto tripActivationDto) {
@@ -25,7 +31,8 @@ public class CarServiceImpl implements CarService {
 
         CarDto carDto = client
                 .get()
-                .uri(String.valueOf(tripActivationDto.getCarId()))
+                .uri(basicUrl
+                       + String.valueOf(tripActivationDto.getCarId()))
                 .retrieve()
                 .bodyToMono(CarDto.class)
                 .share()
@@ -62,7 +69,8 @@ public class CarServiceImpl implements CarService {
         carUpdateInfoAfterTripDto.setFuelLevel(5);
 
         Object response = client.post()
-                .uri(String.valueOf(carId))
+                .uri(basicUrl
+                        + String.valueOf(carId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(carUpdateInfoAfterTripDto))
                 .retrieve()
