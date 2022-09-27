@@ -10,6 +10,7 @@ import com.project.indytskyi.tripsservice.services.BackOfficeService;
 import com.project.indytskyi.tripsservice.services.CarService;
 import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import com.project.indytskyi.tripsservice.services.ImageService;
+import com.project.indytskyi.tripsservice.services.KafkaService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
@@ -30,6 +31,7 @@ public class TripServiceImpl implements TripService {
     private final BackOfficeService backOfficeService;
     private final ImageS3Service imageS3Service;
     private final ImageService imageService;
+    private final KafkaService kafkaService;
 
     private final StartMapper startMapper;
 
@@ -37,12 +39,11 @@ public class TripServiceImpl implements TripService {
     public TripStartDto startTrip(TripActivationDto tripActivation) {
         log.info("Start trip");
         String carClass = carService.getCarInfo(tripActivation);
-
         carService.setCarStatus(tripActivation.getCarId());
+
         tripActivation.setTariff(350);
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
-
         return createTripStartDto(trafficOrder, track);
     }
 
@@ -58,7 +59,8 @@ public class TripServiceImpl implements TripService {
 
         TripFinishDto tripFinishDto = trafficOrderService.finishOrder(trafficOrder);
 
-        carService.setCarAfterFinishingOrder(tripFinishDto, trafficOrder.getCarId());
+        kafkaService.sendOrderToCarService(tripFinishDto);
+        kafkaService.sendOrderToBackOfficeService(trafficOrder, tripFinishDto.getTripPayment());
 
         log.info("finish order and send all information to another services");
 

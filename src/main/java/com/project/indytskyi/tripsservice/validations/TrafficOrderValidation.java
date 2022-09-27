@@ -25,7 +25,7 @@ public class TrafficOrderValidation {
                 .findFirstByUserIdOrderByIdDesc(userId);
         if (trafficOrderEntityOptional.isPresent()) {
             if (trafficOrderEntityOptional.get().getStatus().equals("IN_ORDER")) {
-                List<ErrorResponse> exception = List.of(new ErrorResponse("userId",
+                List<ErrorResponse> exception = List.of(new ErrorResponse("userId: " + userId,
                         "You have already started the trip."
                                 + "Finish the previous one to start a new one")
                 );

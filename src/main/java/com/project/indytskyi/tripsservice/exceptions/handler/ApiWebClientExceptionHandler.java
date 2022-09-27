@@ -16,7 +16,8 @@ public class ApiWebClientExceptionHandler {
 
     @ExceptionHandler
     @ResponseBody
-    public ResponseEntity<Map<String, String>> handleStatusCodeException(WebClientResponseException e) {
+    public ResponseEntity<Map<String, String>>
+            handleStatusCodeException(WebClientResponseException e) {
         log.error("Backend returned {} {} \n {}", e.getStatusCode(),
                 e.getStatusCode().getReasonPhrase(),
                 e.getResponseBodyAsString());

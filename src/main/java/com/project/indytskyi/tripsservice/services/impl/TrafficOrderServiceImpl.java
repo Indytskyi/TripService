@@ -88,5 +88,4 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
         return travelTimeInMinutes * pricePerMinute;
     }
 
-
 }

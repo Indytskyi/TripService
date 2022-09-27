@@ -74,7 +74,6 @@ public class TrafficOrderController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
     /**
      * Controller where you finish your order and send json to another service
      */
@@ -88,7 +87,5 @@ public class TrafficOrderController {
 
         return ResponseEntity.ok(tripService.finishTrip(trafficOrderId, files));
     }
-
-
 
 }

@@ -6,7 +6,9 @@ import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFacto
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +19,7 @@ import com.project.indytskyi.tripsservice.mapper.TripFinishMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
+import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,9 @@ class TrafficOrderServiceImplTest {
     @Mock
     private TripFinishMapper tripFinishMapper;
 
+    @Mock
+    private TrafficOrderValidation trafficOrderValidation;
+
     @InjectMocks
     private TrafficOrderServiceImpl underTest;
 
@@ -52,6 +58,8 @@ class TrafficOrderServiceImplTest {
         //WHEN
         when(trafficsRepository.save(any())).thenReturn(orderEntity);
         when(trafficOrderMapper.toTrafficOrderEntity(any())).thenReturn(orderEntity);
+        doNothing().when(trafficOrderValidation)
+                .validateActiveCountOfTrafficOrders(anyLong());
 
         //THEN
         TrafficOrderEntity trafficOrder = underTest.save(tripActivation);

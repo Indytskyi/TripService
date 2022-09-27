@@ -44,7 +44,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
 
-        final   TrafficOrderEntity trafficOrder = trafficOrderService
+        final TrafficOrderEntity trafficOrder = trafficOrderService
                 .findOne(currentCoordinates.getTrafficOrderId());
 
         final TrackEntity track = initializationNewTrack(currentCoordinates);

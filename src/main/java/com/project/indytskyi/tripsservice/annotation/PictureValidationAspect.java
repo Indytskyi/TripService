@@ -16,19 +16,32 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class PictureValidationAspect {
 
+    private final int numberOfPictures = 3;
+    private final int sizeOfOnePicture = 3145728;
+
+    private final String firstFormatFile = "jpg";
+    private final String secondFormatFile = "png";
+
     @Around("@annotation(PictureValidation)")
     public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        log.info("picture validation");
         List<MultipartFile> files = (List<MultipartFile>) joinPoint.getArgs()[1];
-        final int numberOfPictures = 3;
-        final int sizeOfOnePicture = 3145728;
+
+        log.info("Start validating files");
 
         List<ErrorResponse> errorResponses = new ArrayList<>();
+
+        if (files.size() != numberOfPictures) {
+            log.error("The number of photos must be exactly 3");
+            errorResponses.add(new ErrorResponse("number",
+                    "The number of photos must be exactly 3"));
+            throw new ApiValidationException(errorResponses);
+        }
+
         files.forEach(file -> {
             String imageName = file.getOriginalFilename();
-            if (!imageName.endsWith("png")
-                    && !file.getOriginalFilename().endsWith("jpg")) {
+            if (!imageName.endsWith(secondFormatFile)
+                    && !imageName.endsWith(firstFormatFile)) {
                 log.error("Incorrect format of file = {}", file.getOriginalFilename());
                 errorResponses.add(new ErrorResponse(file.getOriginalFilename(),
                         "Incorrect format of file. Only images with format (jpg or png)"));
@@ -41,18 +54,11 @@ public class PictureValidationAspect {
             }
         });
 
-        if (files.size() != numberOfPictures) {
-            log.error("The number of photos must be exactly 3");
-            errorResponses.add(new ErrorResponse("number",
-                    "The number of photos must be exactly 3"));
-        }
-
         if (!errorResponses.isEmpty()) {
             throw new ApiValidationException(errorResponses);
         }
 
         return joinPoint.proceed();
     }
-
 
 }

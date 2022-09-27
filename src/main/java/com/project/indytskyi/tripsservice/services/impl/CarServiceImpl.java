@@ -6,11 +6,12 @@ import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.dto.car.CarUpdateInfoAfterTripDto;
 import com.project.indytskyi.tripsservice.dto.car.StartCoordinatesOfCarDto;
 import com.project.indytskyi.tripsservice.services.CarService;
+import com.project.indytskyi.tripsservice.util.CarStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -19,20 +20,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
-    private final WebClient client;
-
-    @Value("${basicUrlForCarService}")
-    private String basicUrl;
+    private final WebClient carWebClient;
 
     @Override
     public String getCarInfo(TripActivationDto tripActivationDto) {
 
         log.info("get car from Cas-service, carId = {}", tripActivationDto.getCarId());
 
-        CarDto carDto = client
+        CarDto carDto = carWebClient
                 .get()
-                .uri(basicUrl
-                       + String.valueOf(tripActivationDto.getCarId()))
+                .uri(String.valueOf(tripActivationDto.getCarId()))
                 .retrieve()
                 .bodyToMono(CarDto.class)
                 .share()
@@ -44,33 +41,36 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional
     public void setCarStatus(long carId) {
-
-//        Object o = client.put()
-//                .uri(String.valueOf(carId))
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .body(BodyInserters.fromValue(jsonObject))
-//                .retrieve()
-//                .bodyToMono(Object.class)
-//                .block();
+        log.info("set status to car by carId = {}", carId);
+        String h = String.valueOf(CarStatus.RENTED);
+        Object o = carWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("status/" + carId)
+                        .queryParam("carStatus", h)
+                        .build())
+                .retrieve()
+                .bodyToMono(Object.class)
+                .share()
+                .block();
     }
 
     @Override
-    public void setCarAfterFinishingOrder(TripFinishDto tripFinishDto, long carId) {
+    public void setCarAfterFinishingOrder(TripFinishDto tripFinishDto) {
 
         log.info("set information to car after the end of the trip");
 
         CarUpdateInfoAfterTripDto carUpdateInfoAfterTripDto = new CarUpdateInfoAfterTripDto();
-        carUpdateInfoAfterTripDto.setCarStatus("FREE");
-        carUpdateInfoAfterTripDto.setCoordinates(new StartCoordinatesOfCarDto(tripFinishDto.getLatitude(),
+        carUpdateInfoAfterTripDto.setCarStatus(String.valueOf(CarStatus.FREE));
+        carUpdateInfoAfterTripDto
+                .setCoordinates(new StartCoordinatesOfCarDto(tripFinishDto.getLatitude(),
                 tripFinishDto.getLongitude()));
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
         carUpdateInfoAfterTripDto.setFuelLevel(5);
 
-        Object response = client.post()
-                .uri(basicUrl
-                        + String.valueOf(carId))
+        Object response = carWebClient.post()
+                .uri(String.valueOf(tripFinishDto.getCarId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(carUpdateInfoAfterTripDto))
                 .retrieve()

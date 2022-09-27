@@ -37,6 +37,9 @@ class ImageS3ServiceImplTest {
     @Mock
     S3Object object;
 
+
+
+
     @Test
     void canSaveImageToAmazonS3() throws IOException {
         //GIVEN
@@ -77,16 +80,16 @@ class ImageS3ServiceImplTest {
 //    @Test
 //    void canDownloadFile() {
 //        //GIVEN
-//        S3Object object1 = new S3Object();
+//        S3Object object1 = s3.getObject("bucket", "key");
 //        S3ObjectInputStream objectContent = object1.getObjectContent();
 //
 //        String path = "photos/8/ycp.jpg";
 //        String bucketName = "tripsservice";
 //        byte[] expected = new byte[100];
 //        //WHEN
-//        doReturn(object1).when(s3).getObject(null, path);
+//        when(s3.getObject("bucket", "key")).thenReturn(object1);
 //        when(object.getObjectContent()).thenReturn(objectContent);
-//        when(IOUtils.toByteArray(any())).thenReturn(expected);
+//        when(IOUtils.toByteArray(objectContent)).thenReturn(expected);
 //        byte[] result  = underTest.downloadFile(path);
 //        assertEquals(expected, result);
 //    }

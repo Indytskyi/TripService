@@ -8,6 +8,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import com.project.indytskyi.tripsservice.mapper.CurrentCoordinatesMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
+import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,8 @@ class TrackServiceImplTest {
     @Mock
     private CurrentCoordinatesMapper currentCoordinatesMapper;
 
+    @Mock
+    private TrafficOrderService trafficOrderService;
 
     @InjectMocks
     private TrackServiceImpl underTest;
@@ -64,10 +68,11 @@ class TrackServiceImplTest {
         trafficOrder.setTracks(List.of(track));
         //WHEN
         when(tracksRepository.save(any())).thenReturn(track);
+        when(trafficOrderService.findOne(anyLong())).thenReturn(trafficOrder);
 
 
         //THEN
-        TrackEntity expected = underTest.saveTrack(coordinatesDTO, trafficOrder);
+        TrackEntity expected = underTest.saveTrack(coordinatesDTO);
 
         assertEquals(expected, track);
     }

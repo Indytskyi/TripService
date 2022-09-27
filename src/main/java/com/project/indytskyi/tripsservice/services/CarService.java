@@ -26,6 +26,6 @@ public interface CarService {
      * and set in car the last coordinates of car after trip,
      * distance, fuel level and status of car
      */
-    void setCarAfterFinishingOrder(TripFinishDto tripFinishDto, long carId);
+    void setCarAfterFinishingOrder(TripFinishDto tripFinishDto);
 
 }

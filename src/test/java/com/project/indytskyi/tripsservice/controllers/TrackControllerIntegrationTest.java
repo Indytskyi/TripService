@@ -51,7 +51,7 @@ class TrackControllerIntegrationTest {
 
     @Container
     public static PostgreSQLContainer container =
-            (PostgreSQLContainer) new PostgreSQLContainer("postgres:14.4")
+            (PostgreSQLContainer) new PostgreSQLContainer("postgres:latest")
                     .withExposedPorts(8080);
 
 
@@ -133,10 +133,8 @@ class TrackControllerIntegrationTest {
 
 
         //WHEN
-        when(trackService.saveTrack(coordinatesDto, trafficOrder)).thenReturn(track);
         when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
-        when(trafficOrderService.findOne(coordinatesDto.getTrafficOrderId())).thenReturn(trafficOrder);
-
+        when(trackService.saveTrack(coordinatesDto)).thenReturn(track);
         mockMvc.perform(post("http://localhost:8080/trip/track")
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(coordinatesDto)))
@@ -148,7 +146,7 @@ class TrackControllerIntegrationTest {
                 .andExpect(jsonPath("$.distance").value(TRACK_DISTANCE));
 
         //THEN
-        verify(trackService).saveTrack(coordinatesDto, trafficOrder);
+        verify(trackService).saveTrack(coordinatesDto);
     }
 
     @Test

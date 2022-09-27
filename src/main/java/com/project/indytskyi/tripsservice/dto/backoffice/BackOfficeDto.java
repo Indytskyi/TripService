@@ -20,5 +20,8 @@ public class BackOfficeDto {
 
     private int carId;
 
+    private double tariff;
+
     private int userId;
+
 }
