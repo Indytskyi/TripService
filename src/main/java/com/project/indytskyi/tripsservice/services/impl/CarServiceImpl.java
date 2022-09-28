@@ -65,7 +65,7 @@ public class CarServiceImpl implements CarService {
         carUpdateInfoAfterTripDto.setCarStatus(String.valueOf(CarStatus.FREE));
         carUpdateInfoAfterTripDto
                 .setCoordinates(new StartCoordinatesOfCarDto(tripFinishDto.getLatitude(),
-                tripFinishDto.getLongitude()));
+                        tripFinishDto.getLongitude()));
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
         carUpdateInfoAfterTripDto.setFuelLevel(5);
 
