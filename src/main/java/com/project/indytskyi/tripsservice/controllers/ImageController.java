@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("trip/image")
+@RequestMapping("trip/")
 @Slf4j
 @RequiredArgsConstructor
 public class ImageController {
@@ -30,7 +30,7 @@ public class ImageController {
 
     @ApiOperation(value = "Find all path of images by traffic order id")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/images")
     public ResponseEntity<List<String>> getTrafficOrderImages(
             @PathVariable("id") long trafficOrderId) {
         log.info("Show traffic order by id = {}", trafficOrderId);
@@ -45,7 +45,7 @@ public class ImageController {
     @ApiOperation(value = "Download file by path of this file")
     @ApiResponse(code = 400, message = "Invalid path")
     @SneakyThrows
-    @GetMapping
+    @GetMapping("/image")
     public HttpEntity<byte[]> downloadImage(@RequestParam("path") String path) {
         log.info("Uploading image by path = {}", path);
         MediaType contentType = path.endsWith("jpg") ? MediaType.IMAGE_JPEG
