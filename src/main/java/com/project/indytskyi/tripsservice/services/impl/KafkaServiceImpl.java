@@ -31,13 +31,13 @@ public class KafkaServiceImpl implements KafkaService {
         log.info("Sending BackOfficeDto Json Serializer");
         BackOfficeDto backOfficeDto = BackOfficeDto.of()
                 .price(price)
-                .carId((int) trafficOrder.getUserId())
+                .carId((int) trafficOrder.getCarId())
                 .userId((int) trafficOrder.getUserId())
                 .startDateTime(trafficOrder.getActivationTime())
                 .endDateTime(trafficOrder.getCompletionTime())
-                .tariff(trafficOrder.getTariff())
+                .ratePerHour(trafficOrder.getTariff())
                 .build();
-
+        System.out.println(backOfficeDto);
         backOfficeDtoKafkaTemplate.send(kafkaBackOfficeTopic, backOfficeDto);
     }
 
@@ -52,8 +52,9 @@ public class KafkaServiceImpl implements KafkaService {
                 tripFinishDto.getLongitude()
         ));
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
-        carUpdateInfoAfterTripDto.setFuelLevel(5);
-
+        carUpdateInfoAfterTripDto.setFuelLevelLiter(5);
+        carUpdateInfoAfterTripDto.setId(tripFinishDto.getCarId());
+        System.out.println(carUpdateInfoAfterTripDto);
         carFinishDtoKafkaTemplate.send(kafkaCarTopic, carUpdateInfoAfterTripDto);
     }
 

@@ -45,7 +45,7 @@ public class CarServiceImpl implements CarService {
     public void setCarStatus(long carId) {
         log.info("set status to car by carId = {}", carId);
         String h = String.valueOf(CarStatus.RENTED);
-        Object o = carWebClient.post()
+        Object o = carWebClient.patch()
                 .uri(uriBuilder -> uriBuilder
                         .path("status/" + carId)
                         .queryParam("carStatus", h)
@@ -67,7 +67,7 @@ public class CarServiceImpl implements CarService {
                 .setCoordinates(new StartCoordinatesOfCarDto(tripFinishDto.getLatitude(),
                         tripFinishDto.getLongitude()));
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
-        carUpdateInfoAfterTripDto.setFuelLevel(5);
+        carUpdateInfoAfterTripDto.setFuelLevelLiter(5);
 
         Object response = carWebClient.post()
                 .uri(String.valueOf(tripFinishDto.getCarId()))

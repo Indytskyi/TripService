@@ -16,7 +16,7 @@ public class CarUpdateInfoAfterTripDtoFactory {
                 .carStatus(CAR_UPDATE_CAR_STATUS)
                 .coordinates(CAR_UPDATE_COORDINATES)
                 .distanceInKilometers(CAR_UPDATE_DISTANCE)
-                .fuelLevel(CAR_UPDATE_FUEL_LEVEL)
+                .fuelLevelLiter(CAR_UPDATE_FUEL_LEVEL)
                 .build();
     }
 }

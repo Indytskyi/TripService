@@ -20,15 +20,16 @@ public class BackOfficeServiceImpl implements BackOfficeService {
     public Double getCarTariff(String carClass) {
         log.info("get from backoffice-service tariff by casClass = {}",
                 carClass);
-        return backOfficeWebClient
+        String ratePerHour = backOfficeWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("tariff")
-                        .queryParam("carClass", carClass)
+                        .path("tariffs/" + carClass)
                         .build())
                 .retrieve()
-                .bodyToMono(Double.class)
+                .bodyToMono(String.class)
                 .block();
+
+        return Double.valueOf(ratePerHour.replaceAll("\\D+",""));
     }
 
     @Override

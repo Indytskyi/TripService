@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class CarUpdateInfoAfterTripDto {
+    private Long id;
     private String carStatus;
     private StartCoordinatesOfCarDto coordinates;
     private double distanceInKilometers;
-    private double fuelLevel;
+    private double fuelLevelLiter;
 }

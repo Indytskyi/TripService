@@ -40,8 +40,7 @@ public class TripServiceImpl implements TripService {
         log.info("Start trip");
         String carClass = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
-
-        tripActivation.setTariff(350);
+        tripActivation.setTariff(backOfficeService.getCarTariff(carClass));
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
         return createTripStartDto(trafficOrder, track);

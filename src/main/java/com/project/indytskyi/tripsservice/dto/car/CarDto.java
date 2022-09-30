@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class CarDto {
 
     private String carClass;
-
     private StartCoordinatesOfCarDto coordinates;
 
 
