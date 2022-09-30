@@ -78,7 +78,7 @@ public class TrafficOrderController {
      */
     @ApiOperation(value = "Put images to database, "
             + "calculate trip payment and  return responses to user")
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/photos")
     @PictureValidation
     public ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId,
                                                 @RequestParam("files") List<MultipartFile> files) {
