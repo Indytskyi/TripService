@@ -76,7 +76,7 @@ public class TripServiceImpl implements TripService {
         TripStartDto tripStartDto = startMapper
                 .toStartDto(trafficOrderEntity, trackEntity);
 
-        tripStartDto.setOwnerId(trafficOrderEntity.getId());
+        tripStartDto.setTrafficOrderId(trafficOrderEntity.getId());
         tripStartDto.setTrackId(trackEntity.getId());
         return tripStartDto;
     }

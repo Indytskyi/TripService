@@ -4,6 +4,7 @@ import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import java.util.Map;
 
 public interface TrafficOrderService {
 
@@ -21,7 +22,7 @@ public interface TrafficOrderService {
      * stop order - status of orderTraffic will change to "STOP"
      * and will wait to "FINISH" status
      */
-    void stopOrder(long trafficOrderId);
+    Map<String, String> stopOrder(long trafficOrderId);
 
     /**
      * change status of order to finish after correct image

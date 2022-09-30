@@ -11,10 +11,10 @@ import com.project.indytskyi.tripsservice.services.TripService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,10 +68,9 @@ public class TrafficOrderController {
     @ApiOperation(value = "Stop traffic order")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @PutMapping("{id}")
-    public ResponseEntity<HttpStatus> stop(@PathVariable("id") long trafficOrderId) {
+    public ResponseEntity<Map<String, String>> stop(@PathVariable("id") long trafficOrderId) {
         log.info("Stop traffic order by id = {}", trafficOrderId);
-        trafficOrderService.stopOrder(trafficOrderId);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(trafficOrderService.stopOrder(trafficOrderId));
     }
 
     /**

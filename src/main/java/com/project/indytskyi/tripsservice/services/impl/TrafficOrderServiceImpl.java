@@ -13,6 +13,7 @@ import com.project.indytskyi.tripsservice.util.StatusPaid;
 import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,12 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     @Transactional
     @Override
-    public void stopOrder(long trafficOrderId) {
+    public Map<String, String> stopOrder(long trafficOrderId) {
         findOne(trafficOrderId).setStatus(String.valueOf(Status.STOP));
+        return Map.of(
+                "message", "The trip is stopped. Take pictures of the car",
+                "status", String.valueOf(Status.STOP)
+        );
     }
 
     @Transactional
@@ -74,6 +79,7 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     /**
      * calculate trip payment
+     *
      * @return trip payment = {@link Double}
      */
     private double calculateTripPayment(TrafficOrderEntity trafficOrder) {
