@@ -10,7 +10,7 @@ public class TripStartDtoFactory {
     private static final long TRIP_START_USER_ID = 22L;
     private static final String TRIP_START_STATUS = String.valueOf(Status.IN_ORDER);
     private static final String TRIP_START_STATUS_PAID = String.valueOf(StatusPaid.IN_PROCESS);
-    private static final long TRIP_START_TRACK_ID = 27L;
+    private static final long TRIP_START_TRACK_ID = 22L;
     private static final double TRIP_ACTIVATION_LATITUDE = 4;
     private static final double TRIP_START_LONGITUDE = 3;
     private static final int TRIP_START_SPEED = 0;

@@ -1,8 +1,10 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.project.indytskyi.tripsservice.dto.AllTracksDto;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.mapper.CurrentCoordinatesMapper;
+import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
@@ -29,6 +31,8 @@ public class TrackServiceImpl implements TrackService {
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
 
     private final TrafficOrderService trafficOrderService;
+
+    private final TrackDtoMapper trackDtoMapper;
 
     @Override
     public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
@@ -64,6 +68,18 @@ public class TrackServiceImpl implements TrackService {
     public TrackEntity findOne(long id) {
         return tracksRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public AllTracksDto getListOfAllCoordinates(long id) {
+        return AllTracksDto.of()
+                .trafficOrderId(id)
+                .tracks(trafficOrderService.findOne(id)
+                        .getTracks()
+                        .stream()
+                        .map(trackDtoMapper::toTrackDto)
+                        .toList())
+                .build();
     }
 
     /**

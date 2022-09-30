@@ -175,7 +175,7 @@ class TrafficOrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tripActivationDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.ownerId").value(TRAFFIC_ORDER_ID))
+                .andExpect(jsonPath("$.trafficOrderId").value(TRAFFIC_ORDER_ID))
                 .andExpect(jsonPath("$.carId").value(TRAFFIC_ORDER_CAR_ID))
                 .andExpect(jsonPath("$.userId").value(TRAFFIC_ORDER_USER_ID))
                 .andExpect(jsonPath("$.status").value(TRAFFIC_ORDER_STATUS))
@@ -248,7 +248,7 @@ class TrafficOrderControllerTest {
 
         //WHEN
         when(tripService.finishTrip(TRAFFIC_ORDER_ID, files)).thenReturn(tripFinishDto);
-        mockMvc.perform(multipart("http://localhost:8080/trip/" + 1)
+        mockMvc.perform(multipart("http://localhost:8080/trip/" + 1 + "/photos")
                         .file(multipartFile))
                 .andExpect(status().isOk());
 //                .andExpect(jsonPath("$.latitude").value(TRIP_FINISH_DTO_LATITUDE))

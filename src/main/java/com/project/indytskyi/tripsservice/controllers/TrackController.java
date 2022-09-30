@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.controllers;
 
+import com.project.indytskyi.tripsservice.dto.AllTracksDto;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TrackDto;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for tracks.
  */
 @RestController
-@RequestMapping("trip/track")
+@RequestMapping("trip/")
 @Slf4j
 @RequiredArgsConstructor
 public class TrackController {
@@ -33,12 +34,20 @@ public class TrackController {
      */
     @ApiOperation(value = "Find special track by id")
     @ApiResponse(code = 400, message = "Invalid track Id")
-    @GetMapping("/{id}")
+    @GetMapping("track/{id}")
     public ResponseEntity<TrackDto> getTrack(@PathVariable("id") long id) {
         log.info("Show track by id = {}", id);
 
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService.findOne(id)));
+    }
+
+    @ApiOperation(value = "Find all tracks by id")
+    @ApiResponse(code = 400, message = "Invalid order Id")
+    @GetMapping("{id}/tracks")
+    public ResponseEntity<AllTracksDto> getAllTracksByOrderId(@PathVariable("id") long id) {
+        log.info("Show all tracks  by order id = {}", id);
+        return ResponseEntity.ok(trackService.getListOfAllCoordinates(id));
     }
 
     /**
@@ -47,7 +56,7 @@ public class TrackController {
      */
     @ApiOperation("Get json with current coordinates and create current track")
     @ApiResponse(code = 400, message = "Invalid some data")
-    @PostMapping()
+    @PostMapping("track")
     public ResponseEntity<TrackDto> getCurrentCoordinates(
             @RequestBody @Valid CurrentCoordinatesDto currentCoordinates) {
 

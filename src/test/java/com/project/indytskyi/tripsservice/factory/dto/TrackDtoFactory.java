@@ -7,7 +7,7 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import java.time.LocalDateTime;
 
 public class TrackDtoFactory {
-    public static final long TRACK_DTO_ID = 27L;
+    public static final long TRACK_DTO_ID = 22L;
     public static final double TRACK_DTO_DISTANCE = 0;
     public static final double TRACK_DTO_LATITUDE = 4; //4.5
     public static final double TRACK_DTO_LONGITUDE = 3; // 3.5

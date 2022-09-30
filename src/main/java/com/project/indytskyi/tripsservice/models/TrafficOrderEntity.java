@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  *  Class which interacts with the table Traffic order and contain data od travel
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 @Table(name = "traffic_order")
+@ToString
 public class TrafficOrderEntity {
 
     @Id

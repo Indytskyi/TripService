@@ -15,6 +15,7 @@ public class TrafficOrderDtoFactory {
     public static final String TRAFFIC_ORDER_DTO_STATUS_PAID = String.valueOf(StatusPaid.IN_PROCESS);
     public static final double TRAFFIC_ORDER_DTO_TARIFF = 300;
 
+
     public static TrafficOrderDto createTrafficOrderDto() {
         return TrafficOrderDto.of()
                 .id(TRAFFIC_ORDER_DTO_ID)

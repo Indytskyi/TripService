@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.controllers;
 
+import static com.project.indytskyi.tripsservice.factory.dto.AllTracksDtoFactory.createAllTracksDto;
 import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.createCurrentCoordinatesDto;
 import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.currentCoordinatesDtoForSavingWithInvalidLatitude;
 import static com.project.indytskyi.tripsservice.factory.dto.CurrentCoordinatesDtoFactory.currentCoordinatesDtoForSavingWithInvalidLongitude;
@@ -10,6 +11,7 @@ import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRAC
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_LONGITUDE;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.TRACK_SPEED;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
+import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.indytskyi.tripsservice.dto.AllTracksDto;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TrackDto;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
@@ -118,6 +121,29 @@ class TrackControllerIntegrationTest {
 
         //THEN
         verify(trackService).findOne(TRACK_ID);
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Test get all tracks by traffic order id")
+    void getAllTracksByTrafficOrderId() {
+        //GIVEN
+
+        AllTracksDto allTracksDto = createAllTracksDto();
+        //WHEN
+        when(trackService.getListOfAllCoordinates(TRAFFIC_ORDER_ID)).thenReturn(allTracksDto);
+
+        mockMvc.perform(get("http://localhost:8080/trip/"
+                        + TRAFFIC_ORDER_ID + "/tracks")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.trafficOrderId").value(TRAFFIC_ORDER_ID));
+//                .andExpect(jsonPath("$.tracks").value(TRAFFIC_ORDER_DTO_TRACKS));
+
+        //THEN
+        verify(trackService).getListOfAllCoordinates(TRAFFIC_ORDER_ID);
+
     }
 
     @Test

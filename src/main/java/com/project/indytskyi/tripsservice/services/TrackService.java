@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.services;
 
+import com.project.indytskyi.tripsservice.dto.AllTracksDto;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
@@ -23,5 +24,7 @@ public interface TrackService {
      * find track by id (primary key)
      */
     TrackEntity findOne(long id);
+
+    AllTracksDto getListOfAllCoordinates(long id);
 
 }
