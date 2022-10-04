@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.services;
 
+import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
@@ -20,4 +21,11 @@ public interface TripService {
      * and save pictures to S3
      */
     TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files);
+
+    /**
+     * Get information about trip by id
+     * + if, user has finished his trip,
+     * the admin also get links to photos
+     */
+    TrafficOrderDto getTripById(long trafficOrderId);
 }

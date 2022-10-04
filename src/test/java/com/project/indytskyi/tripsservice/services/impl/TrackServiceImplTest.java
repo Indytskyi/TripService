@@ -77,7 +77,7 @@ class TrackServiceImplTest {
         trafficOrder.setTracks(List.of(track));
         //WHEN
         when(tracksRepository.save(any())).thenReturn(track);
-        when(trafficOrderService.findOne(anyLong())).thenReturn(trafficOrder);
+        when(trafficOrderService.findTrafficOrderById(anyLong())).thenReturn(trafficOrder);
 
 
         //THEN
@@ -117,7 +117,7 @@ class TrackServiceImplTest {
     void getAllTrackByTrafficOrderId() {
         TrafficOrderEntity trafficOrder = createTrafficOrderWithTracks();
         AllTracksDto expected = createAllTracksDto();
-        when(trafficOrderService.findOne(TRAFFIC_ORDER_ID)).thenReturn(trafficOrder);
+        when(trafficOrderService.findTrafficOrderById(TRAFFIC_ORDER_ID)).thenReturn(trafficOrder);
         when(trackDtoMapper.toTrackDto(any())).thenReturn(createTrackDto());
         AllTracksDto response = underTest.getListOfAllCoordinates(TRAFFIC_ORDER_ID);
 

@@ -49,7 +49,7 @@ public class TrackServiceImpl implements TrackService {
     public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
 
         final TrafficOrderEntity trafficOrder = trafficOrderService
-                .findOne(currentCoordinates.getTrafficOrderId());
+                .findTrafficOrderById(currentCoordinates.getTripId());
 
         final TrackEntity track = initializationNewTrack(currentCoordinates);
         final TrackEntity lastTrack = getLastTrack(trafficOrder);
@@ -74,7 +74,7 @@ public class TrackServiceImpl implements TrackService {
     public AllTracksDto getListOfAllCoordinates(long id) {
         return AllTracksDto.of()
                 .trafficOrderId(id)
-                .tracks(trafficOrderService.findOne(id)
+                .tracks(trafficOrderService.findTrafficOrderById(id)
                         .getTracks()
                         .stream()
                         .map(trackDtoMapper::toTrackDto)

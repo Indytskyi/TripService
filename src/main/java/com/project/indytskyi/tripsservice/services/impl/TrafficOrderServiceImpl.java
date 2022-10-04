@@ -44,7 +44,7 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
     }
 
     @Override
-    public TrafficOrderEntity findOne(long id) {
+    public TrafficOrderEntity findTrafficOrderById(long id) {
         return trafficsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
@@ -52,7 +52,7 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
     @Transactional
     @Override
     public Map<String, String> stopOrder(long trafficOrderId) {
-        findOne(trafficOrderId).setStatus(String.valueOf(Status.STOP));
+        findTrafficOrderById(trafficOrderId).setStatus(String.valueOf(Status.STOP));
         return Map.of(
                 "message", "The trip is stopped. Take pictures of the car",
                 "status", String.valueOf(Status.STOP)

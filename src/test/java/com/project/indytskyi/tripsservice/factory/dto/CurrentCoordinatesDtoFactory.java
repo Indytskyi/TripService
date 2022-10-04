@@ -13,7 +13,7 @@ public class CurrentCoordinatesDtoFactory {
         return  CurrentCoordinatesDto.of()
                 .latitude(CURRENT_COORDINATES_LATITUDE)
                 .longitude(CURRENT_COORDINATES_LONGITUDE)
-                .trafficOrderId(CURRENT_COORDINATES_TRAFFIC_ORDER_ID)
+                .tripId(CURRENT_COORDINATES_TRAFFIC_ORDER_ID)
                 .build();
     }
 
@@ -21,7 +21,7 @@ public class CurrentCoordinatesDtoFactory {
         return CurrentCoordinatesDto.of()
                 .latitude(CURRENT_COORDINATES_LATITUDE_INVALID)
                 .longitude(CURRENT_COORDINATES_LONGITUDE)
-                .trafficOrderId(CURRENT_COORDINATES_TRAFFIC_ORDER_ID)
+                .tripId(CURRENT_COORDINATES_TRAFFIC_ORDER_ID)
                 .build();
     }
 
@@ -29,7 +29,7 @@ public class CurrentCoordinatesDtoFactory {
         return CurrentCoordinatesDto.of()
                 .latitude(CURRENT_COORDINATES_LATITUDE)
                 .longitude(CURRENT_COORDINATES_LONGITUDE_INVALID)
-                .trafficOrderId(CURRENT_COORDINATES_TRAFFIC_ORDER_ID)
+                .tripId(CURRENT_COORDINATES_TRAFFIC_ORDER_ID)
                 .build();
     }
 

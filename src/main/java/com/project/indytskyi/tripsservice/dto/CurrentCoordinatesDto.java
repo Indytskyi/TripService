@@ -19,7 +19,7 @@ public class CurrentCoordinatesDto {
 
     @ApiModelProperty(example = "3", value = "")
     @Min(value = 1, message = "trafficOrderId must have correct data")
-    private long trafficOrderId;
+    private long tripId;
 
     @ApiModelProperty(example = "3.567", value = "")
     @Range(min = -90, max = 90, message = "For latitude, use values in the range -90 to 90")

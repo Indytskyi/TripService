@@ -19,7 +19,7 @@ public class TripStartDtoFactory {
 
     public static TripStartDto createTripStartDto() {
         return TripStartDto.of()
-                .trafficOrderId(TRIP_START_OWNER_ID)
+                .tripId(TRIP_START_OWNER_ID)
                 .carId(TRIP_START_CAR_ID)
                 .userId(TRIP_START_USER_ID)
                 .status(TRIP_START_STATUS)

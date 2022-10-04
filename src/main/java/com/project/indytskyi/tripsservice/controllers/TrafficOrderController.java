@@ -5,7 +5,6 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
-import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class TrafficOrderController {
     private final TrafficOrderService trafficOrderService;
-    private final TrafficOrderDtoMapper trafficOrderDtoMapper;
 
     private final TripService tripService;
 
@@ -56,10 +54,9 @@ public class TrafficOrderController {
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
     public ResponseEntity<TrafficOrderDto> getTrafficOrder(@PathVariable("id") long id) {
-        log.info("Show traffic order by id = {}", id);
+        log.info("Show  order by id = {}", id);
         return ResponseEntity
-                .ok(trafficOrderDtoMapper
-                        .toTrafficOrderDto(trafficOrderService.findOne(id)));
+                .ok(tripService.getTripById(id));
     }
 
     /**

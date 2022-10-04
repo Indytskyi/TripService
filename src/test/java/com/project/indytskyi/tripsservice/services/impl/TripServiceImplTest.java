@@ -112,7 +112,7 @@ class TripServiceImplTest {
         String originalFileName = "umlDiagramOfEntity.png";
 
         //WHEN
-        when(trafficOrderService.findOne(anyLong())).thenReturn(trafficOrder);
+        when(trafficOrderService.findTrafficOrderById(anyLong())).thenReturn(trafficOrder);
         when(imageS3Service.saveFile(anyLong(), any())).thenReturn(originalFileName);
         doNothing().when(imageService).saveImages(trafficOrder, originalFileName);
         when(trafficOrderService.finishOrder(trafficOrder)).thenReturn(tripFinishDto);

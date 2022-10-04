@@ -17,7 +17,7 @@ import lombok.Data;
 public class TripStartDto {
 
     @ApiModelProperty(example = "27", value = "")
-    private long trafficOrderId;
+    private long tripId;
 
     @ApiModelProperty(example = "12", value = "")
     private long carId;

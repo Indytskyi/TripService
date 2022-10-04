@@ -122,7 +122,7 @@ class TrafficOrderControllerTest {
         TrafficOrderDto trafficOrderDto = createTrafficOrderDto();
 
         //WHEN
-        when(trafficOrderService.findOne(TRAFFIC_ORDER_ID)).thenReturn(trafficOrder);
+        when(trafficOrderService.findTrafficOrderById(TRAFFIC_ORDER_ID)).thenReturn(trafficOrder);
         when(trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder)).thenReturn(trafficOrderDto);
 
         mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
@@ -136,7 +136,7 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.tariff").value(TRAFFIC_ORDER_TARIFF));
 
         //THEN
-        verify(trafficOrderService).findOne(TRAFFIC_ORDER_ID);
+        verify(trafficOrderService).findTrafficOrderById(TRAFFIC_ORDER_ID);
 
     }
 
@@ -146,7 +146,7 @@ class TrafficOrderControllerTest {
     @DisplayName("Test finding a track by non existent id")
     void getTrackByNonExistentId() {
         //GIVEN
-        when(trafficOrderService.findOne(TRAFFIC_ORDER_ID))
+        when(trafficOrderService.findTrafficOrderById(TRAFFIC_ORDER_ID))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         //WHEN
@@ -155,7 +155,7 @@ class TrafficOrderControllerTest {
                 .andExpect(status().isNotFound());
 
         //THEN
-        verify(trafficOrderService).findOne(TRAFFIC_ORDER_ID);
+        verify(trafficOrderService).findTrafficOrderById(TRAFFIC_ORDER_ID);
     }
 
     @Test
@@ -175,7 +175,7 @@ class TrafficOrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tripActivationDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.trafficOrderId").value(TRAFFIC_ORDER_ID))
+                .andExpect(jsonPath("$.tripId").value(TRAFFIC_ORDER_ID))
                 .andExpect(jsonPath("$.carId").value(TRAFFIC_ORDER_CAR_ID))
                 .andExpect(jsonPath("$.userId").value(TRAFFIC_ORDER_USER_ID))
                 .andExpect(jsonPath("$.status").value(TRAFFIC_ORDER_STATUS))

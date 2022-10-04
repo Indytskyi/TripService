@@ -16,7 +16,7 @@ public interface TrafficOrderService {
     /**
      * find TrafficOrder by id and if we don`t have this id (throw the exception)
      */
-    TrafficOrderEntity findOne(long trafficOrderId);
+    TrafficOrderEntity findTrafficOrderById(long trafficOrderId);
 
     /**
      * stop order - status of orderTraffic will change to "STOP"

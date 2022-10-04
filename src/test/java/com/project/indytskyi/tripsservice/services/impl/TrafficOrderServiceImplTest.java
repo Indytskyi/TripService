@@ -76,7 +76,7 @@ class TrafficOrderServiceImplTest {
         //WHEN
         when(trafficsRepository.findById(1L)).thenReturn(Optional.of(orderEntity));
 
-        TrafficOrderEntity expected = underTest.findOne(1L);
+        TrafficOrderEntity expected = underTest.findTrafficOrderById(1L);
         //THEN
         assertEquals(expected, orderEntity);
     }
@@ -89,7 +89,7 @@ class TrafficOrderServiceImplTest {
         //WHEN
 
         //THEN
-        assertThatThrownBy(() -> underTest.findOne(1L))
+        assertThatThrownBy(() -> underTest.findTrafficOrderById(1L))
                 .isInstanceOf(ResponseStatusException.class);
 
     }

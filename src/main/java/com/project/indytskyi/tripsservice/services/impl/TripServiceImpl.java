@@ -1,9 +1,12 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
+import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
+import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.BackOfficeService;
@@ -35,6 +38,8 @@ public class TripServiceImpl implements TripService {
 
     private final StartMapper startMapper;
 
+    private final TrafficOrderDtoMapper trafficOrderDtoMapper;
+
     @Override
     public TripStartDto startTrip(TripActivationDto tripActivation) {
         log.info("Start trip");
@@ -49,7 +54,7 @@ public class TripServiceImpl implements TripService {
     @Override
     public TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files) {
         TrafficOrderEntity trafficOrder = trafficOrderService
-                .findOne(trafficOrderId);
+                .findTrafficOrderById(trafficOrderId);
 
         files.forEach(file -> {
             String originalFilename = imageS3Service.saveFile(trafficOrderId, file);
@@ -66,6 +71,20 @@ public class TripServiceImpl implements TripService {
         return tripFinishDto;
     }
 
+    @Override
+    public TrafficOrderDto getTripById(long trafficOrderId) {
+        TrafficOrderEntity trafficOrder = trafficOrderService
+                .findTrafficOrderById(trafficOrderId);
+
+        TrafficOrderDto trafficOrderDto = trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder);
+        trafficOrderDto.setPhotos(trafficOrder.getImages()
+                .stream()
+                .map(ImagesEntity::getImage)
+                .toList());
+
+        return trafficOrderDto;
+    }
+
     /**
      * this method create instance of class TripStartDTO which contains all information
      * about new traffic order and start track
@@ -76,7 +95,7 @@ public class TripServiceImpl implements TripService {
         TripStartDto tripStartDto = startMapper
                 .toStartDto(trafficOrderEntity, trackEntity);
 
-        tripStartDto.setTrafficOrderId(trafficOrderEntity.getId());
+        tripStartDto.setTripId(trafficOrderEntity.getId());
         tripStartDto.setTrackId(trackEntity.getId());
         return tripStartDto;
     }
