@@ -28,7 +28,6 @@ import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
-import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -75,8 +74,6 @@ class TrackControllerIntegrationTest {
     @MockBean
     private TrackService trackService;
 
-    @MockBean
-    private TrafficOrderService trafficOrderService;
 
     @MockBean
     private TrackDtoMapper trackDtoMapper;

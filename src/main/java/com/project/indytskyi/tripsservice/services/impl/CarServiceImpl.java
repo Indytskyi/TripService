@@ -1,18 +1,13 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
-import com.project.indytskyi.tripsservice.dto.car.CarUpdateInfoAfterTripDto;
-import com.project.indytskyi.tripsservice.dto.car.StartCoordinatesOfCarDto;
 import com.project.indytskyi.tripsservice.services.CarService;
 import com.project.indytskyi.tripsservice.util.CarStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
@@ -53,28 +48,6 @@ public class CarServiceImpl implements CarService {
                 .retrieve()
                 .bodyToMono(Object.class)
                 .share()
-                .block();
-    }
-
-    @Override
-    public void setCarAfterFinishingOrder(TripFinishDto tripFinishDto) {
-
-        log.info("set information to car after the end of the trip");
-
-        CarUpdateInfoAfterTripDto carUpdateInfoAfterTripDto = new CarUpdateInfoAfterTripDto();
-        carUpdateInfoAfterTripDto.setCarStatus(String.valueOf(CarStatus.FREE));
-        carUpdateInfoAfterTripDto
-                .setCoordinates(new StartCoordinatesOfCarDto(tripFinishDto.getLatitude(),
-                        tripFinishDto.getLongitude()));
-        carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
-        carUpdateInfoAfterTripDto.setFuelLevelLiter(5);
-
-        Object response = carWebClient.post()
-                .uri(String.valueOf(tripFinishDto.getCarId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(carUpdateInfoAfterTripDto))
-                .retrieve()
-                .bodyToMono(Object.class)
                 .block();
     }
 

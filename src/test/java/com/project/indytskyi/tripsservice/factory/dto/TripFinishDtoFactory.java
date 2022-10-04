@@ -10,7 +10,7 @@ public class TripFinishDtoFactory {
     public static final long TRIP_FINISH_DTO_USER_ID = 22;
     public static final double TRIP_FINISH_DTO_DISTANCE = 0;
 
-    public static TripFinishDto createTripFinishDto() {
+        public static TripFinishDto createTripFinishDto() {
         return TripFinishDto.of()
                 .latitude(TRIP_FINISH_DTO_LATITUDE)
                 .longitude(TRIP_FINISH_DTO_LONGITUDE)

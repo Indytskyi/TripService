@@ -1,88 +1,69 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 //@SpringBootTest()
 //@Testcontainers
-@Slf4j
-@Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
+import com.project.indytskyi.tripsservice.TripsServiceApplication;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+//@Import(KafkaServiceImplTest.KafkaTestContainersConfiguration.class)
+@SpringBootTest(classes = TripsServiceApplication.class)
 @DirtiesContext
 class KafkaServiceImplTest {
 
-//    @Container
-//    static KafkaContainer kafka = new KafkaContainer(
-//            DockerImageName.parse("confluentinc/cp-kafka:latest")
-//    );
 //
-//    @BeforeAll
-//    static void beforeAll() {
-//        kafka.start();
-//    }
+//    @ClassRule
+//    public static KafkaContainer kafka =
+//            new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
+//
 //
 //    @Autowired
-//    KafkaService kafkaService;
+//    private KafkaServiceImpl producer;
 //
-//    @Autowired
-//    KafkaAdmin admin;
+//    @BeforeClass
+//    public static void beforeClass() throws Exception {
 //
-//
-//
-//    private String kafkaCarTopic;
+//    }
 //
 //    @Test
-//    public void testSendInformationToCarTopic() {
-//
-//    }
-//
-//    @DynamicPropertySource
-//    public static void properties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.kafka.properties.bootstrap.servers",kafka::getBootstrapServers);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void testCreationOfTopicAtStartup()  {
-//        AdminClient client = AdminClient.create(admin.getConfigurationProperties());
-//        Collection<TopicListing> topicList = client.listTopics().listings().get();
-//        assertNotNull(topicList);
-//        assertEquals(topicList.stream().map(l -> l.name()).collect(Collectors.toList()), Arrays.asList("create-employee-events","springboot-topic"));
-//    }
-
-
-
-
-
-    //    @Container
-//    static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"));
-//
-//    @DynamicPropertySource
-//    static void kafkaProperties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
-//    }
-//
-//    @Autowired
-//    private KafkaCarProducerConfig kafkaCarProducerConfig;
-//
-//    @MockBean
-//    private KafkaServiceImpl kafkaService;
-//
-//    @Test
-//    void test1() {
-//        ArgumentCaptor<TripFinishDto> captor =
-//                ArgumentCaptor.forClass(TripFinishDto.class);
-//
-//        CarUpdateInfoAfterTripDto carUpdate = createCarUpdateDto();
+//    public void testCarKafka() {
 //        TripFinishDto tripFinishDto = createTripFinishDto();
+//        producer.sendOrderToCarService(tripFinishDto);
 //
-//        kafkaService.sendOrderToCarService(tripFinishDto);
+//    }
 //
-//        verify(kafkaService, times(1))
-//                .sendOrderToCarService(captor.capture());
-//        assertNotNull(captor.getValue());
+//
+//    @Test
+//    public void testBackofficeKafka() {
+//        TrafficOrderEntity trafficOrder = createTrafficOrder();
+//        producer.sendOrderToBackOfficeService(trafficOrder, 200);
+//
+//    }
+//
+//
+//    @TestConfiguration
+//    static class KafkaTestContainersConfiguration {
+//
+//
+//
+//        @Bean
+//        public ProducerFactory<String, String> producerFactory() {
+//            Map<String, Object> configProps = new HashMap<>();
+//            configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
+//            configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//            configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//            return new DefaultKafkaProducerFactory<>(configProps);
+//        }
+//
+//        @Bean
+//        public KafkaTemplate<String, String> kafkaTemplate() {
+//            return new KafkaTemplate<>(producerFactory());
+//        }
+//
 //    }
 
 }

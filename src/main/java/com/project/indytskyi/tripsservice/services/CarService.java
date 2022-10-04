@@ -1,7 +1,6 @@
 package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 
 public interface CarService {
 
@@ -20,12 +19,5 @@ public interface CarService {
      * from FREE to RENTED
      */
     void setCarStatus(long carId);
-
-    /**
-     * the method that cals put request in car-service
-     * and set in car the last coordinates of car after trip,
-     * distance, fuel level and status of car
-     */
-    void setCarAfterFinishingOrder(TripFinishDto tripFinishDto);
 
 }
