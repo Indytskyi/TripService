@@ -22,6 +22,8 @@ public class PictureValidationAspect {
     private final String firstFormatFile = "jpg";
     private final String secondFormatFile = "png";
 
+    private List<ErrorResponse> errorResponses;
+
     @Around("@annotation(PictureValidation)")
     public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
 
@@ -29,7 +31,7 @@ public class PictureValidationAspect {
 
         log.info("Start validating files");
 
-        List<ErrorResponse> errorResponses = new ArrayList<>();
+        errorResponses = new ArrayList<>();
 
         if (files.size() != numberOfPictures) {
             log.error("The number of photos must be exactly 3");
@@ -38,27 +40,29 @@ public class PictureValidationAspect {
             throw new ApiValidationException(errorResponses);
         }
 
-        files.forEach(file -> {
-            String imageName = file.getOriginalFilename();
-            if (!imageName.endsWith(secondFormatFile)
-                    && !imageName.endsWith(firstFormatFile)) {
-                log.error("Incorrect format of file = {}", file.getOriginalFilename());
-                errorResponses.add(new ErrorResponse(file.getOriginalFilename(),
-                        "Incorrect format of file. Only images with format (jpg or png)"));
-            }
-
-            if (file.getSize() > sizeOfOnePicture) {
-                log.error("Incorrect size of file = {}", file.getOriginalFilename());
-                errorResponses.add(new ErrorResponse(imageName,
-                        "Incorrect size of file. Must be less than 3 mb"));
-            }
-        });
+        files.forEach(this::validateFile);
 
         if (!errorResponses.isEmpty()) {
             throw new ApiValidationException(errorResponses);
         }
 
         return joinPoint.proceed();
+    }
+
+    private void validateFile(MultipartFile file) {
+        String imageName = file.getOriginalFilename();
+        if (!imageName.endsWith(secondFormatFile)
+                && !imageName.endsWith(firstFormatFile)) {
+            log.error("Incorrect format of file = {}", file.getOriginalFilename());
+            errorResponses.add(new ErrorResponse(file.getOriginalFilename(),
+                    "Incorrect format of file. Only images with format (jpg or png)"));
+        }
+
+        if (file.getSize() > sizeOfOnePicture) {
+            log.error("Incorrect size of file = {}", file.getOriginalFilename());
+            errorResponses.add(new ErrorResponse(imageName,
+                    "Incorrect size of file. Must be less than 3 mb"));
+        }
     }
 
 }

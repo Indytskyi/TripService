@@ -4,6 +4,7 @@ import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
+import com.project.indytskyi.tripsservice.util.Status;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +24,18 @@ public class TrafficOrderValidation {
 
         Optional<TrafficOrderEntity> trafficOrderEntityOptional = trafficsRepository
                 .findFirstByUserIdOrderByIdDesc(userId);
-        if (trafficOrderEntityOptional.isPresent()) {
-            if (trafficOrderEntityOptional.get().getStatus().equals("IN_ORDER")) {
-                List<ErrorResponse> exception = List.of(new ErrorResponse("userId: " + userId,
-                        "You have already started the trip."
-                                + "Finish the previous one to start a new one")
-                );
+        if (trafficOrderEntityOptional.isPresent()
+                && trafficOrderEntityOptional.get()
+                .getStatus().equals(String.valueOf(Status.IN_ORDER))) {
+            List<ErrorResponse> exception = List.of(new ErrorResponse("userId: " + userId,
+                    "You have already started the trip."
+                            + "Finish the previous one to start a new one")
+            );
 
-                log.error("the previous trip don`t finish ");
+            log.error("the previous trip don`t finish ");
 
-                throw new ApiValidationException(exception);
-            }
+            throw new ApiValidationException(exception);
+
         }
     }
 }
