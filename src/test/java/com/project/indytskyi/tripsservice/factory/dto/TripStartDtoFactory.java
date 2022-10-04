@@ -1,8 +1,8 @@
 package com.project.indytskyi.tripsservice.factory.dto;
 
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
-import com.project.indytskyi.tripsservice.util.Status;
-import com.project.indytskyi.tripsservice.util.StatusPaid;
+import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
 
 public class TripStartDtoFactory {
     private static final long TRIP_START_OWNER_ID = 22L;

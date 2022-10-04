@@ -1,8 +1,8 @@
 package com.project.indytskyi.tripsservice.factory.dto;
 
 import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
-import com.project.indytskyi.tripsservice.util.Status;
-import com.project.indytskyi.tripsservice.util.StatusPaid;
+import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
 import java.time.LocalDateTime;
 
 public class TrafficOrderDtoFactory {

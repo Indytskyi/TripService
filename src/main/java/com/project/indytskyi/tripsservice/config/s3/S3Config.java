@@ -25,7 +25,6 @@ public class S3Config {
      */
     @Bean
     public AmazonS3 s3() {
-
         return AmazonS3ClientBuilder
                 .standard()
                 .withRegion(region)
@@ -35,7 +34,6 @@ public class S3Config {
 
     public AWSStaticCredentialsProvider initializationCredentials() {
         return new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secret));
-
     }
 
 }

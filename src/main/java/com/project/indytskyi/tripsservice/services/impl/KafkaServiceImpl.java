@@ -6,7 +6,7 @@ import com.project.indytskyi.tripsservice.dto.car.CarUpdateInfoAfterTripDto;
 import com.project.indytskyi.tripsservice.dto.car.StartCoordinatesOfCarDto;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.KafkaService;
-import com.project.indytskyi.tripsservice.util.CarStatus;
+import com.project.indytskyi.tripsservice.util.enums.CarStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +20,7 @@ public class KafkaServiceImpl implements KafkaService {
 
     private final KafkaTemplate<String, BackOfficeDto> backOfficeDtoKafkaTemplate;
     private final KafkaTemplate<String, CarUpdateInfoAfterTripDto> carFinishDtoKafkaTemplate;
+    private final double defaultFuelLevelLiter = 5;
 
     @Value("${kafka.backoffice}")
     private String kafkaBackOfficeTopic;
@@ -43,7 +44,8 @@ public class KafkaServiceImpl implements KafkaService {
 
     @Override
     public void sendOrderToCarService(TripFinishDto tripFinishDto) {
-        log.info("set information to car after the end of the trip");
+        log.info("set information to car with id = {} after the end of the trip",
+                tripFinishDto.getCarId());
 
         CarUpdateInfoAfterTripDto carUpdateInfoAfterTripDto = new CarUpdateInfoAfterTripDto();
         carUpdateInfoAfterTripDto.setCarStatus(String.valueOf(CarStatus.FREE));
@@ -52,7 +54,7 @@ public class KafkaServiceImpl implements KafkaService {
                 tripFinishDto.getLongitude()
         ));
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
-        carUpdateInfoAfterTripDto.setFuelLevelLiter(5);
+        carUpdateInfoAfterTripDto.setFuelLevelLiter(defaultFuelLevelLiter);
         carUpdateInfoAfterTripDto.setId(tripFinishDto.getCarId());
         System.out.println(carUpdateInfoAfterTripDto);
         carFinishDtoKafkaTemplate.send(kafkaCarTopic, carUpdateInfoAfterTripDto);

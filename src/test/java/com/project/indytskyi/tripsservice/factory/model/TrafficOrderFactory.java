@@ -4,8 +4,8 @@ import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.crea
 
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
-import com.project.indytskyi.tripsservice.util.Status;
-import com.project.indytskyi.tripsservice.util.StatusPaid;
+import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
 import java.time.LocalDateTime;
 import java.util.List;
 

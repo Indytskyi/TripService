@@ -4,7 +4,7 @@ import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
-import com.project.indytskyi.tripsservice.util.Status;
+import com.project.indytskyi.tripsservice.util.enums.Status;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,7 @@ package com.project.indytskyi.tripsservice.services.impl;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.services.CarService;
-import com.project.indytskyi.tripsservice.util.CarStatus;
+import com.project.indytskyi.tripsservice.util.enums.CarStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
