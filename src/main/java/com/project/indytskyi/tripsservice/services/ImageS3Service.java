@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.services;
 
+import java.net.URL;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageS3Service {
@@ -19,5 +20,5 @@ public interface ImageS3Service {
      * by path of this photo.
      * and return photo in byte format
      */
-    byte[] downloadFile(String path);
+    URL downloadFile(String path);
 }

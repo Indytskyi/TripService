@@ -102,7 +102,7 @@ class TrafficOrderServiceImplTest {
 
         //WHEN
         lenient().when(trafficsRepository.findById(any())).thenReturn(Optional.of(orderEntity));
-        underTest.stopOrder(1);
+        underTest.changeStatusOrder(1);
 
         //THEN
         assertEquals(expected, orderEntity.getStatus());

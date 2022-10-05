@@ -3,6 +3,8 @@ package com.project.indytskyi.tripsservice.services.impl;
 import com.project.indytskyi.tripsservice.dto.AllTracksDto;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
+import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
+import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.CurrentCoordinatesMapper;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
@@ -11,8 +13,10 @@ import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.Gfg;
+import com.project.indytskyi.tripsservice.util.enums.Status;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -51,6 +55,10 @@ public class TrackServiceImpl implements TrackService {
         final TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(currentCoordinates.getTripId());
 
+        if (!trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
+            throw new ApiValidationException(List.of(new ErrorResponse("status",
+                    "The machine has stopped, take the machine off pause")));
+        }
         final TrackEntity track = initializationNewTrack(currentCoordinates);
         final TrackEntity lastTrack = getLastTrack(trafficOrder);
         final double distanceBetweenTwoCoordinates =

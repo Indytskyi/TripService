@@ -1,5 +1,7 @@
 package com.project.indytskyi.tripsservice.services;
 
+import com.project.indytskyi.tripsservice.dto.LInksToImagesDto;
+import com.project.indytskyi.tripsservice.dto.StatusDto;
 import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
@@ -28,4 +30,13 @@ public interface TripService {
      * the admin also get links to photos
      */
     TrafficOrderDto getTripById(long trafficOrderId);
+
+
+    /**
+     * change status of trip
+     *
+     */
+    TrafficOrderDto changeTripStatus(long trafficOrderId, StatusDto statusDto);
+
+    LInksToImagesDto generatingDownloadLinks(long trafficOrderId);
 }

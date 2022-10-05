@@ -1,18 +1,16 @@
 package com.project.indytskyi.tripsservice.controllers;
 
-import com.project.indytskyi.tripsservice.services.ImageS3Service;
-import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import com.project.indytskyi.tripsservice.dto.LInksToImagesDto;
+import com.project.indytskyi.tripsservice.services.TripService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,23 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ImageController {
 
-    private final TrafficOrderService trafficOrderService;
-    private final ImageS3Service imageS3Service;
+    private final TripService tripService;
 
     @ApiOperation(value = "Download file by path of this file")
     @ApiResponse(code = 400, message = "Invalid path")
     @SneakyThrows
-    @GetMapping("/image")
-    public HttpEntity<byte[]> downloadImage(@RequestParam("path") String path) {
-        log.info("Uploading image by path = {}", path);
-        MediaType contentType = path.endsWith("jpg") ? MediaType.IMAGE_JPEG
-                                    : MediaType.IMAGE_PNG;
-        byte[] image = imageS3Service.downloadFile(path);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(contentType);
-        headers.setContentLength(image.length);
+    @GetMapping("{id}/image")
+    public ResponseEntity<LInksToImagesDto> downloadImage(@PathVariable("id") long trafficOrderId) {
+        log.info("forming links for downloading, for the trip  = {}", trafficOrderId);
 
-        return new HttpEntity<>(image, headers);
+        return ResponseEntity.ok(tripService.generatingDownloadLinks(trafficOrderId));
     }
 
 }

@@ -1,14 +1,13 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
 import com.project.indytskyi.tripsservice.exceptions.DamagedFileException;
-import com.project.indytskyi.tripsservice.exceptions.FileUploadException;
 import com.project.indytskyi.tripsservice.services.ImageS3Service;
 import java.io.IOException;
+import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,15 +46,20 @@ public class ImageS3ServiceImpl implements ImageS3Service {
     }
 
     @Override
-    public byte[] downloadFile(String path) {
-        S3Object object = s3.getObject(bucketName, path);
+    public URL downloadFile(String path) {
+        java.util.Date expiration = new java.util.Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 60;
 
-        S3ObjectInputStream objectContent = object.getObjectContent();
-        try {
-            return IOUtils.toByteArray(objectContent);
-        } catch (IOException e) {
-            throw new FileUploadException("File upload error! Try again!");
-        }
+        expiration.setTime(expTimeMillis);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, path)
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(expiration);
+        return s3.generatePresignedUrl(generatePresignedUrlRequest);
+
     }
+
+
 
 }

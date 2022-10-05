@@ -200,7 +200,7 @@ class TrafficOrderControllerTest {
                 .andExpect(status().isOk());
 
         //THEN
-        verify(trafficOrderService).stopOrder(TRAFFIC_ORDER_ID);
+        verify(trafficOrderService).changeStatusOrder(TRAFFIC_ORDER_ID);
 
     }
 

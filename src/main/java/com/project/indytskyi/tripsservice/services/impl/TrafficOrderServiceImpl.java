@@ -13,7 +13,6 @@ import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
 import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     private final TrafficsRepository trafficsRepository;
     private final TrafficOrderMapper trafficOrderMapper;
+
     private final TripFinishMapper tripFinishMapper;
 
     private final TrafficOrderValidation trafficOrderValidation;
@@ -47,16 +47,6 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
     public TrafficOrderEntity findTrafficOrderById(long id) {
         return trafficsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @Transactional
-    @Override
-    public Map<String, String> stopOrder(long trafficOrderId) {
-        findTrafficOrderById(trafficOrderId).setStatus(String.valueOf(Status.STOP));
-        return Map.of(
-                "message", "The trip is stopped. Take pictures of the car",
-                "status", String.valueOf(Status.STOP)
-        );
     }
 
     @Transactional
