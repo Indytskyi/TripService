@@ -16,7 +16,7 @@ public interface TripService {
      * initialization of traffic order and create start track
      *
      */
-    TripStartDto startTrip(TripActivationDto tripActivation);
+    TripStartDto startTrip(TripActivationDto tripActivation, String token);
 
     /**
      * Method where you finish your order and send json to another microservices

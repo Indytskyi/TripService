@@ -39,10 +39,11 @@ public class TrafficOrderController {
     @ApiOperation(value = "Create traffic order and start tracking last coordinates of the car")
     @ApiResponse(code = 400, message = "Invalid some data")
     @PostMapping
-    public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
+    public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation,
+                                             @RequestParam("token") String token) {
         log.info("Create new traffic order and start track");
 
-        return ResponseEntity.ok(tripService.startTrip(tripActivation));
+        return ResponseEntity.ok(tripService.startTrip(tripActivation, token));
     }
 
     /**

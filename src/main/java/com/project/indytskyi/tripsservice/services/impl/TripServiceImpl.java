@@ -6,6 +6,7 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
 import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
@@ -21,6 +22,7 @@ import com.project.indytskyi.tripsservice.services.KafkaService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
+import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
 import java.net.URL;
 import java.util.List;
@@ -47,9 +49,15 @@ public class TripServiceImpl implements TripService {
 
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
 
+    private final UserService userService;
+
     @Override
-    public TripStartDto startTrip(TripActivationDto tripActivation) {
+    public TripStartDto startTrip(TripActivationDto tripActivation, String token) {
         log.info("Start trip");
+        ValidateUserResponseDto responseDto = userService.validateUserToken(token);
+
+
+
         String carClass = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
         tripActivation.setTariff(backOfficeService.getCarTariff(carClass));

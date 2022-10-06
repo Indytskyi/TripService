@@ -14,6 +14,9 @@ public class WebClientConfiguration {
     @Value("${backOffice.url}")
     private String basicUrlBackOffice;
 
+    @Value("${user.url}")
+    private String basicUrlUser;
+
     @Bean
     public WebClient carWebClient() {
         return WebClient.builder()
@@ -25,6 +28,12 @@ public class WebClientConfiguration {
     public WebClient backOfficeWebClient() {
         return WebClient.builder()
                 .baseUrl(basicUrlBackOffice)
+                .build();
+    }
+
+    @Bean WebClient userWebClient() {
+        return WebClient.builder()
+                .baseUrl(basicUrlUser)
                 .build();
     }
 
