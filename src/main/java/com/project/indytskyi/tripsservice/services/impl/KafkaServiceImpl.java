@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaServiceImpl implements KafkaService {
 
+    private static final double DEFAULT_FUEL_LEVEL_LITERS = 5;
     private final KafkaTemplate<String, BackOfficeDto> backOfficeDtoKafkaTemplate;
     private final KafkaTemplate<String, CarUpdateInfoAfterTripDto> carFinishDtoKafkaTemplate;
-    private final double defaultFuelLevelLiter = 5;
 
     @Value("${kafka.backoffice}")
     private String kafkaBackOfficeTopic;
@@ -37,7 +37,7 @@ public class KafkaServiceImpl implements KafkaService {
                 .startDateTime(trafficOrder.getActivationTime())
                 .endDateTime(trafficOrder.getCompletionTime())
                 .ratePerHour(trafficOrder.getTariff())
-                .build();System.out.println(backOfficeDto);
+                .build();
 
         backOfficeDtoKafkaTemplate.send(kafkaBackOfficeTopic, backOfficeDto);
     }
@@ -47,15 +47,17 @@ public class KafkaServiceImpl implements KafkaService {
         log.info("set information to car with id = {} after the end of the trip",
                 tripFinishDto.getCarId());
 
-        CarUpdateInfoAfterTripDto carUpdateInfoAfterTripDto = new CarUpdateInfoAfterTripDto();
-        carUpdateInfoAfterTripDto.setCarStatus(String.valueOf(CarStatus.FREE));
-        carUpdateInfoAfterTripDto.setCoordinates(new StartCoordinatesOfCarDto(
-                tripFinishDto.getLatitude(),
-                tripFinishDto.getLongitude()
-        ));
-        carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
-        carUpdateInfoAfterTripDto.setFuelLevelLiter(defaultFuelLevelLiter);
-        carUpdateInfoAfterTripDto.setId(tripFinishDto.getCarId());
+        CarUpdateInfoAfterTripDto carUpdateInfoAfterTripDto =
+                CarUpdateInfoAfterTripDto.of()
+                        .carStatus(CarStatus.FREE.name())
+                        .coordinates(new StartCoordinatesOfCarDto(
+                                tripFinishDto.getLatitude(),
+                                tripFinishDto.getLongitude()
+                        ))
+                        .distanceInKilometers(tripFinishDto.getDistance())
+                        .fuelLevelLiter(DEFAULT_FUEL_LEVEL_LITERS)
+                        .id(tripFinishDto.getCarId())
+                        .build();
 
         carFinishDtoKafkaTemplate.send(kafkaCarTopic, carUpdateInfoAfterTripDto);
     }

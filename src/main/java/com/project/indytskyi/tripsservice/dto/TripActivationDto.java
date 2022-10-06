@@ -16,6 +16,7 @@ import org.hibernate.validator.constraints.Range;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class TripActivationDto {
+
     @ApiModelProperty(example = "12", value = "")
     @Min(value = 1, message = "CarId must have correct data")
     private long carId;

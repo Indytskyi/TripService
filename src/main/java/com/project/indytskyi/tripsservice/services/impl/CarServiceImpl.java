@@ -7,7 +7,6 @@ import com.project.indytskyi.tripsservice.util.enums.CarStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
@@ -31,16 +30,14 @@ public class CarServiceImpl implements CarService {
                 .block();
     }
 
-    //TODO refactor this
     @Override
-    @Transactional
     public void setCarStatus(long carId) {
         log.info("set status to car by carId = {}", carId);
-        String h = String.valueOf(CarStatus.RENTED);
+
         Object o = carWebClient.patch()
                 .uri(uriBuilder -> uriBuilder
                         .path("status/" + carId)
-                        .queryParam("carStatus", h)
+                        .queryParam("carStatus", CarStatus.RENTED.name())
                         .build())
                 .retrieve()
                 .bodyToMono(Object.class)

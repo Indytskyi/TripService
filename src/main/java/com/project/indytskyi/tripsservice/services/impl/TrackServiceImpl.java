@@ -45,7 +45,6 @@ public class TrackServiceImpl implements TrackService {
         return tracksRepository.save(track);
     }
 
-
     @Override
     public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
 
@@ -72,12 +71,14 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public TrackEntity findOne(long id) {
+
         return tracksRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
     public AllTracksDto getListOfAllCoordinates(long id) {
+
         return AllTracksDto.of()
                 .trafficOrderId(id)
                 .tracks(trafficOrderService.findTrafficOrderById(id)
@@ -92,12 +93,12 @@ public class TrackServiceImpl implements TrackService {
      * create new Track and initialize it after that return it to instanceTrack or createStartTrack
      */
     private TrackEntity initializationNewTrack(CurrentCoordinatesDto currentCoordinates) {
-        TrackEntity track = new TrackEntity();
-        track.setLatitude(currentCoordinates.getLatitude());
-        track.setLongitude(currentCoordinates.getLongitude());
-        track.setTimestamp(LocalDateTime.now());
-        //TODO use builder
-        return track;
+
+        return TrackEntity.of()
+                .latitude(currentCoordinates.getLatitude())
+                .longitude(currentCoordinates.getLongitude())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     /**
@@ -124,9 +125,10 @@ public class TrackServiceImpl implements TrackService {
     private int getCurrentSpeed(double distance,
                                 LocalDateTime previousTimestamp,
                                 LocalDateTime currentTimestamp) {
+
         double time = currentTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
                 - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
-        ;
+
         return (int) ((distance / (time)) * 3600000);
     }
 

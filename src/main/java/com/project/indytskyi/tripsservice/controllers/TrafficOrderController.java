@@ -40,8 +40,8 @@ public class TrafficOrderController {
     @ApiResponse(code = 400, message = "Invalid some data")
     @PostMapping
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation) {
-        log.info("Create new traffic order and start track");
 
+        log.info("Create new traffic order and start track");
         return ResponseEntity.ok(tripService.startTrip(tripActivation));
     }
 
@@ -52,9 +52,9 @@ public class TrafficOrderController {
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
     public ResponseEntity<TrafficOrderDto> getTrafficOrder(@PathVariable("id") long id) {
+
         log.info("Show  order by id = {}", id);
-        return ResponseEntity
-                .ok(tripService.getTripById(id));
+        return ResponseEntity.ok(tripService.getTripById(id));
     }
 
     /**
@@ -65,6 +65,7 @@ public class TrafficOrderController {
     @PatchMapping("{id}/status")
     public ResponseEntity<TrafficOrderDto> changeTripStatus(@PathVariable("id") long trafficOrderId,
                                                     @RequestBody StatusDto statusDto) {
+
         log.info("Stop traffic order by id = {}", trafficOrderId);
         return ResponseEntity.ok(tripService.changeTripStatus(trafficOrderId, statusDto));
     }
@@ -78,8 +79,8 @@ public class TrafficOrderController {
     @PictureValidation
     public ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId,
                                                 @RequestParam("files") List<MultipartFile> files) {
-        log.info("Finish traffic order by id = {}", trafficOrderId);
 
+        log.info("Finish traffic order by id = {}", trafficOrderId);
         return ResponseEntity.ok(tripService.finishTrip(trafficOrderId, files));
     }
 

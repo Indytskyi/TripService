@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class TrackController {
+
     private final TrackService trackService;
     private final TrackDtoMapper trackDtoMapper;
 
@@ -36,8 +37,8 @@ public class TrackController {
     @ApiResponse(code = 400, message = "Invalid track Id")
     @GetMapping("track/{id}")
     public ResponseEntity<TrackDto> getTrack(@PathVariable("id") long id) {
-        log.info("Show track by id = {}", id);
 
+        log.info("Show track by id = {}", id);
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService.findOne(id)));
     }
@@ -46,6 +47,7 @@ public class TrackController {
     @ApiResponse(code = 400, message = "Invalid order Id")
     @GetMapping("{id}/tracks")
     public ResponseEntity<AllTracksDto> getAllTracksByOrderId(@PathVariable("id") long id) {
+
         log.info("Show all tracks  by order id = {}", id);
         return ResponseEntity.ok(trackService.getListOfAllCoordinates(id));
     }

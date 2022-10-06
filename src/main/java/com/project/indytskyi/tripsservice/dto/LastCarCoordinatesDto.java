@@ -9,5 +9,4 @@ public class LastCarCoordinatesDto {
     private double latitude;
     private double longitude;
     private double distance;
-
 }

@@ -26,8 +26,8 @@ public class ImageController {
     @SneakyThrows
     @GetMapping("{id}/image")
     public ResponseEntity<LInksToImagesDto> downloadImage(@PathVariable("id") long trafficOrderId) {
-        log.info("forming links for downloading, for the trip  = {}", trafficOrderId);
 
+        log.info("forming links for downloading, for the trip  = {}", trafficOrderId);
         return ResponseEntity.ok(tripService.generatingDownloadLinks(trafficOrderId));
     }
 

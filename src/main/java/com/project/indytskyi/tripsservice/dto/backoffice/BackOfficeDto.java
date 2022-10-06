@@ -13,17 +13,10 @@ import lombok.ToString;
 @Builder(toBuilder = true, builderMethodName = "of")
 @ToString
 public class BackOfficeDto {
-
     private LocalDateTime startDateTime;
-
     private LocalDateTime endDateTime;
-
     private double price;
-
     private int carId;
-
     private double ratePerHour;
-
     private int userId;
-
 }
