@@ -37,8 +37,8 @@ public class KafkaServiceImpl implements KafkaService {
                 .startDateTime(trafficOrder.getActivationTime())
                 .endDateTime(trafficOrder.getCompletionTime())
                 .ratePerHour(trafficOrder.getTariff())
-                .build();
-        System.out.println(backOfficeDto);
+                .build();System.out.println(backOfficeDto);
+
         backOfficeDtoKafkaTemplate.send(kafkaBackOfficeTopic, backOfficeDto);
     }
 
@@ -56,7 +56,7 @@ public class KafkaServiceImpl implements KafkaService {
         carUpdateInfoAfterTripDto.setDistanceInKilometers(tripFinishDto.getDistance());
         carUpdateInfoAfterTripDto.setFuelLevelLiter(defaultFuelLevelLiter);
         carUpdateInfoAfterTripDto.setId(tripFinishDto.getCarId());
-        System.out.println(carUpdateInfoAfterTripDto);
+
         carFinishDtoKafkaTemplate.send(kafkaCarTopic, carUpdateInfoAfterTripDto);
     }
 

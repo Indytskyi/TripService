@@ -18,23 +18,20 @@ public class CarServiceImpl implements CarService {
     private final WebClient carWebClient;
 
     @Override
-    public String getCarInfo(TripActivationDto tripActivationDto) {
+    public CarDto getCarInfo(TripActivationDto tripActivationDto) {
 
-        log.info("get car from Cas-service, carId = {}", tripActivationDto.getCarId());
+        log.info("get car from Car-service, carId = {}", tripActivationDto.getCarId());
 
-        CarDto carDto = carWebClient
+        return carWebClient
                 .get()
                 .uri(String.valueOf(tripActivationDto.getCarId()))
                 .retrieve()
                 .bodyToMono(CarDto.class)
                 .share()
                 .block();
-
-        tripActivationDto.setLongitude(carDto.getCoordinates().getLongitude());
-        tripActivationDto.setLatitude(carDto.getCoordinates().getLatitude());
-        return carDto.getCarClass();
     }
 
+    //TODO refactor this
     @Override
     @Transactional
     public void setCarStatus(long carId) {

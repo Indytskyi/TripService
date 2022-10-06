@@ -11,13 +11,14 @@ import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
 import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
 import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +26,7 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     private final TrafficsRepository trafficsRepository;
     private final TrafficOrderMapper trafficOrderMapper;
-
     private final TripFinishMapper tripFinishMapper;
-
     private final TrafficOrderValidation trafficOrderValidation;
 
     @Override
@@ -49,6 +48,8 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+
+    // TODO remove  @Transactional
     @Transactional
     @Override
     public TripFinishDto finishOrder(TrafficOrderEntity trafficOrder) {

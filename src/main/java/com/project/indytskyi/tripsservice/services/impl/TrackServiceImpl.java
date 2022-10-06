@@ -14,14 +14,14 @@ import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.Gfg;
 import com.project.indytskyi.tripsservice.util.enums.Status;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
 
 
 /**
@@ -33,14 +33,11 @@ public class TrackServiceImpl implements TrackService {
 
     private final TracksRepository tracksRepository;
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
-
     private final TrafficOrderService trafficOrderService;
-
     private final TrackDtoMapper trackDtoMapper;
 
     @Override
-    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
-                                      TripActivationDto tripActivation) {
+    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder, TripActivationDto tripActivation) {
 
         TrackEntity track = initializationNewTrack(currentCoordinatesMapper
                 .toCurrentCoordinates(tripActivation));
@@ -48,28 +45,29 @@ public class TrackServiceImpl implements TrackService {
         return tracksRepository.save(track);
     }
 
-    @Transactional
+
     @Override
     public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
 
         final TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(currentCoordinates.getTripId());
 
-        if (!trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
-            throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "The machine has stopped, take the machine off pause")));
+        if (trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
+            final TrackEntity track = initializationNewTrack(currentCoordinates);
+            final TrackEntity lastTrack = getLastTrack(trafficOrder);
+            final double distanceBetweenTwoCoordinates =
+                    getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
+            final double distance = lastTrack.getDistance() + distanceBetweenTwoCoordinates;
+
+            track.setDistance(distance);
+            track.setOwnerTrack(trafficOrder);
+            track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates, lastTrack.getTimestamp(), track.getTimestamp()));
+
+            return tracksRepository.save(track);
         }
-        final TrackEntity track = initializationNewTrack(currentCoordinates);
-        final TrackEntity lastTrack = getLastTrack(trafficOrder);
-        final double distanceBetweenTwoCoordinates =
-                getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
-        final double distance = lastTrack.getDistance()
-                + distanceBetweenTwoCoordinates;
-        track.setDistance(distance);
-        track.setOwnerTrack(trafficOrder);
-        track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
-                lastTrack.getTimestamp(), track.getTimestamp()));
-        return tracksRepository.save(track);
+
+        throw new ApiValidationException(List.of(new ErrorResponse("status",
+                "The machine has stopped, take the machine off pause")));
     }
 
     @Override
@@ -98,6 +96,7 @@ public class TrackServiceImpl implements TrackService {
         track.setLatitude(currentCoordinates.getLatitude());
         track.setLongitude(currentCoordinates.getLongitude());
         track.setTimestamp(LocalDateTime.now());
+        //TODO use builder
         return track;
     }
 

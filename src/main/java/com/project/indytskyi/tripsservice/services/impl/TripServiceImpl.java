@@ -1,11 +1,7 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
-import com.project.indytskyi.tripsservice.dto.LInksToImagesDto;
-import com.project.indytskyi.tripsservice.dto.StatusDto;
-import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
-import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.dto.TripFinishDto;
-import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.dto.*;
+import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
@@ -13,22 +9,16 @@ import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.ImagesEntity;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
-import com.project.indytskyi.tripsservice.services.BackOfficeService;
-import com.project.indytskyi.tripsservice.services.CarService;
-import com.project.indytskyi.tripsservice.services.ImageS3Service;
-import com.project.indytskyi.tripsservice.services.ImageService;
-import com.project.indytskyi.tripsservice.services.KafkaService;
-import com.project.indytskyi.tripsservice.services.TrackService;
-import com.project.indytskyi.tripsservice.services.TrafficOrderService;
-import com.project.indytskyi.tripsservice.services.TripService;
+import com.project.indytskyi.tripsservice.services.*;
 import com.project.indytskyi.tripsservice.util.enums.Status;
-import java.net.URL;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.net.URL;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +40,17 @@ public class TripServiceImpl implements TripService {
     @Override
     public TripStartDto startTrip(TripActivationDto tripActivation) {
         log.info("Start trip");
-        String carClass = carService.getCarInfo(tripActivation);
+
+        CarDto carDto = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
-        tripActivation.setTariff(backOfficeService.getCarTariff(carClass));
+
+        tripActivation.setLongitude(carDto.getCoordinates().getLongitude());
+        tripActivation.setLatitude(carDto.getCoordinates().getLatitude());
+        tripActivation.setTariff(backOfficeService.getCarTariff(carDto.getCarClass()));
+
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
+
         return createTripStartDto(trafficOrder, track);
     }
 

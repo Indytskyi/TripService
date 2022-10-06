@@ -1,6 +1,7 @@
 package com.project.indytskyi.tripsservice.services;
 
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
+import com.project.indytskyi.tripsservice.dto.car.CarDto;
 
 public interface CarService {
 
@@ -11,7 +12,7 @@ public interface CarService {
      * return carClass for request to backoffice-service
      * to get a tariff
      */
-    String getCarInfo(TripActivationDto tripActivationDto);
+    CarDto getCarInfo(TripActivationDto tripActivationDto);
 
     /**
      * the method that cals put request in car-service
