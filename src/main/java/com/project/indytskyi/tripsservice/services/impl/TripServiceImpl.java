@@ -6,7 +6,6 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
-import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
 import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
@@ -24,6 +23,7 @@ import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
 import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.net.URL;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -50,13 +50,14 @@ public class TripServiceImpl implements TripService {
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
 
     private final UserService userService;
+    private final TrafficOrderValidation trafficOrderValidation;
 
     @Override
     public TripStartDto startTrip(TripActivationDto tripActivation, String token) {
+        userService.checkIfTheConsumerIsUser(token);
+        trafficOrderValidation
+                .validateActiveCountOfTrafficOrders(tripActivation.getUserId());
         log.info("Start trip");
-        ValidateUserResponseDto responseDto = userService.validateUserToken(token);
-
-
 
         String carClass = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
@@ -67,7 +68,10 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files) {
+    public TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files, String token) {
+
+        userService.checkIfTheConsumerIsUser(token);
+
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
@@ -92,7 +96,10 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public TrafficOrderDto getTripById(long trafficOrderId) {
+    public TrafficOrderDto getTripById(long trafficOrderId, String token) {
+
+        userService.checkIfTheConsumerIsAdmin(token);
+
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
@@ -105,7 +112,11 @@ public class TripServiceImpl implements TripService {
     @Transactional
     @Override
     public TrafficOrderDto changeTripStatus(long trafficOrderId,
-                                            StatusDto statusDto) {
+                                            StatusDto statusDto,
+                                            String token) {
+
+        userService.checkIfTheConsumerIsUser(token);
+
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
@@ -129,7 +140,10 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public LInksToImagesDto generatingDownloadLinks(long trafficOrderId) {
+    public LInksToImagesDto generatingDownloadLinks(long trafficOrderId, String token) {
+
+        userService.checkIfTheConsumerIsAdmin(token);
+
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 

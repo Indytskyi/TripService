@@ -6,4 +6,8 @@ public interface UserService {
 
     ValidateUserResponseDto validateUserToken(String token);
 
+    void checkIfTheConsumerIsAdmin(String token);
+
+    void checkIfTheConsumerIsUser(String token);
+
 }

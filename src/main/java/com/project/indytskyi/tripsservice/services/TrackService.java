@@ -18,13 +18,13 @@ public interface TrackService {
      * Create track in which we will receive constant data about the current coordinate of the car
      * and save it in
      */
-    TrackEntity saveTrack(CurrentCoordinatesDto coordinatesDto);
+    TrackEntity saveTrack(CurrentCoordinatesDto coordinatesDto, String token);
 
     /**
      * find track by id (primary key)
      */
-    TrackEntity findOne(long id);
+    TrackEntity findOne(long id, String token);
 
-    AllTracksDto getListOfAllCoordinates(long id);
+    AllTracksDto getListOfAllCoordinates(long id, String token);
 
 }

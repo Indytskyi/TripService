@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,10 +26,11 @@ public class ImageController {
     @ApiResponse(code = 400, message = "Invalid path")
     @SneakyThrows
     @GetMapping("{id}/image")
-    public ResponseEntity<LInksToImagesDto> downloadImage(@PathVariable("id") long trafficOrderId) {
+    public ResponseEntity<LInksToImagesDto> downloadImage(@PathVariable("id") long trafficOrderId,
+                                                          @RequestParam("token") String token) {
         log.info("forming links for downloading, for the trip  = {}", trafficOrderId);
 
-        return ResponseEntity.ok(tripService.generatingDownloadLinks(trafficOrderId));
+        return ResponseEntity.ok(tripService.generatingDownloadLinks(trafficOrderId, token));
     }
 
 }

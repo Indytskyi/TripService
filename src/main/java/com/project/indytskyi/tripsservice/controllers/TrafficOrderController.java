@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,8 @@ public class TrafficOrderController {
     @ApiResponse(code = 400, message = "Invalid some data")
     @PostMapping
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation,
-                                             @RequestParam("token") String token) {
+                                             @RequestHeader("Authorization") String token) {
+
         log.info("Create new traffic order and start track");
 
         return ResponseEntity.ok(tripService.startTrip(tripActivation, token));
@@ -52,10 +54,13 @@ public class TrafficOrderController {
     @ApiOperation(value = "Find special traffic order by id")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @GetMapping("/{id}")
-    public ResponseEntity<TrafficOrderDto> getTrafficOrder(@PathVariable("id") long id) {
+    public ResponseEntity<TrafficOrderDto> getTrafficOrder(
+            @PathVariable("id") long id,
+            @RequestHeader("Authorization") String token) {
+
         log.info("Show  order by id = {}", id);
         return ResponseEntity
-                .ok(tripService.getTripById(id));
+                .ok(tripService.getTripById(id, token));
     }
 
     /**
@@ -64,10 +69,13 @@ public class TrafficOrderController {
     @ApiOperation(value = "Stop traffic order")
     @ApiResponse(code = 400, message = "Invalid traffic order Id")
     @PatchMapping("{id}/status")
-    public ResponseEntity<TrafficOrderDto> changeTripStatus(@PathVariable("id") long trafficOrderId,
-                                                    @RequestBody StatusDto statusDto) {
+    public ResponseEntity<TrafficOrderDto> changeTripStatus(
+            @PathVariable("id") long trafficOrderId,
+            @RequestBody StatusDto statusDto,
+            @RequestHeader("Authorization") String token) {
+
         log.info("Stop traffic order by id = {}", trafficOrderId);
-        return ResponseEntity.ok(tripService.changeTripStatus(trafficOrderId, statusDto));
+        return ResponseEntity.ok(tripService.changeTripStatus(trafficOrderId, statusDto, token));
     }
 
     /**
@@ -77,11 +85,14 @@ public class TrafficOrderController {
             + "calculate trip payment and  return responses to user")
     @PostMapping("/{id}/photos")
     @PictureValidation
-    public ResponseEntity<TripFinishDto> finish(@PathVariable("id") long trafficOrderId,
-                                                @RequestParam("files") List<MultipartFile> files) {
+    public ResponseEntity<TripFinishDto> finish(
+            @PathVariable("id") long trafficOrderId,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestHeader("Authorization") String token) {
+
         log.info("Finish traffic order by id = {}", trafficOrderId);
 
-        return ResponseEntity.ok(tripService.finishTrip(trafficOrderId, files));
+        return ResponseEntity.ok(tripService.finishTrip(trafficOrderId, files, token));
     }
 
 }

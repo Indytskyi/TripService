@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,19 +36,23 @@ public class TrackController {
     @ApiOperation(value = "Find special track by id")
     @ApiResponse(code = 400, message = "Invalid track Id")
     @GetMapping("track/{id}")
-    public ResponseEntity<TrackDto> getTrack(@PathVariable("id") long id) {
+    public ResponseEntity<TrackDto> getTrack(@PathVariable("id") long id,
+                                             @RequestHeader("Authorization") String token) {
         log.info("Show track by id = {}", id);
 
         return ResponseEntity.ok(trackDtoMapper
-                .toTrackDto(trackService.findOne(id)));
+                .toTrackDto(trackService.findOne(id, token)));
     }
 
     @ApiOperation(value = "Find all tracks by id")
     @ApiResponse(code = 400, message = "Invalid order Id")
     @GetMapping("{id}/tracks")
-    public ResponseEntity<AllTracksDto> getAllTracksByOrderId(@PathVariable("id") long id) {
+    public ResponseEntity<AllTracksDto> getAllTracksByOrderId(
+            @PathVariable("id") long id,
+            @RequestHeader("Authorization") String token) {
+
         log.info("Show all tracks  by order id = {}", id);
-        return ResponseEntity.ok(trackService.getListOfAllCoordinates(id));
+        return ResponseEntity.ok(trackService.getListOfAllCoordinates(id, token));
     }
 
     /**
@@ -58,7 +63,8 @@ public class TrackController {
     @ApiResponse(code = 400, message = "Invalid some data")
     @PostMapping("track")
     public ResponseEntity<TrackDto> getCurrentCoordinates(
-            @RequestBody @Valid CurrentCoordinatesDto currentCoordinates) {
+            @RequestBody @Valid CurrentCoordinatesDto currentCoordinates,
+            @RequestHeader("Authorization") String token) {
 
         log.info("Save current coordinates with latitude = {}, longitude = {}",
                 currentCoordinates.getLatitude(),
@@ -66,7 +72,7 @@ public class TrackController {
 
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService
-                        .saveTrack(currentCoordinates)));
+                        .saveTrack(currentCoordinates, token)));
     }
 
 }

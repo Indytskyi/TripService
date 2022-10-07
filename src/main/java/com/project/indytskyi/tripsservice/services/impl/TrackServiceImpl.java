@@ -12,6 +12,7 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.Gfg;
 import com.project.indytskyi.tripsservice.util.enums.Status;
 import java.time.LocalDateTime;
@@ -38,6 +39,8 @@ public class TrackServiceImpl implements TrackService {
 
     private final TrackDtoMapper trackDtoMapper;
 
+    private final UserService userService;
+
     @Override
     public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
                                       TripActivationDto tripActivation) {
@@ -50,7 +53,9 @@ public class TrackServiceImpl implements TrackService {
 
     @Transactional
     @Override
-    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
+    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates, String token) {
+
+        userService.checkIfTheConsumerIsUser(token);
 
         final TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(currentCoordinates.getTripId());
@@ -73,13 +78,19 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public TrackEntity findOne(long id) {
+    public TrackEntity findOne(long id, String token) {
+
+        userService.checkIfTheConsumerIsAdmin(token);
+
         return tracksRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public AllTracksDto getListOfAllCoordinates(long id) {
+    public AllTracksDto getListOfAllCoordinates(long id, String token) {
+
+        userService.checkIfTheConsumerIsUser(token);
+
         return AllTracksDto.of()
                 .trafficOrderId(id)
                 .tracks(trafficOrderService.findTrafficOrderById(id)

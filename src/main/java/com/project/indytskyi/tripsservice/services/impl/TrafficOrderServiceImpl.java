@@ -10,7 +10,6 @@ import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
 import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
-import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +27,8 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     private final TripFinishMapper tripFinishMapper;
 
-    private final TrafficOrderValidation trafficOrderValidation;
-
     @Override
     public TrafficOrderEntity save(TripActivationDto tripActivation) {
-        trafficOrderValidation
-                .validateActiveCountOfTrafficOrders(tripActivation.getUserId());
 
         TrafficOrderEntity trafficOrder = trafficOrderMapper
                 .toTrafficOrderEntity(tripActivation);
