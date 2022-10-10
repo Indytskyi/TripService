@@ -15,6 +15,7 @@ import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.Gfg;
 import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -41,6 +42,8 @@ public class TrackServiceImpl implements TrackService {
 
     private final UserService userService;
 
+    private final AccessTokenValidation accessTokenValidation;
+
     @Override
     public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
                                       TripActivationDto tripActivation) {
@@ -55,10 +58,11 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates, String token) {
 
-        userService.checkIfTheConsumerIsUser(token);
-
         final TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(currentCoordinates.getTripId());
+
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                trafficOrder.getUserId());
 
         if (!trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
             throw new ApiValidationException(List.of(new ErrorResponse("status",
@@ -80,20 +84,24 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public TrackEntity findOne(long id, String token) {
 
-        userService.checkIfTheConsumerIsAdmin(token);
+        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
 
         return tracksRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public AllTracksDto getListOfAllCoordinates(long id, String token) {
+    public AllTracksDto getListOfAllCoordinates(long trafficOrderId, String token) {
 
-        userService.checkIfTheConsumerIsUser(token);
+        final TrafficOrderEntity trafficOrder = trafficOrderService
+                .findTrafficOrderById(trafficOrderId);
+
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                trafficOrder.getUserId());
 
         return AllTracksDto.of()
-                .trafficOrderId(id)
-                .tracks(trafficOrderService.findTrafficOrderById(id)
+                .trafficOrderId(trafficOrderId)
+                .tracks(trafficOrderService.findTrafficOrderById(trafficOrderId)
                         .getTracks()
                         .stream()
                         .map(trackDtoMapper::toTrackDto)

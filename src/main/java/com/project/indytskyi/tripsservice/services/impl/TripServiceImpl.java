@@ -23,6 +23,7 @@ import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
 import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.net.URL;
 import java.util.List;
@@ -52,9 +53,14 @@ public class TripServiceImpl implements TripService {
     private final UserService userService;
     private final TrafficOrderValidation trafficOrderValidation;
 
+    private final AccessTokenValidation accessTokenValidation;
+
     @Override
     public TripStartDto startTrip(TripActivationDto tripActivation, String token) {
-        userService.checkIfTheConsumerIsUser(token);
+
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                tripActivation.getUserId());
+
         trafficOrderValidation
                 .validateActiveCountOfTrafficOrders(tripActivation.getUserId());
         log.info("Start trip");
@@ -70,10 +76,11 @@ public class TripServiceImpl implements TripService {
     @Override
     public TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files, String token) {
 
-        userService.checkIfTheConsumerIsUser(token);
-
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
+
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                trafficOrder.getUserId());
 
         if (!trafficOrder.getStatus().equals(Status.STOP.name())) {
             throw new ApiValidationException(List.of(new ErrorResponse("status",
@@ -98,7 +105,7 @@ public class TripServiceImpl implements TripService {
     @Override
     public TrafficOrderDto getTripById(long trafficOrderId, String token) {
 
-        userService.checkIfTheConsumerIsAdmin(token);
+        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
@@ -115,10 +122,11 @@ public class TripServiceImpl implements TripService {
                                             StatusDto statusDto,
                                             String token) {
 
-        userService.checkIfTheConsumerIsUser(token);
-
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
+
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                trafficOrder.getUserId());
 
         if (!statusDto.getStatus().equals(Status.IN_ORDER.name())
                 && !statusDto.getStatus().equals(Status.STOP.name())) {
@@ -142,10 +150,10 @@ public class TripServiceImpl implements TripService {
     @Override
     public LInksToImagesDto generatingDownloadLinks(long trafficOrderId, String token) {
 
-        userService.checkIfTheConsumerIsAdmin(token);
-
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
+
+        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
 
         if (!trafficOrder.getStatus().equals(Status.FINISH.name())) {
             throw new ApiValidationException(List.of(new ErrorResponse("status",

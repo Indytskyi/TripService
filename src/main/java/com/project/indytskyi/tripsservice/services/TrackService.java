@@ -25,6 +25,6 @@ public interface TrackService {
      */
     TrackEntity findOne(long id, String token);
 
-    AllTracksDto getListOfAllCoordinates(long id, String token);
+    AllTracksDto getListOfAllCoordinates(long trafficOrderId    , String token);
 
 }

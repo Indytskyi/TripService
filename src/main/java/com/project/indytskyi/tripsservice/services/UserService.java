@@ -4,10 +4,6 @@ import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
 
 public interface UserService {
 
-    ValidateUserResponseDto validateUserToken(String token);
-
-    void checkIfTheConsumerIsAdmin(String token);
-
-    void checkIfTheConsumerIsUser(String token);
+    ValidateUserResponseDto validateToken(String token);
 
 }
