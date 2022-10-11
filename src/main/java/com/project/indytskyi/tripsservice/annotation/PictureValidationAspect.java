@@ -16,11 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class PictureValidationAspect {
 
-    private final int numberOfPictures = 3;
-    private final int sizeOfOnePicture = 3145728;
-
-    private final String firstFormatFile = "jpg";
-    private final String secondFormatFile = "png";
+    private static final int NUMBER_OF_PICTURES = 3;
+    private static final int SIZE_OF_ONE_PICTURES = 3145728;
+    private static final String FIRST_FORMAT_FILE = "jpg";
+    private static final String SECOND_FORMAT_FILE = "png";
 
     private List<ErrorResponse> errorResponses;
 
@@ -33,7 +32,7 @@ public class PictureValidationAspect {
 
         errorResponses = new ArrayList<>();
 
-        if (files.size() != numberOfPictures) {
+        if (files.size() != NUMBER_OF_PICTURES) {
             log.error("The number of photos must be exactly 3");
             errorResponses.add(new ErrorResponse("number",
                     "The number of photos must be exactly 3"));
@@ -51,14 +50,14 @@ public class PictureValidationAspect {
 
     private void validateFile(MultipartFile file) {
         String imageName = file.getOriginalFilename();
-        if (!imageName.endsWith(secondFormatFile)
-                && !imageName.endsWith(firstFormatFile)) {
+        if (!imageName.endsWith(SECOND_FORMAT_FILE)
+                && !imageName.endsWith(FIRST_FORMAT_FILE)) {
             log.error("Incorrect format of file = {}", file.getOriginalFilename());
             errorResponses.add(new ErrorResponse(file.getOriginalFilename(),
                     "Incorrect format of file. Only images with format (jpg or png)"));
         }
 
-        if (file.getSize() > sizeOfOnePicture) {
+        if (file.getSize() > SIZE_OF_ONE_PICTURES) {
             log.error("Incorrect size of file = {}", file.getOriginalFilename());
             errorResponses.add(new ErrorResponse(imageName,
                     "Incorrect size of file. Must be less than 3 mb"));

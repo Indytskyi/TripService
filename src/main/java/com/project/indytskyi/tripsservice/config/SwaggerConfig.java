@@ -10,6 +10,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
+    private static final String PATH_TO_CONTROLLERS =
+            "com.project.indytskyi.tripsservice.controllers";
+
     /**
      * Configuration swagger in spring,
      * and share for him path to controllers
@@ -19,7 +22,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors
-                        .basePackage("com.project.indytskyi.tripsservice.controllers"))
+                        .basePackage(PATH_TO_CONTROLLERS))
                 .paths(PathSelectors.any())
                 .build();
     }

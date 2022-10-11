@@ -24,7 +24,7 @@ import com.project.indytskyi.tripsservice.services.TripService;
 import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
 import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
-import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
+import com.project.indytskyi.tripsservice.validations.ServiceValidation;
 import java.net.URL;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,15 +45,11 @@ public class TripServiceImpl implements TripService {
     private final ImageS3Service imageS3Service;
     private final ImageService imageService;
     private final KafkaService kafkaService;
-
-    private final StartMapper startMapper;
-
-    private final TrafficOrderDtoMapper trafficOrderDtoMapper;
-
     private final UserService userService;
-    private final TrafficOrderValidation trafficOrderValidation;
-
+    private final StartMapper startMapper;
+    private final TrafficOrderDtoMapper trafficOrderDtoMapper;
     private final AccessTokenValidation accessTokenValidation;
+    private final ServiceValidation serviceValidation;
 
     @Override
     public TripStartDto startTrip(TripActivationDto tripActivation, String token) {
@@ -61,13 +57,16 @@ public class TripServiceImpl implements TripService {
         accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
                 tripActivation.getUserId());
 
-        trafficOrderValidation
+        serviceValidation
                 .validateActiveCountOfTrafficOrders(tripActivation.getUserId());
-        log.info("Start trip");
+
+        log.info("Start trip with carId = {} and userId = {}",
+                tripActivation.getCarId(),
+                tripActivation.getUserId());
 
         String carClass = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
-        tripActivation.setTariff(backOfficeService.getCarTariff(carClass));
+        tripActivation.setTariff(backOfficeService.getCarTariff(carClass, token));
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
         return createTripStartDto(trafficOrder, track);
@@ -128,20 +127,8 @@ public class TripServiceImpl implements TripService {
         accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
                 trafficOrder.getUserId());
 
-        if (!statusDto.getStatus().equals(Status.IN_ORDER.name())
-                && !statusDto.getStatus().equals(Status.STOP.name())) {
-            throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "Incorrect data entry: '"
-                            + statusDto.getStatus()
-                            + " in status; "
-                            + "Possible values: "
-                            + "[IN_ORDER, STOP]")));
-        }
-
-        if (trafficOrder.getStatus().equals(Status.FINISH.name())) {
-            throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "This trip is over, start another one")));
-        }
+        serviceValidation.validationForStatusChange(trafficOrder.getStatus(),
+                statusDto.getStatus());
 
         trafficOrder.setStatus(statusDto.getStatus());
         return trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder);

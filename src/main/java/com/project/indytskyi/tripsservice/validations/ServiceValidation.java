@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TrafficOrderValidation {
+public class ServiceValidation {
 
     private final TrafficsRepository trafficsRepository;
 
@@ -38,4 +38,24 @@ public class TrafficOrderValidation {
 
         }
     }
+
+    public void validationForStatusChange(String currentStatus, String desiredStatus) {
+
+        if (!desiredStatus.equals(Status.IN_ORDER.name())
+                && !desiredStatus.equals(Status.STOP.name())) {
+            throw new ApiValidationException(List.of(new ErrorResponse("status",
+                    "Incorrect data entry: '"
+                            + desiredStatus
+                            + " in status; "
+                            + "Possible values: "
+                            + "[IN_ORDER, STOP]")));
+        }
+
+        if (currentStatus.equals(Status.FINISH.name())) {
+            throw new ApiValidationException(List.of(new ErrorResponse("status",
+                    "This trip is over, start another one")));
+        }
+
+    }
+
 }

@@ -19,7 +19,6 @@ import com.project.indytskyi.tripsservice.mapper.TripFinishMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
-import com.project.indytskyi.tripsservice.validations.TrafficOrderValidation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
