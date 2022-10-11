@@ -22,9 +22,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 
 /**
  * Business logic for class Track and for Tracks Repository
@@ -45,8 +43,7 @@ public class TrackServiceImpl implements TrackService {
     private final AccessTokenValidation accessTokenValidation;
 
     @Override
-    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
-                                      TripActivationDto tripActivation) {
+    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder, TripActivationDto tripActivation) {
 
         TrackEntity track = initializationNewTrack(currentCoordinatesMapper
                 .toCurrentCoordinates(tripActivation));
@@ -54,7 +51,6 @@ public class TrackServiceImpl implements TrackService {
         return tracksRepository.save(track);
     }
 
-    @Transactional
     @Override
     public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates, String token) {
 
@@ -64,21 +60,23 @@ public class TrackServiceImpl implements TrackService {
         accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
                 trafficOrder.getUserId());
 
-        if (!trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
-            throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "The machine has stopped, take the machine off pause")));
+        if (trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
+
+            final TrackEntity track = initializationNewTrack(currentCoordinates);
+            final TrackEntity lastTrack = getLastTrack(trafficOrder);
+            final double distanceBetweenTwoCoordinates =
+                    getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
+            final double distance = lastTrack.getDistance()
+                    + distanceBetweenTwoCoordinates;
+            track.setDistance(distance);
+            track.setOwnerTrack(trafficOrder);
+            track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
+                    lastTrack.getTimestamp(), track.getTimestamp()));
+            return tracksRepository.save(track);
         }
-        final TrackEntity track = initializationNewTrack(currentCoordinates);
-        final TrackEntity lastTrack = getLastTrack(trafficOrder);
-        final double distanceBetweenTwoCoordinates =
-                getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
-        final double distance = lastTrack.getDistance()
-                + distanceBetweenTwoCoordinates;
-        track.setDistance(distance);
-        track.setOwnerTrack(trafficOrder);
-        track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
-                lastTrack.getTimestamp(), track.getTimestamp()));
-        return tracksRepository.save(track);
+
+        throw new ApiValidationException(List.of(new ErrorResponse("status",
+                "The machine has stopped, take the machine off pause")));
     }
 
     @Override
@@ -113,11 +111,12 @@ public class TrackServiceImpl implements TrackService {
      * create new Track and initialize it after that return it to instanceTrack or createStartTrack
      */
     private TrackEntity initializationNewTrack(CurrentCoordinatesDto currentCoordinates) {
-        TrackEntity track = new TrackEntity();
-        track.setLatitude(currentCoordinates.getLatitude());
-        track.setLongitude(currentCoordinates.getLongitude());
-        track.setTimestamp(LocalDateTime.now());
-        return track;
+
+        return TrackEntity.of()
+                .latitude(currentCoordinates.getLatitude())
+                .longitude(currentCoordinates.getLongitude())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     /**
@@ -144,9 +143,10 @@ public class TrackServiceImpl implements TrackService {
     private int getCurrentSpeed(double distance,
                                 LocalDateTime previousTimestamp,
                                 LocalDateTime currentTimestamp) {
+
         double time = currentTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
                 - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
-        ;
+
         return (int) ((distance / (time)) * 3600000);
     }
 

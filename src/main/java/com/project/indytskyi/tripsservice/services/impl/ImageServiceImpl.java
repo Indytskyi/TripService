@@ -18,10 +18,10 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void saveImages(TrafficOrderEntity ownerOrder,
                            String originFileName) {
-        ImagesEntity imagesEntity = new ImagesEntity();
-        imagesEntity.setImage(originFileName);
-        imagesEntity.setOwnerImage(ownerOrder);
-        imagesRepository.save(imagesEntity);
+        imagesRepository.save(ImagesEntity.of()
+                .image(originFileName)
+                .ownerImage(ownerOrder)
+                .build());
     }
 
 }

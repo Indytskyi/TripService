@@ -15,7 +15,6 @@ import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -24,7 +23,6 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     private final TrafficsRepository trafficsRepository;
     private final TrafficOrderMapper trafficOrderMapper;
-
     private final TripFinishMapper tripFinishMapper;
 
     @Override
@@ -40,11 +38,13 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
     @Override
     public TrafficOrderEntity findTrafficOrderById(long id) {
+
         return trafficsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @Transactional
+
+    // TODO remove  @Transactional
     @Override
     public TripFinishDto finishOrder(TrafficOrderEntity trafficOrder) {
 
@@ -58,6 +58,8 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
         tripFinishDto.setTripPayment(calculateTripPayment(trafficOrder));
 
+        trafficsRepository.save(trafficOrder);
+
         return tripFinishDto;
 
     }
@@ -68,6 +70,7 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
      * @return trip payment = {@link Double}
      */
     private double calculateTripPayment(TrafficOrderEntity trafficOrder) {
+
         final double minutesInHour = 60;
         final double pricePerMinute = trafficOrder.getTariff() / minutesInHour;
 

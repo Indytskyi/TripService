@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class TrafficOrderDto {
+
     @ApiModelProperty(example = "27", value = "")
     private long id;
 

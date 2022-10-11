@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class StartCoordinatesOfCarDto {
-
     private double latitude;
     private double longitude;
-
 }

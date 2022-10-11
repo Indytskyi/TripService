@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class TripFinishDto {
+
     @ApiModelProperty(example = "3.567", value = "")
     private double latitude;
 

@@ -6,6 +6,7 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
@@ -64,11 +65,16 @@ public class TripServiceImpl implements TripService {
                 tripActivation.getCarId(),
                 tripActivation.getUserId());
 
-        String carClass = carService.getCarInfo(tripActivation);
+        CarDto carDto = carService.getCarInfo(tripActivation);
         carService.setCarStatus(tripActivation.getCarId());
-        tripActivation.setTariff(backOfficeService.getCarTariff(carClass, token));
+
+        tripActivation.setLongitude(carDto.getCoordinates().getLongitude());
+        tripActivation.setLatitude(carDto.getCoordinates().getLatitude());
+
+        tripActivation.setTariff(backOfficeService.getCarTariff(carDto.getCarClass(), token));
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
+
         return createTripStartDto(trafficOrder, track);
     }
 
@@ -164,6 +170,7 @@ public class TripServiceImpl implements TripService {
      */
     private TripStartDto createTripStartDto(TrafficOrderEntity trafficOrderEntity,
                                             TrackEntity trackEntity) {
+
         TripStartDto tripStartDto = startMapper
                 .toStartDto(trafficOrderEntity, trackEntity);
 
@@ -173,6 +180,7 @@ public class TripServiceImpl implements TripService {
     }
 
     private List<String> getAllPathFromTrip(TrafficOrderEntity trafficOrder) {
+
         return trafficOrder.getImages()
                 .stream()
                 .map(ImagesEntity::getImage)

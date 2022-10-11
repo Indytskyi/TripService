@@ -28,6 +28,7 @@ public class ImageController {
     @GetMapping("{id}/image")
     public ResponseEntity<LInksToImagesDto> downloadImage(@PathVariable("id") long trafficOrderId,
                                                           @RequestParam("token") String token) {
+
         log.info("forming links for downloading, for the trip  = {}", trafficOrderId);
 
         return ResponseEntity.ok(tripService.generatingDownloadLinks(trafficOrderId, token));
