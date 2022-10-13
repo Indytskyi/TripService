@@ -4,16 +4,18 @@ import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFacto
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.project.indytskyi.tripsservice.exceptions.DamagedFileException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,18 +29,10 @@ class ImageS3ServiceImplTest {
 
     @Mock
     MultipartFile mockFile;
-
     @Mock
     private AmazonS3 s3;
-
     @InjectMocks
     private ImageS3ServiceImpl underTest;
-
-    @Mock
-    S3Object object;
-
-
-
 
     @Test
     void canSaveImageToAmazonS3() throws IOException {
@@ -76,13 +70,17 @@ class ImageS3ServiceImplTest {
                 .isInstanceOf(DamagedFileException.class);
     }
 
-//    @SneakyThrows
-//    @Test
-//    void canDownloadFile() {
-//        //GIVEN
-//        String path = "./src/test/resources/umlDiagramOfEntity.png";
-//        File file = new File(path);
-//
+    @SneakyThrows
+    @Test
+    void canGenerateURl() {
+        //GIVEN
+        String path = "./src/test/resources/umlDiagramOfEntity.png";
+        File file = new File(path);
+
+
+        underTest.downloadFile(path);
+        verify(s3, times(1)).generatePresignedUrl(any());
+
 //        S3Object s3Object = new S3Object();
 //        s3Object.setBucketName("bucket");
 //        s3Object.setKey("key");
@@ -95,6 +93,8 @@ class ImageS3ServiceImplTest {
 //
 //        byte[] result = underTest.downloadFile(path);
 //        assertEquals(expected, result);
-//    }
+    }
+
+
 
 }

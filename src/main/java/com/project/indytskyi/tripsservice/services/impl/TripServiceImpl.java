@@ -7,8 +7,7 @@ import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
-import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
-import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
+import com.project.indytskyi.tripsservice.exceptions.enums.StatusException;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.ImagesEntity;
@@ -22,9 +21,7 @@ import com.project.indytskyi.tripsservice.services.KafkaService;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
-import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
-import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import com.project.indytskyi.tripsservice.validations.ServiceValidation;
 import java.net.URL;
 import java.util.List;
@@ -46,17 +43,14 @@ public class TripServiceImpl implements TripService {
     private final ImageS3Service imageS3Service;
     private final ImageService imageService;
     private final KafkaService kafkaService;
-    private final UserService userService;
+
     private final StartMapper startMapper;
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
-    private final AccessTokenValidation accessTokenValidation;
+
     private final ServiceValidation serviceValidation;
 
     @Override
     public TripStartDto startTrip(TripActivationDto tripActivation, String token) {
-
-        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
-                tripActivation.getUserId());
 
         serviceValidation
                 .validateActiveCountOfTrafficOrders(tripActivation.getUserId());
@@ -71,7 +65,7 @@ public class TripServiceImpl implements TripService {
         tripActivation.setLongitude(carDto.getCoordinates().getLongitude());
         tripActivation.setLatitude(carDto.getCoordinates().getLatitude());
 
-        tripActivation.setTariff(backOfficeService.getCarTariff(carDto.getCarClass(), token));
+        tripActivation.setTariff(backOfficeService.getCarTariff(carDto, token));
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
 
@@ -79,18 +73,14 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files, String token) {
+    public TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files) {
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
-        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
-                trafficOrder.getUserId());
-
-        if (!trafficOrder.getStatus().equals(Status.STOP.name())) {
-            throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "Pause the car to end the trip")));
-        }
+        serviceValidation.validateStatusAccess(trafficOrder.getStatus(),
+                Status.STOP.name(),
+                StatusException.FORGET_STOP_EXCEPTION.getException());
 
         files.forEach(file -> {
             String originalFilename = imageS3Service.saveFile(trafficOrderId, file);
@@ -108,9 +98,7 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public TrafficOrderDto getTripById(long trafficOrderId, String token) {
-
-        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
+    public TrafficOrderDto getTripById(long trafficOrderId) {
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
@@ -123,35 +111,26 @@ public class TripServiceImpl implements TripService {
 
     @Transactional
     @Override
-    public TrafficOrderDto changeTripStatus(long trafficOrderId,
-                                            StatusDto statusDto,
-                                            String token) {
+    public TrafficOrderDto changeTripStatus(long trafficOrderId, StatusDto statusDto) {
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
-        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
-                trafficOrder.getUserId());
-
-        serviceValidation.validationForStatusChange(trafficOrder.getStatus(),
-                statusDto.getStatus());
+        serviceValidation.validationForStatusChange(statusDto.getStatus(), trafficOrder.getStatus());
 
         trafficOrder.setStatus(statusDto.getStatus());
         return trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder);
     }
 
     @Override
-    public LInksToImagesDto generatingDownloadLinks(long trafficOrderId, String token) {
+    public LInksToImagesDto generatingDownloadLinks(long trafficOrderId) {
 
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
-        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
-
-        if (!trafficOrder.getStatus().equals(Status.FINISH.name())) {
-            throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "The user has not yet completed a trip")));
-        }
+        serviceValidation.validateStatusAccess(trafficOrder.getStatus(),
+                Status.FINISH.name(),
+                StatusException.UNFINISHED_TRIP_EXCEPTION.getException());
 
         List<URL> imageS3Urls = getAllPathFromTrip(trafficOrder)
                 .stream()

@@ -1,14 +1,11 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.project.indytskyi.tripsservice.dto.backoffice.ResponseFromBackofficeDto;
+import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.services.BackOfficeService;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
@@ -20,22 +17,23 @@ public class BackOfficeServiceImpl implements BackOfficeService {
     private final WebClient backOfficeWebClient;
 
     @Override
-    public Double getCarTariff(String carClass, String token) {
+    public double getCarTariff(CarDto carDto, String token) {
 
         log.info("get from backoffice-service tariff by casClass = {}",
-                carClass);
-        String ratePerHour = backOfficeWebClient
+                carDto.getCarClass());
+        ResponseFromBackofficeDto backofficeDto = backOfficeWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("tariffs/" + carClass)
-                        .queryParams()
+                        .path("tariffs/" + carDto.getCarClass())
+                        .queryParam("latitude", carDto.getCoordinates().getLatitude())
+                        .queryParam("longitude", carDto.getCoordinates().getLongitude())
                         .build())
                 .header("Authorization", BEARER_TOKEN_START + token)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(ResponseFromBackofficeDto.class)
                 .block();
 
-        return Double.valueOf(ratePerHour.replaceAll("\\D+",""));
+        return backofficeDto.getRatePerHour();
     }
 
 }

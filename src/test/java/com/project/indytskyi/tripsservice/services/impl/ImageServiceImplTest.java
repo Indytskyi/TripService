@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.ImagesRepository;
 import java.io.File;
@@ -26,14 +25,8 @@ class ImageServiceImplTest {
 
     @Mock
     private ImagesRepository imagesRepository;
-
-    @Mock
-    private AmazonS3 s3;
-
     @InjectMocks
     private ImageServiceImpl underTest;
-
-
 
     @Test
     void canSaveImages() throws IOException {

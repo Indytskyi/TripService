@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Gfg {
 
     private static final int RADIUS_EARTH = 6371;
+
     /**
      * method where you calculate distance between two coordinates
      */

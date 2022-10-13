@@ -59,11 +59,11 @@ class CarServiceImplTest {
         );
 
         //THEN
-        String response = underTest.getCarInfo(tripActivationDto);
+        CarDto response = underTest.getCarInfo(tripActivationDto);
 
         mockWebServer.shutdown();
         Assertions.assertNotNull(expected);
-        assertEquals(expected.getCarClass(), response);
+        assertEquals(expected, response);
 
     }
 

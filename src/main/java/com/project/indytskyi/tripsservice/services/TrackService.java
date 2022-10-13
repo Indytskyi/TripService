@@ -12,19 +12,19 @@ public interface TrackService {
      * Create first track in parallel with new Traffic Order and save it to Database
      */
     TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
-                                 TripActivationDto tripActivation);
+                               TripActivationDto tripActivation);
 
     /**
      * Create track in which we will receive constant data about the current coordinate of the car
      * and save it in
      */
-    TrackEntity saveTrack(CurrentCoordinatesDto coordinatesDto, String token);
+    TrackEntity saveTrack(CurrentCoordinatesDto coordinatesDto);
 
     /**
      * find track by id (primary key)
      */
-    TrackEntity findOne(long id, String token);
+    TrackEntity findOne(long id);
 
-    AllTracksDto getListOfAllCoordinates(long trafficOrderId    , String token);
+    AllTracksDto getListOfAllCoordinates(long trafficOrderId);
 
 }

@@ -22,21 +22,21 @@ public interface TripService {
      * Method where you finish your order and send json to another microservices
      * and save pictures to S3
      */
-    TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files, String token);
+    TripFinishDto finishTrip(long trafficOrderId, List<MultipartFile> files);
 
     /**
      * Get information about trip by id
      * + if, user has finished his trip,
      * the admin also get links to photos
      */
-    TrafficOrderDto getTripById(long trafficOrderId, String token);
+    TrafficOrderDto getTripById(long trafficOrderId);
 
 
     /**
      * change status of trip
      *
      */
-    TrafficOrderDto changeTripStatus(long trafficOrderId, StatusDto statusDto, String token);
+    TrafficOrderDto changeTripStatus(long trafficOrderId, StatusDto statusDto);
 
-    LInksToImagesDto generatingDownloadLinks(long trafficOrderId, String token);
+    LInksToImagesDto generatingDownloadLinks(long trafficOrderId);
 }

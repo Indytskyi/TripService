@@ -1,9 +1,10 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
-import static com.project.indytskyi.tripsservice.factory.dto.car.CarDtoFactory.createCarDto;
+import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.project.indytskyi.tripsservice.dto.car.CarDto;
+import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
+import java.util.List;
 import lombok.SneakyThrows;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -16,48 +17,49 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @ExtendWith(MockitoExtension.class)
-class BackOfficeServiceImplTest {
+class UserServiceImplTest {
 
     private final MockWebServer mockWebServer = new MockWebServer();
 
     @InjectMocks
-    private BackOfficeServiceImpl underTest;
+    private UserServiceImpl underTest;
 
 
-    private String basicUrlCar = "http://localhost:8083/user/";
+    private String basicUrlUser = "http://localhost:8082";
 
     @Spy
-    private final WebClient backofficeWebClient = WebClient.create(basicUrlCar);
+    private final WebClient carWebClient = WebClient.create(basicUrlUser);
 
     @SneakyThrows
     @Test
-    void getCarTariff() {
+    void validateToken() {
         //GIVEN
-        Double expected = 200.0;
-        CarDto carDto = createCarDto();
-        String token = "sdlkfjsdklfjsdk";
+        ValidateUserResponseDto responseDto = new ValidateUserResponseDto();
+        responseDto.setUserId(TRAFFIC_ORDER_USER_ID);
+        responseDto.setRoles(List.of("ADMIN"));
+        String token = "test";
+
         //WHEN
-        mockWebServer.start(8083);
+        mockWebServer.start(8082);
         mockWebServer.enqueue(
                 new MockResponse()
                         .setResponseCode(200)
                         .addHeader("Content-type", "application/json")
                         .setBody("""
                                 {
-                                  "name":"family",
-                                  "description":"good for family trips",
-                                  "carType":"medium",
-                                  "ratePerHour":200
+                                    "userId" : 22,
+                                    "roles" : [
+                                        "ADMIN"
+                                    ]
                                 }
                                 """)
         );
 
-        //THEN
-        Double response = underTest.getCarTariff(carDto, token);
+        var response =  underTest.validateToken(token);
 
         mockWebServer.shutdown();
         Assertions.assertNotNull(response);
-        assertEquals(expected, response);
-
+        assertEquals(responseDto, response);
     }
+
 }

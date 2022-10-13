@@ -28,6 +28,8 @@ import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrackService;
+import com.project.indytskyi.tripsservice.services.UserService;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -78,6 +80,12 @@ class TrackControllerIntegrationTest {
     @MockBean
     private TrackDtoMapper trackDtoMapper;
 
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private AccessTokenValidation accessTokenValidation;
+
     @Test
     @SneakyThrows
     @DisplayName("Test finding a track by id")
@@ -85,13 +93,15 @@ class TrackControllerIntegrationTest {
         //GIVEN
         TrackEntity track = createTrack();
         TrackDto trackDto = createTrackDto();
+        String token = "Test";
 
         //WHEN
         when(trackService.findOne(TRACK_ID)).thenReturn(track);
         when(trackDtoMapper.toTrackDto(track)).thenReturn(trackDto);
 
         mockMvc.perform(get("http://localhost:8080/trip/track/" + TRACK_ID)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TRACK_ID))
                 .andExpect(jsonPath("$.latitude").value(TRACK_LATITUDE))
@@ -109,11 +119,14 @@ class TrackControllerIntegrationTest {
     @DisplayName("Test finding a track by non existent id")
     void getTrackByNonExistentId() {
         //GIVEN
+        String token = "Test";
+
+        //WHEN
         when(trackService.findOne(TRACK_ID))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-        //WHEN
         mockMvc.perform(get("http://localhost:8080/trip/track/" + TRACK_ID)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isNotFound());
 
         //THEN
@@ -126,14 +139,16 @@ class TrackControllerIntegrationTest {
     @DisplayName("Test get all tracks by traffic order id")
     void getAllTracksByTrafficOrderId() {
         //GIVEN
-
+        String token = "Test";
         AllTracksDto allTracksDto = createAllTracksDto();
+
         //WHEN
         when(trackService.getListOfAllCoordinates(TRAFFIC_ORDER_ID)).thenReturn(allTracksDto);
 
         mockMvc.perform(get("http://localhost:8080/trip/"
                         + TRAFFIC_ORDER_ID + "/tracks")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.trafficOrderId").value(TRAFFIC_ORDER_ID));
 //                .andExpect(jsonPath("$.tracks").value(TRAFFIC_ORDER_DTO_TRACKS));
@@ -153,6 +168,7 @@ class TrackControllerIntegrationTest {
         TrackDto trackDto = createTrackDto();
         TrafficOrderEntity trafficOrder = createTrafficOrder();
         trafficOrder.setTracks(List.of(track));
+        String token = "Test";
 
 
         //WHEN
@@ -160,7 +176,8 @@ class TrackControllerIntegrationTest {
         when(trackService.saveTrack(coordinatesDto)).thenReturn(track);
         mockMvc.perform(post("http://localhost:8080/trip/track")
                 .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(coordinatesDto)))
+                        .content(objectMapper.writeValueAsString(coordinatesDto))
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TRACK_ID))
                 .andExpect(jsonPath("$.latitude").value(TRACK_LATITUDE))
@@ -178,11 +195,13 @@ class TrackControllerIntegrationTest {
     void addCurrentCoordinatesWithInvalidLatitude() {
         //GIVEN
           CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLatitude();
-//
+        String token = "Test";
+
         //WHEN
         mockMvc.perform(post("http://localhost:8080/trip/track")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(coordinatesDto)))
+                        .content(objectMapper.writeValueAsString(coordinatesDto))
+                        .header("Authorization", token))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$..field").value("latitude"))
                 .andExpect(jsonPath("$..message").
@@ -196,11 +215,13 @@ class TrackControllerIntegrationTest {
     void addCurrentCoordinatesWithInvalidLongitude() {
         //GIVEN
         CurrentCoordinatesDto coordinatesDto = currentCoordinatesDtoForSavingWithInvalidLongitude();
+        String token = "Test";
 
         //WHEN
         mockMvc.perform(post("http://localhost:8080/trip/track")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(coordinatesDto)))
+                        .content(objectMapper.writeValueAsString(coordinatesDto))
+                        .header("Authorization", token))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$..field").value("longitude"))
                 .andExpect(jsonPath("$..message").

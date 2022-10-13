@@ -60,6 +60,4 @@ public class ImageS3ServiceImpl implements ImageS3Service {
 
     }
 
-
-
 }

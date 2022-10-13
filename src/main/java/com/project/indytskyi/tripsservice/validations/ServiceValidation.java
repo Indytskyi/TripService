@@ -2,6 +2,7 @@ package com.project.indytskyi.tripsservice.validations;
 
 import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
+import com.project.indytskyi.tripsservice.exceptions.enums.StatusException;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import com.project.indytskyi.tripsservice.util.enums.Status;
@@ -25,8 +26,8 @@ public class ServiceValidation {
         Optional<TrafficOrderEntity> trafficOrderEntityOptional = trafficsRepository
                 .findFirstByUserIdOrderByIdDesc(userId);
         if (trafficOrderEntityOptional.isPresent()
-                && trafficOrderEntityOptional.get()
-                .getStatus().equals(String.valueOf(Status.IN_ORDER))) {
+                && !trafficOrderEntityOptional.get()
+                .getStatus().equals(Status.FINISH.name())) {
             List<ErrorResponse> exception = List.of(new ErrorResponse("userId: " + userId,
                     "You have already started the trip."
                             + "Finish the previous one to start a new one")
@@ -39,7 +40,7 @@ public class ServiceValidation {
         }
     }
 
-    public void validationForStatusChange(String currentStatus, String desiredStatus) {
+    public void validationForStatusChange(String desiredStatus, String currentStatus) {
 
         if (!desiredStatus.equals(Status.IN_ORDER.name())
                 && !desiredStatus.equals(Status.STOP.name())) {
@@ -51,11 +52,19 @@ public class ServiceValidation {
                             + "[IN_ORDER, STOP]")));
         }
 
-        if (currentStatus.equals(Status.FINISH.name())) {
+        if (currentStatus.equals("FINISH")) {
             throw new ApiValidationException(List.of(new ErrorResponse("status",
-                    "This trip is over, start another one")));
+                    StatusException.TRIP_COMPLETED_EXCEPTION.getException())));
         }
 
+    }
+
+    public void validateStatusAccess(String currentStatus, String expectedStatus,
+                                     String exceptionMessage) {
+        if (!currentStatus.equals(expectedStatus)) {
+            throw new ApiValidationException(List.of(new ErrorResponse("status",
+                    exceptionMessage)));
+        }
     }
 
 }

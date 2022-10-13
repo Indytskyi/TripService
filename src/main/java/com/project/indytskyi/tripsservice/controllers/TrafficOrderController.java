@@ -6,7 +6,11 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
+import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.services.TripService;
+import com.project.indytskyi.tripsservice.services.UserService;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import java.util.List;
@@ -32,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class TrafficOrderController {
 
     private final TripService tripService;
+    private final UserService userService;
+    private final AccessTokenValidation accessTokenValidation;
 
     /**
      * Controller where you start your work
@@ -42,6 +48,14 @@ public class TrafficOrderController {
     @PostMapping
     public ResponseEntity<TripStartDto> save(@RequestBody @Valid TripActivationDto tripActivation,
                                              @RequestHeader("Authorization") String token) {
+
+        if (tripActivation.getUserId() != userService.validateToken(token).getUserId()) {
+            throw new ApiValidationException(List.of(new ErrorResponse(
+                    "Role",
+                    "You do not have access to this part."
+                            + " log in to your account to start the trip"
+            )));
+        }
 
         log.info("Create new traffic order and start track");
 
@@ -58,9 +72,11 @@ public class TrafficOrderController {
             @PathVariable("id") long id,
             @RequestHeader("Authorization") String token) {
 
+        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
+
         log.info("Show  order by id = {}", id);
         return ResponseEntity
-                .ok(tripService.getTripById(id, token));
+                .ok(tripService.getTripById(id));
     }
 
     /**
@@ -74,8 +90,12 @@ public class TrafficOrderController {
             @RequestBody StatusDto statusDto,
             @RequestHeader("Authorization") String token) {
 
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                trafficOrderId);
+
         log.info("Stop traffic order by id = {}", trafficOrderId);
-        return ResponseEntity.ok(tripService.changeTripStatus(trafficOrderId, statusDto, token));
+
+        return ResponseEntity.ok(tripService.changeTripStatus(trafficOrderId, statusDto));
     }
 
     /**
@@ -90,9 +110,12 @@ public class TrafficOrderController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestHeader("Authorization") String token) {
 
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                trafficOrderId);
+
         log.info("Finish traffic order by id = {}", trafficOrderId);
 
-        return ResponseEntity.ok(tripService.finishTrip(trafficOrderId, files, token));
+        return ResponseEntity.ok(tripService.finishTrip(trafficOrderId, files));
     }
 
 }

@@ -1,12 +1,26 @@
 package com.project.indytskyi.tripsservice.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.indytskyi.tripsservice.services.impl.ImageS3ServiceImpl;
-import com.project.indytskyi.tripsservice.services.impl.TrafficOrderServiceImpl;
+import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_ID;
+import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_USER_ID;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
+import com.project.indytskyi.tripsservice.services.TripService;
+import com.project.indytskyi.tripsservice.services.UserService;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
+import java.util.List;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +38,6 @@ class ImageControllerTest {
             (PostgreSQLContainer) new PostgreSQLContainer("postgres:latest")
                     .withExposedPorts(8080);
 
-
     @DynamicPropertySource
     public static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url",container::getJdbcUrl);
@@ -33,51 +46,32 @@ class ImageControllerTest {
 
     }
 
-
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
-    private TrafficOrderServiceImpl trafficOrderService;
-
+    private AccessTokenValidation accessTokenValidation;
     @MockBean
-    private ImageS3ServiceImpl imageS3Service;
+    private TripService tripService;
+    @MockBean
+    private UserService userService;
 
-//    @SneakyThrows
-//    @Test
-//    void getTrafficOrderImages() {
-//        TrafficOrderEntity trafficOrderEntity = createTrafficOrder();
-//        trafficOrderEntity.setImages(List.of(new ImagesEntity(1, trafficOrderEntity, "photo/" + TRAFFIC_ORDER_ID + "/spring.png")));
-//        //WHEN
-//        when(trafficOrderService
-//                .findTrafficOrderById(TRAFFIC_ORDER_ID)).thenReturn(trafficOrderEntity);
-//
-//        mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID + "/images")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        //THEN
-//        verify(trafficOrderService).findTrafficOrderById(TRAFFIC_ORDER_ID);
-//
-//    }
+    @SneakyThrows
+    @Test
+    void downloadImage() {
+        //GIVEN
+        ValidateUserResponseDto responseDto = new ValidateUserResponseDto();
+        responseDto.setUserId(TRAFFIC_ORDER_USER_ID);
+        responseDto.setRoles(List.of("ADMIN"));
+        String token = "Hello";
 
-//    @SneakyThrows
-//    @Test
-//    void downloadImage() {
-//        //GIVEN
-//        File file = new File("./src/test/resources/umlDiagramOfEntity.png");
-//        FileInputStream fileInputStream = new FileInputStream(file);
-//
-//        //WHEN
-//        when(imageS3Service.downloadFile(anyString())).thenReturn(IOUtils.toByteArray(fileInputStream));
-//
-//        mockMvc.perform(get("http://localhost:8080/trip/image")
-//                        .contentType(MediaType.IMAGE_PNG)
-//                        .header("path", "src/test/resources/umlDiagramOfEntity.png"))
-//                .andExpect(status().isOk());
-//
-//    }
+        //WHEN
+        when(userService.validateToken(anyString())).thenReturn(responseDto);
+        doNothing().when(accessTokenValidation).checkIfTheConsumerIsAdmin(responseDto);
+        when(tripService.generatingDownloadLinks(TRAFFIC_ORDER_ID)).thenReturn(any());
+        mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID + "/image")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
 }

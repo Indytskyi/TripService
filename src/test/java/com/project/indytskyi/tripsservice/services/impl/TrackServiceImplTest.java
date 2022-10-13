@@ -13,7 +13,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.project.indytskyi.tripsservice.dto.AllTracksDto;
@@ -25,6 +27,7 @@ import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
+import com.project.indytskyi.tripsservice.validations.ServiceValidation;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -48,8 +51,14 @@ class TrackServiceImplTest {
     @Mock
     private TrackDtoMapper trackDtoMapper;
 
+    @Mock
+    private ServiceValidation serviceValidation;
+
     @InjectMocks
     private TrackServiceImpl underTest;
+
+
+
 
     @Test
     void canAddStartTrack() {
@@ -76,6 +85,7 @@ class TrackServiceImplTest {
         CurrentCoordinatesDto coordinatesDTO = createCurrentCoordinatesDto();
         trafficOrder.setTracks(List.of(track));
         //WHEN
+        doNothing().when(serviceValidation).validateStatusAccess(anyString(), anyString(), any());
         when(tracksRepository.save(any())).thenReturn(track);
         when(trafficOrderService.findTrafficOrderById(anyLong())).thenReturn(trafficOrder);
 

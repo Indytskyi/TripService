@@ -3,8 +3,7 @@ package com.project.indytskyi.tripsservice.services.impl;
 import com.project.indytskyi.tripsservice.dto.AllTracksDto;
 import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
-import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
-import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
+import com.project.indytskyi.tripsservice.exceptions.enums.StatusException;
 import com.project.indytskyi.tripsservice.mapper.CurrentCoordinatesMapper;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
@@ -12,13 +11,11 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
-import com.project.indytskyi.tripsservice.services.UserService;
 import com.project.indytskyi.tripsservice.util.Gfg;
 import com.project.indytskyi.tripsservice.util.enums.Status;
-import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
+import com.project.indytskyi.tripsservice.validations.ServiceValidation;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,17 +30,13 @@ public class TrackServiceImpl implements TrackService {
 
     private final TracksRepository tracksRepository;
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
-
     private final TrafficOrderService trafficOrderService;
-
     private final TrackDtoMapper trackDtoMapper;
-
-    private final UserService userService;
-
-    private final AccessTokenValidation accessTokenValidation;
+    private final ServiceValidation serviceValidation;
 
     @Override
-    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder, TripActivationDto tripActivation) {
+    public TrackEntity saveStartTrack(TrafficOrderEntity trafficOrder,
+                                      TripActivationDto tripActivation) {
 
         TrackEntity track = initializationNewTrack(currentCoordinatesMapper
                 .toCurrentCoordinates(tripActivation));
@@ -52,50 +45,40 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates, String token) {
+    public TrackEntity saveTrack(CurrentCoordinatesDto currentCoordinates) {
 
         final TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(currentCoordinates.getTripId());
 
-        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
-                trafficOrder.getUserId());
+        serviceValidation.validateStatusAccess(trafficOrder.getStatus(),
+                Status.IN_ORDER.name(),
+                StatusException.STOPPED_CAR_EXCEPTION.getException());
 
-        if (trafficOrder.getStatus().equals(Status.IN_ORDER.name())) {
+        final TrackEntity track = initializationNewTrack(currentCoordinates);
+        final TrackEntity lastTrack = getLastTrack(trafficOrder);
+        final double distanceBetweenTwoCoordinates =
+                getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
+        final double distance = lastTrack.getDistance()
+                + distanceBetweenTwoCoordinates;
 
-            final TrackEntity track = initializationNewTrack(currentCoordinates);
-            final TrackEntity lastTrack = getLastTrack(trafficOrder);
-            final double distanceBetweenTwoCoordinates =
-                    getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
-            final double distance = lastTrack.getDistance()
-                    + distanceBetweenTwoCoordinates;
-            track.setDistance(distance);
-            track.setOwnerTrack(trafficOrder);
-            track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
-                    lastTrack.getTimestamp(), track.getTimestamp()));
-            return tracksRepository.save(track);
-        }
+        track.setDistance(distance);
+        track.setOwnerTrack(trafficOrder);
+        track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
+                lastTrack.getTimestamp(), track.getTimestamp()));
 
-        throw new ApiValidationException(List.of(new ErrorResponse("status",
-                "The machine has stopped, take the machine off pause")));
+        return tracksRepository.save(track);
+
     }
 
     @Override
-    public TrackEntity findOne(long id, String token) {
-
-        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
+    public TrackEntity findOne(long id) {
 
         return tracksRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public AllTracksDto getListOfAllCoordinates(long trafficOrderId, String token) {
-
-        final TrafficOrderEntity trafficOrder = trafficOrderService
-                .findTrafficOrderById(trafficOrderId);
-
-        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
-                trafficOrder.getUserId());
+    public AllTracksDto getListOfAllCoordinates(long trafficOrderId) {
 
         return AllTracksDto.of()
                 .trafficOrderId(trafficOrderId)

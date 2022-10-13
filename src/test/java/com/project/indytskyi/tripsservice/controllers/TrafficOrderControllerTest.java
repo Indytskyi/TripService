@@ -21,26 +21,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.indytskyi.tripsservice.dto.StatusDto;
 import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
-import com.project.indytskyi.tripsservice.mapper.StartMapper;
 import com.project.indytskyi.tripsservice.mapper.TrafficOrderDtoMapper;
 import com.project.indytskyi.tripsservice.models.TrackEntity;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
-import com.project.indytskyi.tripsservice.services.ImageS3Service;
-import com.project.indytskyi.tripsservice.services.ImageService;
-import com.project.indytskyi.tripsservice.services.TrackService;
-import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.services.TripService;
+import com.project.indytskyi.tripsservice.services.UserService;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -82,51 +81,34 @@ class TrafficOrderControllerTest {
 
     }
 
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private TrafficOrderService trafficOrderService;
-
-    @MockBean
-    private TrackService trackService;
-
-    @MockBean
-    private ImageService imageService;
-
-    @MockBean
-    private ImageS3Service imageS3Service;
-
     @MockBean
     private TripService tripService;
-
-    @MockBean
-    private StartMapper startMapper;
-
     @MockBean
     private TrafficOrderDtoMapper trafficOrderDtoMapper;
 
-//    @MockBean
-//    private ImageValidation imageValidation;
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private AccessTokenValidation accessTokenValidation;
 
     @Test
     @SneakyThrows
     @DisplayName("Test finding a track by id")
     void getTrackById() {
         //GIVEN
-        TrafficOrderEntity trafficOrder = createTrafficOrder();
         TrafficOrderDto trafficOrderDto = createTrafficOrderDto();
-
+        String token = "test";
         //WHEN
-        when(trafficOrderService.findTrafficOrderById(TRAFFIC_ORDER_ID)).thenReturn(trafficOrder);
-        when(trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder)).thenReturn(trafficOrderDto);
+        when(tripService.getTripById(TRAFFIC_ORDER_ID)).thenReturn(trafficOrderDto);
 
         mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TRAFFIC_ORDER_ID))
                 .andExpect(jsonPath("$.carId").value(TRAFFIC_ORDER_CAR_ID))
@@ -136,7 +118,7 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.tariff").value(TRAFFIC_ORDER_TARIFF));
 
         //THEN
-        verify(trafficOrderService).findTrafficOrderById(TRAFFIC_ORDER_ID);
+        verify(tripService).getTripById(TRAFFIC_ORDER_ID);
 
     }
 
@@ -146,16 +128,18 @@ class TrafficOrderControllerTest {
     @DisplayName("Test finding a track by non existent id")
     void getTrackByNonExistentId() {
         //GIVEN
-        when(trafficOrderService.findTrafficOrderById(TRAFFIC_ORDER_ID))
+        when(tripService.getTripById(TRAFFIC_ORDER_ID))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String token = "test";
 
         //WHEN
         mockMvc.perform(get("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isNotFound());
 
         //THEN
-        verify(trafficOrderService).findTrafficOrderById(TRAFFIC_ORDER_ID);
+        verify(tripService).getTripById(TRAFFIC_ORDER_ID);
     }
 
     @Test
@@ -167,13 +151,16 @@ class TrafficOrderControllerTest {
         TrackEntity track = createTrack();
         TrafficOrderEntity trafficOrder = createTrafficOrder();
         TripStartDto tripStartDto = createTripStartDto();
-
+        ValidateUserResponseDto responseDto = new ValidateUserResponseDto();
+        responseDto.setUserId(22L);
+        String token = "test";
         //WHEN
-        when(tripService.startTrip(tripActivationDto)).thenReturn(tripStartDto);
-
+        when(tripService.startTrip(tripActivationDto, token)).thenReturn(tripStartDto);
+        when(userService.validateToken(token)).thenReturn(responseDto);
         mockMvc.perform(post("http://localhost:8080/trip")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(tripActivationDto)))
+                        .content(objectMapper.writeValueAsString(tripActivationDto))
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tripId").value(TRAFFIC_ORDER_ID))
                 .andExpect(jsonPath("$.carId").value(TRAFFIC_ORDER_CAR_ID))
@@ -192,15 +179,42 @@ class TrafficOrderControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Test saving traffic order and first coordinates of car")
+    void saveTrafficOrderAndStartTrack1() {
+        //GIVEN
+        TripActivationDto tripActivationDto = createTripActivationDto();
+        TripStartDto tripStartDto = createTripStartDto();
+        ValidateUserResponseDto responseDto = new ValidateUserResponseDto();
+        responseDto.setUserId(21L);
+        String token = "test";
+        //WHEN
+        when(tripService.startTrip(tripActivationDto, token)).thenReturn(tripStartDto);
+        when(userService.validateToken(token)).thenReturn(responseDto);
+        mockMvc.perform(post("http://localhost:8080/trip")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tripActivationDto))
+                        .header("Authorization", token))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @SneakyThrows
     @DisplayName("Test stopping traffic order ")
     void stopTrafficOrder() {
+        //GIVEN
+        String token = "test";
+        StatusDto statusDto = new StatusDto();
+        statusDto.setStatus("STOP");
         //WHEN
-        mockMvc.perform(put("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(patch("http://localhost:8080/trip/" + TRAFFIC_ORDER_ID + "/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(statusDto))
+                        .header("Authorization", token))
                 .andExpect(status().isOk());
 
         //THEN
-        verify(trafficOrderService).changeStatusOrder(TRAFFIC_ORDER_ID);
+        verify(tripService).changeTripStatus(TRAFFIC_ORDER_ID, statusDto);
 
     }
 
@@ -235,6 +249,7 @@ class TrafficOrderControllerTest {
         //GIVEN
         TripFinishDto tripFinishDto = createTripFinishDto();
         TrafficOrderEntity trafficOrder = createTrafficOrder();
+        String token = "test";
 
         MockMultipartFile multipartFile
                 = new MockMultipartFile(
@@ -249,14 +264,9 @@ class TrafficOrderControllerTest {
         //WHEN
         when(tripService.finishTrip(TRAFFIC_ORDER_ID, files)).thenReturn(tripFinishDto);
         mockMvc.perform(multipart("http://localhost:8080/trip/" + 1 + "/photos")
-                        .file(multipartFile))
+                        .file(multipartFile)
+                        .header("Authorization", token))
                 .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.latitude").value(TRIP_FINISH_DTO_LATITUDE))
-//                .andExpect(jsonPath("$.longitude").value(TRIP_FINISH_DTO_LONGITUDE))
-//                .andExpect(jsonPath("$.tripPayment").value(TRIP_FINISH_DTO_TRIP_PAYMENT))
-//                .andExpect(jsonPath("$.carId").value(TRIP_FINISH_DTO_CAR_ID))
-//                .andExpect(jsonPath("$.userId").value(TRIP_FINISH_DTO_USER_ID))
-//                .andExpect(jsonPath("$.distance").value(TRIP_FINISH_DTO_DISTANCE));
 
         //THEN
     }

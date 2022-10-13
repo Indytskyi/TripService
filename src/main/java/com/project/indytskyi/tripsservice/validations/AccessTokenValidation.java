@@ -3,14 +3,20 @@ package com.project.indytskyi.tripsservice.validations;
 import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
 import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
+import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
+import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class AccessTokenValidation {
 
     private static final String ROLE_ADMIN = "ADMIN";
     private static final String ROLE_USER = "USER";
+
+    private final TrafficOrderService trafficOrderService;
 
     public void checkIfTheConsumerIsAdmin(ValidateUserResponseDto responseDto) {
 
@@ -23,8 +29,10 @@ public class AccessTokenValidation {
     }
 
     public void checkIfTheConsumerIsOrdinary(ValidateUserResponseDto responseDto,
-                                             long userId) {
-        if (!(responseDto.getRoles().contains(ROLE_USER) && responseDto.getUserId() == userId)
+                                             long tripId) {
+        TrafficOrderEntity trafficOrder = trafficOrderService.findTrafficOrderById(tripId);
+        if (!(responseDto.getRoles().contains(ROLE_USER)
+                && responseDto.getUserId() == trafficOrder.getUserId())
                 && !responseDto.getRoles().contains(ROLE_ADMIN)) {
             throw new ApiValidationException(List.of(new ErrorResponse(
                     "Role",

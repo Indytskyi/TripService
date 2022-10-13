@@ -5,6 +5,8 @@ import com.project.indytskyi.tripsservice.dto.CurrentCoordinatesDto;
 import com.project.indytskyi.tripsservice.dto.TrackDto;
 import com.project.indytskyi.tripsservice.mapper.TrackDtoMapper;
 import com.project.indytskyi.tripsservice.services.TrackService;
+import com.project.indytskyi.tripsservice.services.UserService;
+import com.project.indytskyi.tripsservice.validations.AccessTokenValidation;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import javax.validation.Valid;
@@ -27,8 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class TrackController {
+
     private final TrackService trackService;
     private final TrackDtoMapper trackDtoMapper;
+    private final AccessTokenValidation accessTokenValidation;
+    private final UserService userService;
 
     /**
      * Controller where we want to find special track by id
@@ -40,8 +45,10 @@ public class TrackController {
                                              @RequestHeader("Authorization") String token) {
         log.info("Show track by id = {}", id);
 
+        accessTokenValidation.checkIfTheConsumerIsAdmin(userService.validateToken(token));
+
         return ResponseEntity.ok(trackDtoMapper
-                .toTrackDto(trackService.findOne(id, token)));
+                .toTrackDto(trackService.findOne(id)));
     }
 
     @ApiOperation(value = "Find all tracks by id")
@@ -51,8 +58,11 @@ public class TrackController {
             @PathVariable("id") long id,
             @RequestHeader("Authorization") String token) {
 
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                id);
+
         log.info("Show all tracks  by order id = {}", id);
-        return ResponseEntity.ok(trackService.getListOfAllCoordinates(id, token));
+        return ResponseEntity.ok(trackService.getListOfAllCoordinates(id));
     }
 
     /**
@@ -66,13 +76,16 @@ public class TrackController {
             @RequestBody @Valid CurrentCoordinatesDto currentCoordinates,
             @RequestHeader("Authorization") String token) {
 
+        accessTokenValidation.checkIfTheConsumerIsOrdinary(userService.validateToken(token),
+                currentCoordinates.getTripId());
+
         log.info("Save current coordinates with latitude = {}, longitude = {}",
                 currentCoordinates.getLatitude(),
                 currentCoordinates.getLongitude());
 
         return ResponseEntity.ok(trackDtoMapper
                 .toTrackDto(trackService
-                        .saveTrack(currentCoordinates, token)));
+                        .saveTrack(currentCoordinates)));
     }
 
 }
