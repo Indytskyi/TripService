@@ -1,6 +1,6 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
-import com.project.indytskyi.tripsservice.dto.backoffice.ResponseFromBackofficeDto;
+import com.project.indytskyi.tripsservice.dto.backoffice.CarTariffInformationDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.services.BackOfficeService;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +17,11 @@ public class BackOfficeServiceImpl implements BackOfficeService {
     private final WebClient backOfficeWebClient;
 
     @Override
-    public double getCarTariff(CarDto carDto, String token) {
+    public CarTariffInformationDto getCarTariffResponse(CarDto carDto, String token) {
 
         log.info("get from backoffice-service tariff by casClass = {}",
                 carDto.getCarClass());
-        ResponseFromBackofficeDto backofficeDto = backOfficeWebClient
+        CarTariffInformationDto backofficeDto = backOfficeWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("tariffs/" + carDto.getCarClass())
@@ -30,10 +30,10 @@ public class BackOfficeServiceImpl implements BackOfficeService {
                         .build())
                 .header("Authorization", BEARER_TOKEN_START + token)
                 .retrieve()
-                .bodyToMono(ResponseFromBackofficeDto.class)
+                .bodyToMono(CarTariffInformationDto.class)
                 .block();
 
-        return backofficeDto.getRatePerHour();
+        return backofficeDto;
     }
 
 }

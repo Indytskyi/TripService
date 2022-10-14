@@ -32,11 +32,11 @@ public class TrafficOrderDto {
     @ApiModelProperty(example = "IN_ORDER", value = "")
     private String status;
 
-    @ApiModelProperty(example = "IN_PROCESS", value = "")
-    private String statusPaid;
-
     @ApiModelProperty(example = "300.0", value = "")
     private double tariff;
+
+    @ApiModelProperty(example = "USD")
+    private String currency;
 
     @ApiModelProperty(value = "")
     private List<String> photos;

@@ -13,7 +13,6 @@ import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.crea
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_CAR_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_STATUS;
-import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_STATUS_PAID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_TARIFF;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_USER_ID;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
@@ -114,7 +113,6 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.carId").value(TRAFFIC_ORDER_CAR_ID))
                 .andExpect(jsonPath("$.userId").value(TRAFFIC_ORDER_USER_ID))
                 .andExpect(jsonPath("$.status").value(TRAFFIC_ORDER_STATUS))
-                .andExpect(jsonPath("$.statusPaid").value(TRAFFIC_ORDER_STATUS_PAID))
                 .andExpect(jsonPath("$.tariff").value(TRAFFIC_ORDER_TARIFF));
 
         //THEN
@@ -166,7 +164,6 @@ class TrafficOrderControllerTest {
                 .andExpect(jsonPath("$.carId").value(TRAFFIC_ORDER_CAR_ID))
                 .andExpect(jsonPath("$.userId").value(TRAFFIC_ORDER_USER_ID))
                 .andExpect(jsonPath("$.status").value(TRAFFIC_ORDER_STATUS))
-                .andExpect(jsonPath("$.statusPaid").value(TRAFFIC_ORDER_STATUS_PAID))
                 .andExpect(jsonPath("$.trackId").value(TRACK_DTO_ID))
                 .andExpect(jsonPath("$.latitude").value(TRACK_DTO_LATITUDE))
                 .andExpect(jsonPath("$.longitude").value(TRACK_DTO_LONGITUDE))

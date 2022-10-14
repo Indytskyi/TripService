@@ -19,4 +19,5 @@ public class BackOfficeDto {
     private int carId;
     private double ratePerHour;
     private int userId;
+    private String currency;
 }

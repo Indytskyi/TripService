@@ -9,7 +9,6 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
-import com.project.indytskyi.tripsservice.util.enums.StatusPaid;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
                 .toTrafficOrderEntity(tripActivation);
         trafficOrder.setActivationTime(LocalDateTime.now());
         trafficOrder.setStatus(String.valueOf(Status.IN_ORDER));
-        trafficOrder.setStatusPaid(String.valueOf(StatusPaid.IN_PROCESS));
         return trafficsRepository.save(trafficOrder);
     }
 
@@ -50,7 +48,6 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
 
         trafficOrder.setCompletionTime(LocalDateTime.now());
         trafficOrder.setStatus(String.valueOf(Status.FINISH));
-        trafficOrder.setStatusPaid(String.valueOf(StatusPaid.PAID));
         TrackEntity track = trafficOrder.getTracks().get(trafficOrder.getTracks().size() - 1);
 
         TripFinishDto tripFinishDto = tripFinishMapper

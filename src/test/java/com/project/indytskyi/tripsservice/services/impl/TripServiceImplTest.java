@@ -4,6 +4,7 @@ import static com.project.indytskyi.tripsservice.factory.dto.TrafficOrderDtoFact
 import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.createTripActivationDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.createTripFinishDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripStartDtoFactory.createTripStartDto;
+import static com.project.indytskyi.tripsservice.factory.dto.backoffice.CarTariffInformationDtoFactory.createCARTariffInformationDto;
 import static com.project.indytskyi.tripsservice.factory.dto.car.CarDtoFactory.createCarDto;
 import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.TRAFFIC_ORDER_ID;
@@ -84,6 +85,7 @@ class TripServiceImplTest {
         TrackEntity track = createTrack();
         TripStartDto tripStartDto = createTripStartDto();
         CarDto carDto = createCarDto();
+        var carTariffInformationDto = createCARTariffInformationDto();
         String token = "test";
         double tariff = 200;
 
@@ -92,7 +94,7 @@ class TripServiceImplTest {
         when(carService.getCarInfo(tripActivationDto)).thenReturn(carDto);
         doNothing().when(carService).setCarStatus(anyLong());
         when(trafficOrderService.save(tripActivationDto)).thenReturn(trafficOrder);
-        when(backOfficeService.getCarTariff(carDto, token)).thenReturn(tariff);
+        when(backOfficeService.getCarTariffResponse(carDto, token)).thenReturn(carTariffInformationDto);
         when(trackService.saveStartTrack(trafficOrder, tripActivationDto))
                 .thenReturn(track);
         when(startMapper.toStartDto(trafficOrder, track)).thenReturn(tripStartDto);

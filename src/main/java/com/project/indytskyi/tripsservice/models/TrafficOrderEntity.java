@@ -47,11 +47,11 @@ public class TrafficOrderEntity {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "status_paid")
-    private String statusPaid;
-
     @Column(name = "tariff")
     private double tariff;
+
+    @Column(name = "currency")
+    private String currency;
 
     @OneToMany(mappedBy = "ownerTrack")
     private List<TrackEntity> tracks;

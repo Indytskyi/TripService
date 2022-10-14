@@ -6,6 +6,7 @@ import com.project.indytskyi.tripsservice.dto.TrafficOrderDto;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.TripFinishDto;
 import com.project.indytskyi.tripsservice.dto.TripStartDto;
+import com.project.indytskyi.tripsservice.dto.backoffice.CarTariffInformationDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.exceptions.enums.StatusException;
 import com.project.indytskyi.tripsservice.mapper.StartMapper;
@@ -43,10 +44,8 @@ public class TripServiceImpl implements TripService {
     private final ImageS3Service imageS3Service;
     private final ImageService imageService;
     private final KafkaService kafkaService;
-
     private final StartMapper startMapper;
     private final TrafficOrderDtoMapper trafficOrderDtoMapper;
-
     private final ServiceValidation serviceValidation;
 
     @Override
@@ -60,12 +59,17 @@ public class TripServiceImpl implements TripService {
                 tripActivation.getUserId());
 
         CarDto carDto = carService.getCarInfo(tripActivation);
+
+        final CarTariffInformationDto carTariffInformationDto =
+                backOfficeService.getCarTariffResponse(carDto, token);
+
         carService.setCarStatus(tripActivation.getCarId());
 
         tripActivation.setLongitude(carDto.getCoordinates().getLongitude());
         tripActivation.setLatitude(carDto.getCoordinates().getLatitude());
+        tripActivation.setTariff(carTariffInformationDto.getRatePerHour());
+        tripActivation.setCurrency(carTariffInformationDto.getCurrency());
 
-        tripActivation.setTariff(backOfficeService.getCarTariff(carDto, token));
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
 

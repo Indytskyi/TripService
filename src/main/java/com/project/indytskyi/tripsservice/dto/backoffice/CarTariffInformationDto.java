@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
-public class ResponseFromBackofficeDto {
+public class CarTariffInformationDto {
     private double ratePerHour;
-
+    private String currency;
 }

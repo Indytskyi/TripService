@@ -1,8 +1,10 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import static com.project.indytskyi.tripsservice.factory.dto.backoffice.CarTariffInformationDtoFactory.createCARTariffInformationDto;
 import static com.project.indytskyi.tripsservice.factory.dto.car.CarDtoFactory.createCarDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.project.indytskyi.tripsservice.dto.backoffice.CarTariffInformationDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import lombok.SneakyThrows;
 import okhttp3.mockwebserver.MockResponse;
@@ -33,7 +35,7 @@ class BackOfficeServiceImplTest {
     @Test
     void getCarTariff() {
         //GIVEN
-        Double expected = 200.0;
+        var expected = createCARTariffInformationDto();
         CarDto carDto = createCarDto();
         String token = "sdlkfjsdklfjsdk";
         //WHEN
@@ -47,13 +49,14 @@ class BackOfficeServiceImplTest {
                                   "name":"family",
                                   "description":"good for family trips",
                                   "carType":"medium",
+                                  "currency" : "USD",
                                   "ratePerHour":200
                                 }
                                 """)
         );
 
         //THEN
-        Double response = underTest.getCarTariff(carDto, token);
+        CarTariffInformationDto response = underTest.getCarTariffResponse(carDto, token);
 
         mockWebServer.shutdown();
         Assertions.assertNotNull(response);
