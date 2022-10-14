@@ -116,7 +116,8 @@ public class TripServiceImpl implements TripService {
         TrafficOrderEntity trafficOrder = trafficOrderService
                 .findTrafficOrderById(trafficOrderId);
 
-        serviceValidation.validationForStatusChange(statusDto.getStatus(), trafficOrder.getStatus());
+        serviceValidation.validationForStatusChange(statusDto.getStatus(),
+                trafficOrder.getStatus());
 
         trafficOrder.setStatus(statusDto.getStatus());
         return trafficOrderDtoMapper.toTrafficOrderDto(trafficOrder);

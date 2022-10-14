@@ -27,5 +27,4 @@ public interface TrafficOrderService {
      */
     TripFinishDto finishOrder(TrafficOrderEntity trafficOrder);
 
-
 }
