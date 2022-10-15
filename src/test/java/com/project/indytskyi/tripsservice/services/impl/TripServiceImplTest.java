@@ -91,8 +91,8 @@ class TripServiceImplTest {
 
         //WHEN
         doNothing().when(serviceValidation).validateActiveCountOfTrafficOrders(TRAFFIC_ORDER_USER_ID);
-        when(carService.getCarInfo(tripActivationDto)).thenReturn(carDto);
-        doNothing().when(carService).setCarStatus(anyLong());
+        when(carService.getCarInfo(tripActivationDto, token)).thenReturn(carDto);
+        doNothing().when(carService).setCarStatus(anyLong(), anyString());
         when(trafficOrderService.save(tripActivationDto)).thenReturn(trafficOrder);
         when(backOfficeService.getCarTariffResponse(carDto, token)).thenReturn(carTariffInformationDto);
         when(trackService.saveStartTrack(trafficOrder, tripActivationDto))

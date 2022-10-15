@@ -29,8 +29,9 @@ public class ServiceValidation {
                 && !trafficOrderEntityOptional.get()
                 .getStatus().equals(Status.FINISH.name())) {
             List<ErrorResponse> exception = List.of(new ErrorResponse("userId: " + userId,
-                    "You have already started the trip."
-                            + "Finish the previous one to start a new one")
+                    "You have already started the trip = "
+                            + trafficOrderEntityOptional.get().getId()
+                            + ". Finish the previous one to start a new one")
             );
 
             log.error("the previous trip don`t finish ");

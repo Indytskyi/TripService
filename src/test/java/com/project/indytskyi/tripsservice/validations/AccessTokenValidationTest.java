@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
-import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
+import com.project.indytskyi.tripsservice.exceptions.AccessRequestException;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import java.util.List;
@@ -39,7 +39,7 @@ class AccessTokenValidationTest {
 
         } catch (Exception e) {
             //THEN
-            assertEquals(e.getClass(), ApiValidationException.class);
+            assertEquals(e.getClass(), AccessRequestException.class);
         }
     }
 
@@ -72,7 +72,7 @@ class AccessTokenValidationTest {
 
         } catch (Exception e) {
             //THEN
-            assertEquals(e.getClass(), ApiValidationException.class);
+            assertEquals(e.getClass(), AccessRequestException.class);
         }
     }
 
@@ -92,7 +92,7 @@ class AccessTokenValidationTest {
 
         } catch (Exception e) {
             //THEN
-            assertEquals(e.getClass(), ApiValidationException.class);
+            assertEquals(e.getClass(), AccessRequestException.class);
         }
     }
 

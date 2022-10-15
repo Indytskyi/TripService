@@ -41,6 +41,7 @@ public class KafkaServiceImpl implements KafkaService {
                 .build();
 
         backOfficeDtoKafkaTemplate.send(kafkaBackOfficeTopic, backOfficeDto);
+        System.out.println(backOfficeDto);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class KafkaServiceImpl implements KafkaService {
                         .build();
 
         carFinishDtoKafkaTemplate.send(kafkaCarTopic, carUpdateInfoAfterTripDto);
+        System.out.println(carUpdateInfoAfterTripDto);
     }
 
 }

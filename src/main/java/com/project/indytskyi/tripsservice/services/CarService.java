@@ -12,13 +12,13 @@ public interface CarService {
      * return carClass for request to backoffice-service
      * to get a tariff
      */
-    CarDto getCarInfo(TripActivationDto tripActivationDto);
+    CarDto getCarInfo(TripActivationDto tripActivationDto, String token);
 
     /**
      * the method that cals put request in car-service
      * and set the new CarStatus for car
      * from FREE to RENTED
      */
-    void setCarStatus(long carId);
+    void setCarStatus(long carId, String token);
 
 }

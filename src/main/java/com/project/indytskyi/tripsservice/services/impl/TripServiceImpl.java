@@ -58,12 +58,12 @@ public class TripServiceImpl implements TripService {
                 tripActivation.getCarId(),
                 tripActivation.getUserId());
 
-        CarDto carDto = carService.getCarInfo(tripActivation);
+        CarDto carDto = carService.getCarInfo(tripActivation, token);
 
         final CarTariffInformationDto carTariffInformationDto =
                 backOfficeService.getCarTariffResponse(carDto, token);
 
-        carService.setCarStatus(tripActivation.getCarId());
+        carService.setCarStatus(tripActivation.getCarId(), token);
 
         tripActivation.setLongitude(carDto.getCoordinates().getLongitude());
         tripActivation.setLatitude(carDto.getCoordinates().getLatitude());

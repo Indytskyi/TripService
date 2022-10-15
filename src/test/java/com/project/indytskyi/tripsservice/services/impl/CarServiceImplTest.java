@@ -42,6 +42,7 @@ class CarServiceImplTest {
         //GIVEN
         CarDto expected = createCarDto();
         TripActivationDto tripActivationDto = createTripActivationDto();
+        String token = "test";
         //WHEN
         mockWebServer.start(8084);
         mockWebServer.enqueue(
@@ -59,7 +60,7 @@ class CarServiceImplTest {
         );
 
         //THEN
-        CarDto response = underTest.getCarInfo(tripActivationDto);
+        CarDto response = underTest.getCarInfo(tripActivationDto, token);
 
         mockWebServer.shutdown();
         Assertions.assertNotNull(expected);
@@ -70,6 +71,8 @@ class CarServiceImplTest {
     @SneakyThrows
     @Test
     void setCarStatus() {
+        //GIVEN
+        String token = "test";
         //WHEN
         mockWebServer.start(8084);
         mockWebServer.enqueue(
@@ -85,7 +88,7 @@ class CarServiceImplTest {
         );
 
         //THEN
-        underTest.setCarStatus(TRAFFIC_ORDER_CAR_ID);
+        underTest.setCarStatus(TRAFFIC_ORDER_CAR_ID, token);
 
         mockWebServer.shutdown();
         verify(carWebClient).patch();

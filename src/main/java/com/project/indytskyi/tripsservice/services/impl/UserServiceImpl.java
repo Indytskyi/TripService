@@ -10,15 +10,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private static final String BEARER_TOKEN_START = "Bearer ";
-
     private final WebClient userWebClient;
 
     @Override
     public ValidateUserResponseDto validateToken(String token) {
         return userWebClient.get()
                 .uri("validate-auth-token")
-                .header("Authorization", BEARER_TOKEN_START + token)
+                .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(ValidateUserResponseDto.class)
                 .block();

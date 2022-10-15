@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class BackOfficeServiceImpl implements BackOfficeService {
 
-    private static final String BEARER_TOKEN_START = "Bearer ";
     private final WebClient backOfficeWebClient;
 
     @Override
@@ -28,7 +27,7 @@ public class BackOfficeServiceImpl implements BackOfficeService {
                         .queryParam("latitude", carDto.getCoordinates().getLatitude())
                         .queryParam("longitude", carDto.getCoordinates().getLongitude())
                         .build())
-                .header("Authorization", BEARER_TOKEN_START + token)
+                .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(CarTariffInformationDto.class)
                 .block();

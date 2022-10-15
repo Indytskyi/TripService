@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.exceptions.handler;
 
+import com.project.indytskyi.tripsservice.exceptions.AccessRequestException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +29,11 @@ public class ApiExceptionHandler {
                         a.getDefaultMessage())).collect(Collectors.toList());
 
         return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleAccessException(AccessRequestException e) {
+        return new ResponseEntity<>(e.getErrorResponse(), HttpStatus.FORBIDDEN);
     }
     
 }

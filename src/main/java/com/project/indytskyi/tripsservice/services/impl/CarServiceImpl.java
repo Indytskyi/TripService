@@ -17,13 +17,14 @@ public class CarServiceImpl implements CarService {
     private final WebClient carWebClient;
 
     @Override
-    public CarDto getCarInfo(TripActivationDto tripActivationDto) {
+    public CarDto getCarInfo(TripActivationDto tripActivationDto, String token) {
 
         log.info("get car from Car-service, carId = {}", tripActivationDto.getCarId());
 
         return carWebClient
                 .get()
                 .uri(String.valueOf(tripActivationDto.getCarId()))
+                .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(CarDto.class)
                 .share()
@@ -31,7 +32,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public void setCarStatus(long carId) {
+    public void setCarStatus(long carId, String token) {
         log.info("set status to car by carId = {}", carId);
 
         Object o = carWebClient.patch()
@@ -39,6 +40,7 @@ public class CarServiceImpl implements CarService {
                         .path("status/" + carId)
                         .queryParam("carStatus", CarStatus.RENTED.name())
                         .build())
+                .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .share()

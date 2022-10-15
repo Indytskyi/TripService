@@ -1,11 +1,10 @@
 package com.project.indytskyi.tripsservice.validations;
 
 import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
-import com.project.indytskyi.tripsservice.exceptions.ApiValidationException;
+import com.project.indytskyi.tripsservice.exceptions.AccessRequestException;
 import com.project.indytskyi.tripsservice.exceptions.ErrorResponse;
 import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,10 +20,10 @@ public class AccessTokenValidation {
     public void checkIfTheConsumerIsAdmin(ValidateUserResponseDto responseDto) {
 
         if (!responseDto.getRoles().contains(ROLE_ADMIN)) {
-            throw new ApiValidationException(List.of(new ErrorResponse(
+            throw new AccessRequestException(new ErrorResponse(
                     "Role - ADMIN",
                     "You do not have access to this part. Contact support"
-            )));
+            ));
         }
     }
 
@@ -34,11 +33,11 @@ public class AccessTokenValidation {
         if (!(responseDto.getRoles().contains(ROLE_USER)
                 && responseDto.getUserId() == trafficOrder.getUserId())
                 && !responseDto.getRoles().contains(ROLE_ADMIN)) {
-            throw new ApiValidationException(List.of(new ErrorResponse(
+            throw new AccessRequestException(new ErrorResponse(
                     "Role",
                     "You do not have access to this part."
                             + " log in to your account to start the trip"
-            )));
+            ));
         }
     }
 }
