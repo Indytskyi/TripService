@@ -61,7 +61,7 @@ public class TrackServiceImpl implements TrackService {
         final double distance = lastTrack.getDistance()
                 + distanceBetweenTwoCoordinates;
 
-        track.setDistance(distance);
+        track.setDistance(Double.parseDouble(String.format("%.2f", distance)));
         track.setOwnerTrack(trafficOrder);
         track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
                 lastTrack.getTimestamp(), track.getTimestamp()));

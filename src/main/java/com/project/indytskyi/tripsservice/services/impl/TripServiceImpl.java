@@ -69,11 +69,14 @@ public class TripServiceImpl implements TripService {
         tripActivation.setLatitude(carDto.getCoordinates().getLatitude());
         tripActivation.setTariff(carTariffInformationDto.getRatePerHour());
         tripActivation.setCurrency(carTariffInformationDto.getCurrency());
+        tripActivation.setTariffId(carTariffInformationDto.getId());
 
         TrafficOrderEntity trafficOrder = trafficOrderService.save(tripActivation);
         TrackEntity track = trackService.saveStartTrack(trafficOrder, tripActivation);
 
-        return createTripStartDto(trafficOrder, track);
+        TripStartDto tripStartDto = createTripStartDto(trafficOrder, track);
+
+        return tripStartDto;
     }
 
     @Override

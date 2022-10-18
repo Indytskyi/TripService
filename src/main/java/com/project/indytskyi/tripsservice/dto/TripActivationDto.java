@@ -39,4 +39,7 @@ public class TripActivationDto {
     @ApiModelProperty(example = "USD")
     private String currency;
 
+    @ApiModelProperty(example = "2")
+    private long tariffId;
+
 }

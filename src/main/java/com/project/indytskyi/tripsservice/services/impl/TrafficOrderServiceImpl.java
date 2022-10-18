@@ -53,7 +53,8 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
         TripFinishDto tripFinishDto = tripFinishMapper
                 .toTripFinishDto(trafficOrder, track);
 
-        tripFinishDto.setTripPayment(calculateTripPayment(trafficOrder));
+        tripFinishDto.setTripPayment(Double.parseDouble(String
+                .format("%.2f", calculateTripPayment(trafficOrder))));
 
         trafficsRepository.save(trafficOrder);
 

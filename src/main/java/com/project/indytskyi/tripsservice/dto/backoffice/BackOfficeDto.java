@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.dto.backoffice;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +14,14 @@ import lombok.ToString;
 @Builder(toBuilder = true, builderMethodName = "of")
 @ToString
 public class BackOfficeDto {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDateTime;
     private double price;
     private int carId;
     private double ratePerHour;
     private int userId;
     private String currency;
+    private long tariffId;
 }

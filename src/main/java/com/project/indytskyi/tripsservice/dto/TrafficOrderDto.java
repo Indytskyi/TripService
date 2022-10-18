@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,9 +25,11 @@ public class TrafficOrderDto {
     private long userId;
 
     @ApiModelProperty(value = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime activationTime;
 
     @ApiModelProperty(value = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime completionTime;
 
     @ApiModelProperty(example = "IN_ORDER", value = "")

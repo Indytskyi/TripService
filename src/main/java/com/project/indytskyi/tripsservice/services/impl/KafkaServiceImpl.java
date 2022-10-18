@@ -38,6 +38,7 @@ public class KafkaServiceImpl implements KafkaService {
                 .endDateTime(trafficOrder.getCompletionTime())
                 .ratePerHour(trafficOrder.getTariff())
                 .currency(trafficOrder.getCurrency())
+                .tariffId(trafficOrder.getTariffId())
                 .build();
 
         backOfficeDtoKafkaTemplate.send(kafkaBackOfficeTopic, backOfficeDto);

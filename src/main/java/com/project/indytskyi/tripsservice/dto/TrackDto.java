@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class TrackDto {
     private int speed;
 
     @ApiModelProperty()
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
     @ApiModelProperty(example = "0.2")

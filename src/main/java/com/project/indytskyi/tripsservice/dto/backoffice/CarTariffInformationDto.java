@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true, builderMethodName = "of")
 public class CarTariffInformationDto {
+    private long id;
     private double ratePerHour;
     private String currency;
 }

@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import javax.validation.Valid;
@@ -27,6 +28,7 @@ public class TripStartDto {
 
     @ApiModelProperty(value = "")
     @Valid
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime activationTime;
 
     @ApiModelProperty(example = "IN_ORDER", value = "")
@@ -52,6 +54,7 @@ public class TripStartDto {
 
     @ApiModelProperty(value = "")
     @Valid
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
     @ApiModelProperty(example = "0.0", value = "")

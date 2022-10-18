@@ -38,6 +38,9 @@ public class TrafficOrderEntity {
     @Column(name = "user_id")
     private long userId;
 
+    @Column(name = "tariff_id")
+    private long tariffId;
+
     @Column(name = "activation_time")
     private LocalDateTime activationTime;
 

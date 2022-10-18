@@ -1,0 +1,1 @@
+alter table traffic_order add column tariff_id bigint;

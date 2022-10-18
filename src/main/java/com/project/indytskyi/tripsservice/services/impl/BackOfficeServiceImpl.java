@@ -20,7 +20,8 @@ public class BackOfficeServiceImpl implements BackOfficeService {
 
         log.info("get from backoffice-service tariff by casClass = {}",
                 carDto.getCarClass());
-        CarTariffInformationDto backofficeDto = backOfficeWebClient
+
+        return backOfficeWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("tariffs/" + carDto.getCarClass())
@@ -31,8 +32,6 @@ public class BackOfficeServiceImpl implements BackOfficeService {
                 .retrieve()
                 .bodyToMono(CarTariffInformationDto.class)
                 .block();
-
-        return backofficeDto;
     }
 
 }
