@@ -13,4 +13,5 @@ public class CarTariffInformationDto {
     private long id;
     private double ratePerHour;
     private String currency;
+    private String unitOfSpeed;
 }

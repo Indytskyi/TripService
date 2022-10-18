@@ -12,6 +12,7 @@ import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.Gfg;
+import com.project.indytskyi.tripsservice.util.enums.SpeedUnit;
 import com.project.indytskyi.tripsservice.util.enums.Status;
 import com.project.indytskyi.tripsservice.validations.ServiceValidation;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class TrackServiceImpl implements TrackService {
 
+    private static final double KPH_TO_MPH = 1.60934;
     private final TracksRepository tracksRepository;
     private final CurrentCoordinatesMapper currentCoordinatesMapper;
     private final TrafficOrderService trafficOrderService;
@@ -40,6 +42,7 @@ public class TrackServiceImpl implements TrackService {
 
         TrackEntity track = initializationNewTrack(currentCoordinatesMapper
                 .toCurrentCoordinates(tripActivation));
+        track.setUnitOfSpeed(tripActivation.getUnitOfSpeed());
         track.setOwnerTrack(trafficOrder);
         return tracksRepository.save(track);
     }
@@ -56,6 +59,9 @@ public class TrackServiceImpl implements TrackService {
 
         final TrackEntity track = initializationNewTrack(currentCoordinates);
         final TrackEntity lastTrack = getLastTrack(trafficOrder);
+
+        track.setUnitOfSpeed(lastTrack.getUnitOfSpeed());
+
         final double distanceBetweenTwoCoordinates =
                 getDistanceBetweenTwoCoordinates(currentCoordinates, lastTrack);
         final double distance = lastTrack.getDistance()
@@ -64,7 +70,7 @@ public class TrackServiceImpl implements TrackService {
         track.setDistance(Double.parseDouble(String.format("%.2f", distance)));
         track.setOwnerTrack(trafficOrder);
         track.setSpeed(getCurrentSpeed(distanceBetweenTwoCoordinates,
-                lastTrack.getTimestamp(), track.getTimestamp()));
+                lastTrack.getTimestamp(), track.getTimestamp(), track.getUnitOfSpeed()));
 
         return tracksRepository.save(track);
 
@@ -107,10 +113,13 @@ public class TrackServiceImpl implements TrackService {
      */
     private double getDistanceBetweenTwoCoordinates(CurrentCoordinatesDto currentCoordinates,
                                                     TrackEntity lastTrack) {
-        return Gfg.distance(lastTrack.getLatitude(),
+        var distance = Gfg.distance(lastTrack.getLatitude(),
                 lastTrack.getLongitude(),
                 currentCoordinates.getLatitude(),
                 currentCoordinates.getLongitude());
+        return lastTrack.getUnitOfSpeed().equals(SpeedUnit.KPH.name())
+                ? distance
+                : distance / KPH_TO_MPH;
     }
 
     /**
@@ -125,12 +134,16 @@ public class TrackServiceImpl implements TrackService {
      */
     private int getCurrentSpeed(double distance,
                                 LocalDateTime previousTimestamp,
-                                LocalDateTime currentTimestamp) {
+                                LocalDateTime currentTimestamp,
+                                String unitOfSpeed) {
 
         double time = currentTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
                 - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
 
-        return (int) ((distance / (time)) * 3600000);
+        double speed = ((distance / (time)) * 3600000);
+        return unitOfSpeed.equals(SpeedUnit.KPH.name())
+                ? (int) speed
+                : (int) (speed / KPH_TO_MPH);
     }
 
 }

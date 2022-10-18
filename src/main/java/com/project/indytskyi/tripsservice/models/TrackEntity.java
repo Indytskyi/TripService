@@ -44,6 +44,9 @@ public class TrackEntity {
     @Column(name = "speed")
     private int speed;
 
+    @Column(name = "speed_unit")
+    private String unitOfSpeed;
+
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
 

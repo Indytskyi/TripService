@@ -62,4 +62,5 @@ public class TrafficOrderEntity {
     @OneToMany(mappedBy = "ownerImage")
     private List<ImagesEntity> images;
 
+
 }

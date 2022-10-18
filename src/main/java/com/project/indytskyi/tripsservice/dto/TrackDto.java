@@ -27,6 +27,9 @@ public class TrackDto {
     private int speed;
 
     @ApiModelProperty()
+    private String unitOfSpeed;
+
+    @ApiModelProperty()
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 

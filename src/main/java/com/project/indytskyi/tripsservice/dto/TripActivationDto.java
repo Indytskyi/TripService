@@ -42,4 +42,6 @@ public class TripActivationDto {
     @ApiModelProperty(example = "2")
     private long tariffId;
 
+    private String unitOfSpeed;
+
 }

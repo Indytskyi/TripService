@@ -52,6 +52,9 @@ public class TripStartDto {
     @ApiModelProperty(value = "")
     private int speed;
 
+    @ApiModelProperty()
+    private String unitOfSpeed;
+
     @ApiModelProperty(value = "")
     @Valid
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
