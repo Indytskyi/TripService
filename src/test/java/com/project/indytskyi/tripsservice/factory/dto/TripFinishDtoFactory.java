@@ -9,6 +9,7 @@ public class TripFinishDtoFactory {
     public static final long TRIP_FINISH_DTO_CAR_ID = 12;
     public static final long TRIP_FINISH_DTO_USER_ID = 22;
     public static final double TRIP_FINISH_DTO_DISTANCE = 0;
+    public static final String TRIP_FINISH_DTO_UNIT_OF_DISTANCE = "kilometres";
 
         public static TripFinishDto createTripFinishDto() {
         return TripFinishDto.of()
@@ -18,6 +19,7 @@ public class TripFinishDtoFactory {
                 .carId(TRIP_FINISH_DTO_CAR_ID)
                 .userId(TRIP_FINISH_DTO_USER_ID)
                 .distance(TRIP_FINISH_DTO_DISTANCE)
+                .unitOfDistance(TRIP_FINISH_DTO_UNIT_OF_DISTANCE)
                 .build();
     }
 }

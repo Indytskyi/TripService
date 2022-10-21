@@ -2,6 +2,7 @@ package com.project.indytskyi.tripsservice.services.impl;
 
 import static com.project.indytskyi.tripsservice.factory.dto.TripActivationDtoFactory.createTripActivationDto;
 import static com.project.indytskyi.tripsservice.factory.dto.TripFinishDtoFactory.createTripFinishDto;
+import static com.project.indytskyi.tripsservice.factory.model.TrackFactory.createTrack;
 import static com.project.indytskyi.tripsservice.factory.model.TrafficOrderFactory.createTrafficOrder;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -110,10 +111,11 @@ class TrafficOrderServiceImplTest {
         TripFinishDto tripFinishDto = createTripFinishDto();
 
         TrafficOrderEntity orderEntity = createTrafficOrder();
+//        orderEntity.setTracks(List.of(createTrack()));
 
         orderEntity.setActivationTime(LocalDateTime.now().minusMinutes(5));
         List<TrackEntity> tracks = new ArrayList<>();
-        TrackEntity track = new TrackEntity();
+        TrackEntity track = createTrack();
         tracks.add(track);
         orderEntity.setTracks(tracks);
 

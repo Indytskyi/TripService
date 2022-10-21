@@ -14,6 +14,7 @@ public class TrackFactory {
     public static final int TRACK_SPEED = 0;
     public static final LocalDateTime TRACK_TIMESTAMP = LocalDateTime.now();
     public static final TrafficOrderEntity TRACK_TRAFFIC_ORDER = createTrafficOrder();
+    public static final String TRACK_UNIT_OF_SPEED = "KPH";
 
     public static TrackEntity createTrack() {
         return TrackEntity.of()
@@ -23,6 +24,7 @@ public class TrackFactory {
                 .longitude(TRACK_LONGITUDE)
                 .speed(TRACK_SPEED)
                 .timestamp(TRACK_TIMESTAMP)
+                .unitOfSpeed(TRACK_UNIT_OF_SPEED)
                 .ownerTrack(TRACK_TRAFFIC_ORDER)
                 .build();
     }

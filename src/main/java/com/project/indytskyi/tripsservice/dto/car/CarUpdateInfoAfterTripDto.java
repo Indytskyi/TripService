@@ -13,6 +13,7 @@ public class CarUpdateInfoAfterTripDto {
     private Long id;
     private String carStatus;
     private StartCoordinatesOfCarDto coordinates;
-    private double distanceInKilometers;
+    private double distance;
     private double fuelLevelLiter;
+    private String unitOfDistance;
 }

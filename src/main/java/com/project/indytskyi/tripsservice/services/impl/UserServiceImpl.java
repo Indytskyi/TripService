@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.project.indytskyi.tripsservice.config.DiscoveryUrlConfig;
 import com.project.indytskyi.tripsservice.dto.user.ValidateUserResponseDto;
 import com.project.indytskyi.tripsservice.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +11,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final WebClient userWebClient;
+    private final DiscoveryUrlConfig basicUrl;
+    private final WebClient webClient;
 
     @Override
     public ValidateUserResponseDto validateToken(String token) {
-        return userWebClient.get()
-                .uri("validate-auth-token")
+        return webClient.get()
+                .uri(basicUrl.getUserServiceUrl() + "/validate-auth-token")
                 .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(ValidateUserResponseDto.class)

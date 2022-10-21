@@ -9,6 +9,7 @@ import com.project.indytskyi.tripsservice.models.TrafficOrderEntity;
 import com.project.indytskyi.tripsservice.repositories.TrafficsRepository;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.util.enums.TripUnits;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,9 @@ public class TrafficOrderServiceImpl implements TrafficOrderService {
         TripFinishDto tripFinishDto = tripFinishMapper
                 .toTripFinishDto(trafficOrder, track);
 
+        tripFinishDto.setUnitOfDistance(track.getUnitOfSpeed().equals(TripUnits.KPH.name())
+                ? TripUnits.KPH.getUnitOfDistance()
+                : TripUnits.MPH.getUnitOfDistance());
         tripFinishDto.setTripPayment(Double.parseDouble(String
                 .format("%.2f", calculateTripPayment(trafficOrder))));
 

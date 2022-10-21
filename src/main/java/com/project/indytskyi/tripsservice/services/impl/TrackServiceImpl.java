@@ -12,8 +12,8 @@ import com.project.indytskyi.tripsservice.repositories.TracksRepository;
 import com.project.indytskyi.tripsservice.services.TrackService;
 import com.project.indytskyi.tripsservice.services.TrafficOrderService;
 import com.project.indytskyi.tripsservice.util.Gfg;
-import com.project.indytskyi.tripsservice.util.enums.SpeedUnit;
 import com.project.indytskyi.tripsservice.util.enums.Status;
+import com.project.indytskyi.tripsservice.util.enums.TripUnits;
 import com.project.indytskyi.tripsservice.validations.ServiceValidation;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -117,7 +117,7 @@ public class TrackServiceImpl implements TrackService {
                 lastTrack.getLongitude(),
                 currentCoordinates.getLatitude(),
                 currentCoordinates.getLongitude());
-        return lastTrack.getUnitOfSpeed().equals(SpeedUnit.KPH.name())
+        return lastTrack.getUnitOfSpeed().equals(TripUnits.KPH.name())
                 ? distance
                 : distance / KPH_TO_MPH;
     }
@@ -141,7 +141,7 @@ public class TrackServiceImpl implements TrackService {
                 - previousTimestamp.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
 
         double speed = ((distance / (time)) * 3600000);
-        return unitOfSpeed.equals(SpeedUnit.KPH.name())
+        return unitOfSpeed.equals(TripUnits.KPH.name())
                 ? (int) speed
                 : (int) (speed / KPH_TO_MPH);
     }

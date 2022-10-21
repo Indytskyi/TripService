@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.project.indytskyi.tripsservice.config.DiscoveryUrlConfig;
 import com.project.indytskyi.tripsservice.dto.TripActivationDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.services.CarService;
@@ -14,16 +15,18 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
-    private final WebClient carWebClient;
+    private final DiscoveryUrlConfig basicUrl;
+    private final WebClient webClient;
 
     @Override
     public CarDto getCarInfo(TripActivationDto tripActivationDto, String token) {
 
         log.info("get car from Car-service, carId = {}", tripActivationDto.getCarId());
 
-        return carWebClient
+        return webClient
                 .get()
-                .uri(String.valueOf(tripActivationDto.getCarId()))
+                .uri(basicUrl.getCarServiceUrl() + "/cars/"
+                        + String.valueOf(tripActivationDto.getCarId()))
                 .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(CarDto.class)
@@ -35,9 +38,9 @@ public class CarServiceImpl implements CarService {
     public void setCarStatus(long carId, String token) {
         log.info("set status to car by carId = {}", carId);
 
-        Object o = carWebClient.patch()
+        Object o = webClient.patch()
                 .uri(uriBuilder -> uriBuilder
-                        .path("status/" + carId)
+                        .path(basicUrl.getCarServiceUrl() + "/cars/status/" + carId)
                         .queryParam("carStatus", CarStatus.RENTED.name())
                         .build())
                 .header("Authorization", token)

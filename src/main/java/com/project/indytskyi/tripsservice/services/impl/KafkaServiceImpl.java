@@ -57,9 +57,10 @@ public class KafkaServiceImpl implements KafkaService {
                                 tripFinishDto.getLatitude(),
                                 tripFinishDto.getLongitude()
                         ))
-                        .distanceInKilometers(tripFinishDto.getDistance())
+                        .distance(tripFinishDto.getDistance())
                         .fuelLevelLiter(DEFAULT_FUEL_LEVEL_LITERS)
                         .id(tripFinishDto.getCarId())
+                        .unitOfDistance(tripFinishDto.getUnitOfDistance())
                         .build();
 
         carFinishDtoKafkaTemplate.send(kafkaCarTopic, carUpdateInfoAfterTripDto);

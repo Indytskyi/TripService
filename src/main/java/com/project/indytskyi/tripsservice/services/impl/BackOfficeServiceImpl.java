@@ -1,5 +1,6 @@
 package com.project.indytskyi.tripsservice.services.impl;
 
+import com.project.indytskyi.tripsservice.config.DiscoveryUrlConfig;
 import com.project.indytskyi.tripsservice.dto.backoffice.CarTariffInformationDto;
 import com.project.indytskyi.tripsservice.dto.car.CarDto;
 import com.project.indytskyi.tripsservice.services.BackOfficeService;
@@ -13,7 +14,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class BackOfficeServiceImpl implements BackOfficeService {
 
-    private final WebClient backOfficeWebClient;
+    private final DiscoveryUrlConfig basicUrl;
+    private final WebClient webClient;
 
     @Override
     public CarTariffInformationDto getCarTariffResponse(CarDto carDto, String token) {
@@ -21,10 +23,11 @@ public class BackOfficeServiceImpl implements BackOfficeService {
         log.info("get from backoffice-service tariff by casClass = {}",
                 carDto.getCarClass());
 
-        return backOfficeWebClient
+        return webClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("tariffs/" + carDto.getCarClass())
+                        .path(basicUrl.getBackofficeServiceUrl() + "/user/tariffs/"
+                                + carDto.getCarClass())
                         .queryParam("latitude", carDto.getCoordinates().getLatitude())
                         .queryParam("longitude", carDto.getCoordinates().getLongitude())
                         .build())

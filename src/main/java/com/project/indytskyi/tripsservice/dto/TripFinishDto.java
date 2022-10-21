@@ -35,4 +35,8 @@ public class TripFinishDto {
     @ApiModelProperty(example = "5.0", value = "")
     private double distance;
 
+    @ApiModelProperty()
+    private String unitOfDistance;
+
+
 }
